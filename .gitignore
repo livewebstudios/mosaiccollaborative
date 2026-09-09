@@ -6,3 +6,8 @@ dist/
 .env.production
 .netlify/
 npm-debug.log*
+
+# Local only: QA tooling and working notes, not part of the site
+tools/
+CLAUDE.md
+src/content/insights/_template.md

@@ -1,0 +1,89 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import markSvg from "../assets/logo/mosaic_mark_animatable.svg?raw";
+
+const title = "Page Not Found | The Mosaic Collaborative";
+const description = "The page you're looking for has moved or never existed.";
+---
+
+<Base title={title} description={description} path="/404/">
+  <section class="section notfound" aria-labelledby="nf-h">
+    <div class="container notfound-inner">
+      <div class="notfound-copy">
+        <p class="eyebrow" data-reveal>404</p>
+        <h1 id="nf-h" data-reveal>This piece isn't in the picture.</h1>
+        <p class="lead" data-reveal>The page you're looking for has moved or never existed.</p>
+        <p data-reveal>
+          <a class="btn btn-primary" href="/">
+            <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
+            Back to the whole picture
+          </a>
+        </p>
+      </div>
+
+      <!-- The mark's own tiles, scattered. They reassemble on hover, focus or tap. -->
+      <div class="scatter" data-scatter tabindex="0" role="img" aria-label="The Mosaic Collaborative mark, scattered into its tiles">
+        <Fragment set:html={markSvg} />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notfound {
+    min-height: 72svh;
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--section-y) + 8.5rem);
+  }
+  .notfound-inner { display: grid; gap: clamp(2.5rem, 5vw, 4rem); align-items: center; }
+  @media (min-width: 900px) { .notfound-inner { grid-template-columns: 6fr 5fr; } }
+  .notfound-copy { display: grid; gap: 1rem; max-width: 30ch; }
+
+  .scatter { justify-self: center; width: min(100%, 380px); cursor: pointer; }
+  .scatter :global(svg) { width: 100%; height: auto; overflow: visible; }
+  .scatter:focus-visible { outline: 3px solid var(--color-gold); outline-offset: 8px; border-radius: 4px; }
+
+  /* Scattered is the resting state, assembled is the reward. Under reduced motion,
+     or with JavaScript off and no pointer, the mark simply sits assembled. */
+  :global(html.motion-ok) .scatter :global([data-tile]) {
+    transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--r, 0deg));
+    transform-origin: center;
+    transform-box: fill-box;
+    transition: transform 0.85s var(--ease-out-expo);
+    transition-delay: calc(var(--d, 0) * 22ms);
+  }
+  :global(html.motion-ok) .scatter:hover :global([data-tile]),
+  :global(html.motion-ok) .scatter:focus-visible :global([data-tile]),
+  :global(html.motion-ok) .scatter.is-assembled :global([data-tile]) {
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scatter :global([data-tile]) { transform: none !important; }
+  }
+</style>
+
+<script>
+  // Deterministic scatter offsets, assigned once per tile so the layout is stable
+  // between renders. Tapping toggles the assembled state on touch devices.
+  const scatter = document.querySelector<HTMLElement>("[data-scatter]");
+  if (scatter && document.documentElement.classList.contains("motion-ok")) {
+    const tiles = scatter.querySelectorAll<SVGElement>("[data-tile]");
+    let seed = 20260909;
+    const rand = () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 4294967296;
+    };
+    tiles.forEach((tile, i) => {
+      const angle = rand() * Math.PI * 2;
+      const dist = 120 + rand() * 260;
+      tile.style.setProperty("--dx", `${Math.cos(angle) * dist}px`);
+      tile.style.setProperty("--dy", `${Math.sin(angle) * dist}px`);
+      tile.style.setProperty("--r", `${(rand() * 2 - 1) * 90}deg`);
+      tile.style.setProperty("--d", String(i));
+    });
+    scatter.addEventListener("click", () => scatter.classList.toggle("is-assembled"));
+  }
+</script>

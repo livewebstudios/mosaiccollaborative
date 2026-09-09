@@ -1,0 +1,81 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../data/site";
+
+const title = "Privacy Policy | The Mosaic Collaborative";
+const description = "How The Mosaic Collaborative handles your information.";
+const hasEmail = !site.email.startsWith("TODO");
+const contactHref = hasEmail ? `mailto:${site.email}` : "/contact/";
+const contactLabel = hasEmail ? site.email : "our contact form";
+---
+
+<Base title={title} description={description} path="/privacy/">
+  <section class="section legal" aria-labelledby="privacy-h">
+    <div class="container legal-inner">
+      <p class="eyebrow" data-reveal>Legal</p>
+      <h1 id="privacy-h" data-reveal>Privacy policy</h1>
+      <p class="lead" data-reveal>
+        Last updated: <!-- TODO: confirm with Jon. Set this to the launch date. -->on publication.
+      </p>
+
+      <div class="legal-body">
+        <h2>What we collect</h2>
+        <p>
+          When you use the contact form we collect the information you enter: your name, company,
+          role, email, phone if you include it, and your message. We also receive standard technical
+          information from our hosting provider (Netlify), such as your IP address and browser type,
+          in server logs.
+        </p>
+
+        <h2>How we use it</h2>
+        <p>
+          We use contact form information only to respond to your inquiry and, if you become a client,
+          to deliver our services. We do not sell your information, and we do not add you to a
+          marketing list unless you ask us to.
+        </p>
+
+        <h2>Who we share it with</h2>
+        <p>
+          Form submissions are processed by Netlify Forms and delivered to our email. We do not share
+          your information with anyone else except as required by law.
+        </p>
+
+        <h2>Cookies and analytics</h2>
+        <p>
+          This site does not use advertising cookies.
+          <!-- TODO: confirm with Jon. State the analytics tool here if one is added, for example
+               Netlify Analytics, which is server side and sets no cookies. -->
+        </p>
+
+        <h2>Your choices</h2>
+        <p>
+          You can ask us to correct or delete the information you've sent us at any time by contacting
+          us at <a href={contactHref}>{contactLabel}</a>.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          {site.name}<br />
+          <a href={contactHref}>{contactLabel}</a>
+          <!-- TODO: confirm with Roz. Mailing address, if one is required. -->
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .legal { padding-top: calc(var(--section-y) + 8.5rem); }
+  .legal-inner { max-width: 52rem; margin-inline: 0; }
+  .legal-inner h1 { margin-block: 0.5rem 1rem; }
+  .legal-body { margin-top: clamp(2rem, 4vw, 3rem); max-width: 62ch; }
+  .legal-body h2 {
+    font-size: var(--step-2);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 0.6rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+  .legal-body h2:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+  .legal-body a { text-decoration: underline; text-underline-offset: 4px; }
+</style>

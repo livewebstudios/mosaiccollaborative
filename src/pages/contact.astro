@@ -1,0 +1,214 @@
+---
+import Base from "../layouts/Base.astro";
+import MosaicField from "../components/MosaicField.astro";
+import Icon from "../components/Icon.astro";
+import { journeys } from "../data/journeys";
+import { site } from "../data/site";
+
+const title = "Contact The Mosaic Collaborative";
+const description =
+  "Tell us what's going on. We'll tell you honestly whether we can help and where we'd start.";
+
+const hasEmail = !site.email.startsWith("TODO");
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: title,
+    description,
+    url: site.url + "/contact/",
+    mainEntity: {
+      "@type": "Organization",
+      name: site.name,
+      url: site.url,
+      ...(hasEmail ? { email: site.email } : {}),
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "Sales",
+        areaServed: "US",
+        availableLanguage: "English",
+      },
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name: "Contact", item: site.url + "/contact/" },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} path="/contact/" schema={schema}>
+  <div class="contact-page" data-parallax-scope>
+    <div class="contact-field" aria-hidden="true" data-parallax="0.15">
+      <MosaicField cols={7} rows={6} cell={110} density={0.3} seed={211} opacity={0.5} drift />
+    </div>
+
+    <section class="section contact" aria-labelledby="contact-h">
+      <div class="container contact-inner">
+        <div class="contact-intro">
+          <p class="eyebrow" data-reveal>Contact</p>
+          <h1 id="contact-h" data-reveal>Let's see the whole picture.</h1>
+          <p class="lead" data-reveal>
+            Tell us what's going on. We'll tell you honestly whether we can help, and where we'd start.
+          </p>
+
+          <address class="contact-details" data-reveal>
+            {hasEmail ? (
+              <p><a class="link-arrow" href={`mailto:${site.email}`}>{site.email}</a></p>
+            ) : null}
+            {site.linkedinCompany ? (
+              <p>
+                <a class="link-arrow" href={site.linkedinCompany} rel="noopener noreferrer" target="_blank">
+                  <Icon name="linkedin" size={15} /> LinkedIn
+                </a>
+              </p>
+            ) : null}
+            <p class="contact-location">Based in the New York metro area. Working with clients nationally.</p>
+          </address>
+          <!-- TODO: confirm with Roz. Direct email, LinkedIn URL and the exact location line. -->
+        </div>
+
+        <div class="contact-form-wrap" data-reveal>
+          <form
+            class="contact-form"
+            name="contact"
+            method="POST"
+            action="/thank-you/"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+          >
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="honeypot" aria-hidden="true">
+              <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+            </p>
+
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" autocomplete="name" required />
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="company">Company</label>
+                <input id="company" name="company" type="text" autocomplete="organization" />
+              </div>
+              <div class="field">
+                <label for="role">Your role</label>
+                <input id="role" name="role" type="text" autocomplete="organization-title" />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required />
+              </div>
+              <div class="field">
+                <label for="phone">Phone <span class="optional">(optional)</span></label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" />
+              </div>
+            </div>
+
+            <fieldset class="choice-set">
+              <legend>Which sounds most like you?</legend>
+              {journeys.map((j) => (
+                <label class="choice" data-accent={j.accent}>
+                  <input type="radio" name="journey" value={j.slug} />
+                  <span class="choice-text">{`"${j.quote}"`}</span>
+                </label>
+              ))}
+              <label class="choice" data-accent="navy">
+                <input type="radio" name="journey" value="unsure" checked />
+                <span class="choice-text">Not sure yet</span>
+              </label>
+            </fieldset>
+
+            <div class="field">
+              <label for="message">What's going on?</label>
+              <textarea id="message" name="message" rows="6" required></textarea>
+            </div>
+
+            <div class="field field-check">
+              <label class="choice">
+                <input type="checkbox" name="consent" required />
+                <span class="choice-text">
+                  I'm happy for The Mosaic Collaborative to contact me about this inquiry.
+                </span>
+              </label>
+            </div>
+
+            <button class="btn btn-primary" type="submit">
+              <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
+              Send
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .contact-page { position: relative; overflow: hidden; }
+  .contact-field {
+    position: absolute;
+    inset: 4% -18% auto auto;
+    width: min(58%, 720px);
+    opacity: 0.8;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at 62% 45%, #000 22%, transparent 68%);
+  }
+
+  .contact { padding-top: calc(var(--section-y) + 8.5rem); position: relative; z-index: 1; }
+  .contact-inner { display: grid; gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
+  @media (min-width: 1024px) { .contact-inner { grid-template-columns: 5fr 7fr; } }
+
+  .contact-intro { display: grid; gap: 1rem; align-content: start; }
+  @media (min-width: 1024px) { .contact-intro { position: sticky; top: 11rem; } }
+  .contact-intro h1 { font-size: var(--step-4); max-width: 12ch; }
+
+  .contact-details { font-style: normal; display: grid; gap: 0.75rem; margin-top: 1.5rem; }
+  .contact-location { font-size: var(--step--1); max-width: 30ch; }
+
+  .contact-form-wrap {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+  .contact-form { display: grid; gap: 1.5rem; }
+  .field-row { display: grid; gap: 1.5rem; }
+  @media (min-width: 560px) { .field-row { grid-template-columns: repeat(2, 1fr); } }
+  .optional { font-weight: 400; opacity: 0.7; }
+
+  .choice-set { border: 0; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+  .choice-set legend { font-weight: 500; font-size: var(--step--1); padding: 0; margin-bottom: 0.75rem; }
+
+  .choice {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--rule);
+    border-radius: 10px 0 10px 0;
+    cursor: pointer;
+    transition: border-color 0.3s var(--ease-out-expo), background-color 0.3s var(--ease-out-expo);
+  }
+  .choice:hover { background: var(--color-gray); }
+  .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-tint); }
+  .choice input { width: 1.15rem; height: 1.15rem; margin: 0.15rem 0 0; accent-color: var(--color-navy); flex: none; }
+  .choice-text { font-size: var(--step--1); line-height: 1.45; }
+  .choice-set .choice-text { font-family: var(--font-display); font-style: italic; font-size: var(--step-0); }
+
+  .field-check { margin-top: 0.5rem; }
+  .field-check .choice { border: 0; padding: 0; }
+  .field-check .choice:hover { background: none; }
+
+  .contact-form button { justify-self: start; margin-top: 0.5rem; }
+</style>

@@ -1,0 +1,157 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import MosaicField from "../../components/MosaicField.astro";
+import Icon from "../../components/Icon.astro";
+import { site } from "../../data/site";
+
+const title = "Insights from The Mosaic Collaborative";
+const description =
+  "Practical thinking on leadership, culture, organizational effectiveness and leading through AI-driven change.";
+
+const posts = (await getCollection("insights", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const categories = [...new Set(posts.map((p) => p.data.category))];
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: title,
+    description,
+    url: site.url + "/insights/",
+    publisher: { "@type": "Organization", name: site.name, url: site.url },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name: "Insights", item: site.url + "/insights/" },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} path="/insights/" schema={schema}>
+  <section class="section page-hero" aria-labelledby="insights-h">
+    <div class="hero-field" aria-hidden="true">
+      <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={173} drift />
+    </div>
+    <div class="container page-hero-inner">
+      <p class="eyebrow" data-reveal>Insights</p>
+      <h1 id="insights-h" data-reveal>Thinking out loud</h1>
+      <p class="lead" data-reveal>
+        Practical thinking on leadership, culture, organizational effectiveness and leading through
+        AI-driven change.
+      </p>
+    </div>
+  </section>
+
+  <section class="section posts" aria-label="Articles">
+    <div class="container">
+      {posts.length > 0 ? (
+        <>
+          {categories.length > 1 && (
+            <ul class="category-list" aria-label="Categories">
+              {categories.map((c) => <li class="category-chip">{c}</li>)}
+            </ul>
+          )}
+          <ul class="post-grid" data-reveal-stagger="80">
+            {posts.map((post) => (
+              <li class="card post-card" data-accent={post.data.heroAccent} data-reveal>
+                <article>
+                  <p class="eyebrow">{post.data.category}</p>
+                  <h2><a href={`/insights/${post.id}/`}>{post.data.title}</a></h2>
+                  <p class="post-desc">{post.data.description}</p>
+                  <p class="post-meta">
+                    <time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+                  </p>
+                </article>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <div class="empty-state" data-reveal>
+          <p class="eyebrow">Coming soon</p>
+          <p class="text-large">
+            We're writing. The first pieces land here shortly.
+          </p>
+          <p class="measure">
+            In the meantime, the four journeys explain how we think about organizational change, and
+            the core offerings show what that looks like in practice.
+          </p>
+          <p class="empty-links">
+            <a class="link-arrow" href="/how-we-work/">See how we work <Icon name="arrow" size={15} /></a>
+            <a class="link-arrow" href="/services/">Browse the offerings <Icon name="arrow" size={15} /></a>
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaBand
+    heading="Rather talk it through?"
+    body="Tell us what's going on and we'll tell you honestly whether we can help."
+  />
+</Base>
+
+<style>
+  .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
+  .page-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; display: grid; gap: 1rem; }
+  .hero-field {
+    position: absolute;
+    right: -8%;
+    top: 22%;
+    width: min(38%, 440px);
+    pointer-events: none;
+    opacity: 0.85;
+    mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
+  }
+
+  .posts { padding-top: 0; }
+
+  .category-list {
+    list-style: none;
+    margin: 0 0 clamp(1.5rem, 3vw, 2.5rem);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .category-chip {
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.4em 0.9em;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+  }
+
+  .post-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 700px) { .post-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1200px) { .post-grid { grid-template-columns: repeat(3, 1fr); } }
+  .post-card h2 { font-size: var(--step-2); margin: 0.5rem 0 0.75rem; }
+  .post-card h2 a { text-decoration: none; }
+  .post-card h2 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .post-desc { font-size: var(--step--1); }
+  .post-meta { font-size: var(--step--1); opacity: 0.7; margin-top: 1rem; }
+
+  .empty-state { display: grid; gap: 1.25rem; max-width: 48rem; }
+  .empty-state .text-large { max-width: 16em; }
+  .empty-links { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 0.5rem; }
+</style>

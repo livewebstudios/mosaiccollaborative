@@ -52,7 +52,7 @@ export const journeys: Journey[] = [
     ],
     deliverable: "A shared direction.",
     metaTitle: "Clarify: Establish Strategic Direction | The Mosaic Collaborative",
-    metaDescription: "When you know you need change but don't know what to do next. Organizational assessment, roadmap development and an implementation toolkit that deliver a shared direction."
+    metaDescription: "When you know you need change but don't know what to do next. Assessment, roadmap and toolkit that deliver a shared direction."
   },
   {
     slug: "build",
@@ -86,7 +86,7 @@ export const journeys: Journey[] = [
     ],
     deliverable: "A stronger foundation.",
     metaTitle: "Build: Develop the Capacity to Execute | The Mosaic Collaborative",
-    metaDescription: "You have the strategy. Now you need the people, processes and systems to support it. Leadership structure, operating model, talent strategy and measurement that build a stronger foundation."
+    metaDescription: "You have the strategy. Now you need the people, processes and systems to support it. We build a stronger foundation."
   },
   {
     slug: "activate",
@@ -151,6 +151,6 @@ export const journeys: Journey[] = [
     ],
     deliverable: "Renewed momentum.",
     metaTitle: "Reignite: Restore Trust, Engagement and Momentum | The Mosaic Collaborative",
-    metaDescription: "When trust has eroded and high performers are leaving. Organizational assessment, culture and engagement strategy and internal capability that deliver renewed momentum."
+    metaDescription: "When trust has eroded and high performers are leaving. Assessment, culture and engagement strategy that deliver renewed momentum."
   }
 ];

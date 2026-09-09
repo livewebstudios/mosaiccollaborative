@@ -1,0 +1,49 @@
+---
+import Base from "../layouts/Base.astro";
+import MosaicField from "../components/MosaicField.astro";
+import Icon from "../components/Icon.astro";
+
+const title = "Thank You | The Mosaic Collaborative";
+const description = "Your message has been received. We reply within two business days.";
+---
+
+<Base title={title} description={description} path="/thank-you/">
+  <section class="section slim-page" aria-labelledby="thanks-h">
+    <div class="slim-field" aria-hidden="true">
+      <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={303} drift />
+    </div>
+    <div class="container slim-inner">
+      <p class="eyebrow" data-reveal>Thank you</p>
+      <h1 id="thanks-h" data-reveal>Message received.</h1>
+      <p class="lead" data-reveal>
+        We read every note personally and will reply within two business days.
+      </p>
+      <p data-reveal>
+        <a class="link-arrow" href="/how-we-work/">
+          While you wait, see how we work <Icon name="arrow" size={15} />
+        </a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .slim-page {
+    position: relative;
+    overflow: hidden;
+    min-height: 68svh;
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--section-y) + 8.5rem);
+  }
+  .slim-inner { position: relative; z-index: 1; max-width: 46rem; margin-inline: 0; display: grid; gap: 1.25rem; }
+  .slim-field {
+    position: absolute;
+    right: -8%;
+    top: 20%;
+    width: min(38%, 440px);
+    pointer-events: none;
+    opacity: 0.85;
+    mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
+  }
+</style>

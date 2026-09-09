@@ -13,9 +13,18 @@ Handoff folder with full brief, content, design system and assets: `mosaic-hando
 - Every page must render and be readable with JavaScript disabled and with `prefers-reduced-motion: reduce`. Motion is progressive enhancement.
 - Spell the founder's name "Roz" and the company "The Mosaic Collaborative". Do not use "Mosaic Collective" (that appears in an old deck and is wrong).
 
+## Decisions made during the build (2026-09-09)
+
+- **Astro 7, not the Astro 5 pin in the handoff.** Astro 5 carries a critical
+  advisory set including remote code execution through AVIF image optimization,
+  which this config uses. `npm audit` is clean on 7.3.2. Do not downgrade.
+- **The Live Web Studios relative path rule is exempt on this project.** Jon
+  approved root-relative asset paths because Astro emits them and Netlify deploy
+  previews serve from the domain root. Canonical URLs stay absolute as usual.
+
 ## Stack
 
-- Astro 5 (static output), TypeScript, Tailwind CSS v4 (via `@tailwindcss/vite`), GSAP 3 + ScrollTrigger, Lenis (smooth scroll), Astro View Transitions for page transitions.
+- Astro 7 (static output), TypeScript, Tailwind CSS v4 (via `@tailwindcss/vite`), GSAP 3 + ScrollTrigger, Lenis (smooth scroll), Astro View Transitions for page transitions.
 - Content: Astro content collections (`src/content/insights/*.md`) for the blog. Site content lives in `src/data/*.ts` (journeys, services, team) so pages are generated from data, not hand-copied.
 - Forms: Netlify Forms (`data-netlify="true"`, honeypot, `netlify-honeypot="bot-field"`), with a `/thank-you` page. No third-party form service.
 - Hosting: Netlify from GitHub `main`. `netlify.toml` with headers, redirects and the form settings.

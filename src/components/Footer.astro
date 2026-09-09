@@ -1,0 +1,140 @@
+---
+import { site } from "../data/site";
+import { journeys } from "../data/journeys";
+import MosaicField from "./MosaicField.astro";
+import Icon from "./Icon.astro";
+
+const year = new Date().getFullYear();
+const hasEmail = !site.email.startsWith("TODO");
+---
+
+<footer class="site-footer section-dark">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <p class="display footer-tagline">{site.tagline}</p>
+      <p class="eyebrow">{site.strapline}</p>
+    </div>
+
+    <nav class="footer-col" aria-label="Footer">
+      <h2 class="eyebrow">EXPLORE</h2>
+      <ul>
+        {site.nav.map((item) => <li><a href={item.href}>{item.label.toUpperCase()}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label="Journeys">
+      <h2 class="eyebrow">JOURNEYS</h2>
+      <ul>
+        {journeys.map((j) => (
+          <li><a href={`/how-we-work/${j.slug}/`}>{j.name.toUpperCase()}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="footer-col">
+      <h2 class="eyebrow">CONTACT</h2>
+      <ul>
+        {hasEmail ? (
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        ) : (
+          <li><a href="/contact/">SEND A MESSAGE</a></li>
+        )}
+        <!-- TODO: confirm with Roz. Direct email address for the site. -->
+        <li class="footer-location">{site.location}</li>
+        <!-- TODO: confirm with Roz. Exact location line. -->
+        {site.linkedinCompany && (
+          <li>
+            <a class="footer-linkedin" href={site.linkedinCompany} rel="noopener noreferrer" target="_blank">
+              <Icon name="linkedin" size={16} /> LINKEDIN
+            </a>
+          </li>
+        )}
+        <!-- TODO: confirm with Roz. LinkedIn company page URL. -->
+      </ul>
+    </div>
+  </div>
+
+  <div class="container">
+    <hr class="rule footer-rule" />
+    <div class="footer-legal">
+      <p class="small">&copy; {year} {site.name}. All rights reserved.</p>
+      <ul class="footer-legal-links">
+        <li><a href="/privacy/">PRIVACY</a></li>
+        <li><a href={site.credit.href} rel="noopener noreferrer" target="_blank">{site.credit.label}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-field" aria-hidden="true">
+    <MosaicField cols={6} rows={4} cell={80} density={0.5} seed={19} opacity={0.18} />
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    padding-block: var(--section-y) 2.5rem;
+    overflow: hidden;
+  }
+  .footer-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .footer-inner { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .footer-inner { grid-template-columns: 1.6fr 1fr 1fr 1.2fr; } }
+
+  .footer-tagline {
+    font-size: var(--step-2);
+    max-width: 16ch;
+    color: var(--color-linen);
+    margin-bottom: 1rem;
+  }
+
+  .footer-col ul { list-style: none; margin: 1rem 0 0; padding: 0; }
+  .footer-col li + li { margin-top: 0.6rem; }
+  .footer-col a {
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--color-linen);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s var(--ease-out-expo);
+  }
+  .footer-col a:hover { border-bottom-color: var(--color-gold); }
+  .footer-linkedin { display: inline-flex; align-items: center; gap: 0.5em; }
+  .footer-location { font-size: var(--step--1); opacity: 0.75; max-width: 22ch; }
+
+  .footer-rule {
+    margin-block: clamp(2.5rem, 5vw, 4rem) 1.5rem;
+    border-top: 1px solid var(--color-gold);
+  }
+  .footer-legal {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .footer-legal p { opacity: 0.75; }
+  .footer-legal-links { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+  .footer-legal-links a {
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .footer-legal-links a:hover { border-bottom-color: var(--color-gold); }
+
+  .footer-field {
+    position: absolute;
+    right: -6%;
+    bottom: -20%;
+    width: min(46%, 520px);
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="The Mosaic Collaborative">
+  <rect width="32" height="32" fill="#FAF0E0"/>
+  <g stroke="#FAF0E0" stroke-width="1.5" stroke-linejoin="round">
+    <polygon fill="#1E3A5F" points="3,4 16,4 3,28"/>
+    <polygon fill="#D4942A" points="16,4 16,28 3,28"/>
+    <polygon fill="#8B1A3A" points="16,4 29,4 16,28"/>
+    <polygon fill="#7A9BB5" points="29,4 29,28 16,28"/>
+  </g>
+</svg>

@@ -1,0 +1,35 @@
+---
+/** The full in-repo icon set. No icon packs, per the design system. */
+interface Props { name: "arrow" | "plus" | "triangle" | "linkedin" | "close" | "menu"; class?: string; size?: number }
+const { name, class: className = "", size = 16 } = Astro.props;
+---
+{name === "arrow" && (
+  <svg class={className} width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+)}
+{name === "plus" && (
+  <svg class={className} width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </svg>
+)}
+{name === "triangle" && (
+  <svg class={className} width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <polygon points="2,2 14,8 2,14" fill="currentColor" />
+  </svg>
+)}
+{name === "close" && (
+  <svg class={className} width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </svg>
+)}
+{name === "menu" && (
+  <svg class={className} width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M2 5h12M2 11h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </svg>
+)}
+{name === "linkedin" && (
+  <svg class={className} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM.24 8.25h4.5V24H.24V8.25Zm7.63 0h4.31v2.15h.06c.6-1.13 2.07-2.32 4.26-2.32 4.56 0 5.4 3 5.4 6.9V24h-4.5v-7.9c0-1.88-.03-4.3-2.62-4.3-2.62 0-3.02 2.05-3.02 4.16V24h-4.5V8.25Z" />
+  </svg>
+)}

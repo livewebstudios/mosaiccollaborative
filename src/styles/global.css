@@ -1,0 +1,521 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   The Mosaic Collaborative: design tokens
+   Source of truth: mosaic-handoff/02_DESIGN_SYSTEM.md. Do not add colors.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-navy: #1e3a5f;
+  --color-burgundy: #8b1a3a;
+  --color-gold: #d4942a;
+  --color-slate: #7a9bb5;
+  --color-linen: #faf0e0;
+  --color-linen-dark: #f3e6d0;
+  --color-gray: #f0f2f5;
+  --color-ink: #14233a;
+
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+
+  --radius-tile: 24px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+:root {
+  /* Tints. Only these, per the design system. */
+  --navy-90: color-mix(in oklab, var(--color-navy) 90%, black);
+  --navy-10: color-mix(in oklab, var(--color-navy) 10%, var(--color-linen));
+  --burgundy-10: color-mix(in oklab, var(--color-burgundy) 10%, var(--color-linen));
+  --gold-10: color-mix(in oklab, var(--color-gold) 10%, var(--color-linen));
+  --slate-10: color-mix(in oklab, var(--color-slate) 10%, var(--color-linen));
+  --rule: color-mix(in oklab, var(--color-navy) 20%, transparent);
+
+  --scrim: linear-gradient(180deg, rgba(250, 240, 224, 0.15), rgba(250, 240, 224, 0.85));
+  --scrim-dark: linear-gradient(180deg, rgba(30, 58, 95, 0.35), rgba(30, 58, 95, 0.9));
+
+  /* Fluid type scale, 375px to 1440px */
+  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.94rem);
+  --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --step-2: clamp(1.6rem, 1.3rem + 1.2vw, 2.25rem);
+  --step-3: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
+  --step-4: clamp(2.75rem, 1.8rem + 4vw, 5rem);
+  --step-5: clamp(3.5rem, 2rem + 7vw, 8rem);
+
+  --section-y: clamp(4rem, 8vw, 9rem);
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --grid-gap: clamp(1rem, 2vw, 2rem);
+
+  /* Per-section accent. Components read this rather than hard-coding a color. */
+  --accent: var(--color-navy);
+  --accent-tint: var(--navy-10);
+}
+
+[data-accent="navy"] { --accent: var(--color-navy); --accent-tint: var(--navy-10); }
+[data-accent="slate"] { --accent: var(--color-slate); --accent-tint: var(--slate-10); }
+[data-accent="gold"] { --accent: var(--color-gold); --accent-tint: var(--gold-10); }
+[data-accent="burgundy"] { --accent: var(--color-burgundy); --accent-tint: var(--burgundy-10); }
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+* { min-width: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+body {
+  background: var(--color-linen);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.06;
+  text-wrap: balance;
+  color: var(--color-navy);
+}
+
+h1 { font-size: var(--step-4); }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-2); line-height: 1.15; }
+
+p { text-wrap: pretty; }
+p + p { margin-top: 1.25em; }
+
+a { color: inherit; }
+
+img, video, svg { display: block; max-width: 100%; height: auto; }
+
+:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection { background: var(--color-gold); color: var(--color-navy); }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  background: var(--color-navy);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+}
+.skip-link:focus { left: 0; }
+
+/* ------------------------------------------------------------------
+   Layout utilities
+   ------------------------------------------------------------------ */
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section { padding-block: var(--section-y); position: relative; }
+
+.section-dark {
+  background: var(--color-navy);
+  color: var(--color-linen);
+}
+.section-dark h1,
+.section-dark h2,
+.section-dark h3 { color: var(--color-linen); }
+.section-dark .eyebrow { color: var(--color-gold); }
+
+.section-gray { background: var(--color-gray); }
+.section-linen-dark { background: var(--color-linen-dark); }
+
+.measure { max-width: 62ch; }
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--grid-gap);
+}
+@media (min-width: 768px) { .grid-12 { grid-template-columns: repeat(6, 1fr); } }
+@media (min-width: 1024px) { .grid-12 { grid-template-columns: repeat(12, 1fr); } }
+
+/* ------------------------------------------------------------------
+   Type utilities
+   ------------------------------------------------------------------ */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-burgundy);
+  line-height: 1.3;
+}
+
+.lead { font-size: var(--step-1); line-height: 1.4; max-width: 54ch; }
+.small { font-size: var(--step--1); }
+.text-large { font-size: var(--step-3); line-height: 1.12; font-family: var(--font-display); }
+.display-xl { font-size: var(--step-5); line-height: 1; }
+
+.emphasis { color: var(--color-burgundy); }
+.section-dark .emphasis { color: var(--color-gold); }
+
+.quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-2);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* Vertical label in the left gutter, desktop only */
+.vertical-label {
+  display: none;
+}
+@media (min-width: 1280px) {
+  .vertical-label {
+    display: block;
+    position: absolute;
+    left: var(--gutter);
+    top: var(--section-y);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    transform-origin: center;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Components
+   ------------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--step-0);
+  line-height: 1;
+  padding: 0.9em 1.6em;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease-out-expo), color 0.3s var(--ease-out-expo),
+    border-color 0.3s var(--ease-out-expo), transform 0.3s var(--ease-out-expo);
+}
+.btn:hover { transform: translateY(-2px); }
+
+.btn-primary { background: var(--color-navy); color: #fff; }
+.btn-primary:hover { background: var(--navy-90); }
+
+.btn-secondary { border-color: var(--color-navy); color: var(--color-navy); }
+.btn-secondary:hover { background: var(--color-navy); color: #fff; }
+
+.btn-on-dark { background: var(--color-linen); color: var(--color-navy); }
+.btn-on-dark:hover { background: #fff; }
+
+.section-dark .btn-secondary { border-color: var(--color-linen); color: var(--color-linen); }
+.section-dark .btn-secondary:hover { background: var(--color-linen); color: var(--color-navy); }
+
+/* Triangle that slides in on button hover */
+.btn .btn-tri {
+  width: 0;
+  overflow: hidden;
+  transition: width 0.3s var(--ease-out-expo);
+}
+.btn:hover .btn-tri, .btn:focus-visible .btn-tri { width: 0.55em; }
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--rule);
+}
+.link-arrow svg { transition: transform 0.3s var(--ease-out-expo); }
+.link-arrow:hover svg, .link-arrow:focus-visible svg { transform: translateX(4px); }
+.link-arrow:hover { text-decoration-color: currentColor; }
+
+/* Asymmetric card, echoes a cut tile */
+.card {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  overflow: hidden;
+  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+}
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  aspect-ratio: 1;
+  background: var(--accent);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  transition: width 0.4s var(--ease-out-expo);
+}
+.card:hover, .card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -24px rgba(20, 35, 58, 0.45);
+}
+.card:hover::after, .card:focus-within::after { width: 64px; }
+
+.section-gray .card { background: #fff; }
+
+/* Triangle bullet lists */
+.tri-list { list-style: none; padding: 0; }
+.tri-list > li {
+  position: relative;
+  padding-left: 1.5em;
+}
+.tri-list > li + li { margin-top: 0.75em; }
+.tri-list > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.rule { border: 0; border-top: 1px solid var(--rule); }
+.section-dark .rule { border-top: 2px solid rgba(255, 255, 255, 0.25); }
+
+/* Stat tile */
+.stat-tile {
+  position: relative;
+  background: var(--accent-tint);
+  border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  min-height: clamp(9rem, 14vw, 12rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+}
+.stat-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  opacity: 0.14;
+  clip-path: polygon(100% 0, 100% 0, 100% 0);
+  transition: clip-path 0.4s var(--ease-out-expo);
+}
+.stat-tile:hover::before { clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 0); }
+.stat-tile .stat-name {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  line-height: 1.05;
+  color: var(--color-navy);
+}
+
+/* Team ring */
+.team-photo {
+  position: relative;
+  width: clamp(9rem, 18vw, 14rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-linen-dark);
+  box-shadow: 0 0 0 6px var(--accent);
+}
+.team-photo img { width: 100%; height: 100%; object-fit: cover; }
+.team-initials {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: var(--accent);
+  background: var(--accent-tint);
+}
+
+/* Accordion */
+.accordion-row { border-top: 1px solid var(--rule); }
+.accordion-row:last-child { border-bottom: 1px solid var(--rule); }
+.accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 2.5vw, 1.75rem) 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  color: var(--color-navy);
+}
+.accordion-icon { transition: transform 0.45s var(--ease-in-out-quart); flex: none; }
+.accordion-trigger[aria-expanded="true"] .accordion-icon { transform: rotate(45deg); }
+.accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s var(--ease-in-out-quart);
+}
+.accordion-panel > div { overflow: hidden; }
+.accordion-row[data-open="true"] .accordion-panel { grid-template-rows: 1fr; }
+
+/* Form fields */
+.field { display: flex; flex-direction: column; gap: 0.5rem; }
+.field label { font-weight: 500; font-size: var(--step--1); }
+.field input,
+.field textarea,
+.field select {
+  font: inherit;
+  font-size: var(--step-0);
+  color: var(--color-ink);
+  background: var(--color-gray);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 4px 0 4px 0;
+  padding: 0.85em 1em;
+  width: 100%;
+  transition: border-color 0.3s var(--ease-out-expo), background-color 0.3s var(--ease-out-expo);
+}
+.field textarea { min-height: 9rem; resize: vertical; }
+.field input:focus,
+.field textarea:focus { outline: none; border-bottom-color: var(--color-navy); background: #fff; }
+.field:focus-within label { color: var(--color-burgundy); }
+.field .error { color: var(--color-burgundy); font-size: var(--step--1); }
+
+.honeypot { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
+
+/* Diagonal tile band divider */
+.diagonal-band {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.diagonal-band > * {
+  position: absolute;
+  left: -10%;
+  top: 50%;
+  width: 120%;
+  transform: translateY(-50%) rotate(-12deg);
+  transform-origin: center;
+}
+
+/* ------------------------------------------------------------------
+   Motion. Everything below is progressive enhancement: content is
+   visible and readable with JavaScript off and under reduced motion.
+   ------------------------------------------------------------------ */
+[data-reveal] { opacity: 1; transform: none; }
+
+html.motion-ok [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.motion-ok [data-reveal].is-revealed { opacity: 1; transform: none; }
+
+.scroll-cue-line {
+  display: block;
+  width: 1px;
+  height: 56px;
+  background: color-mix(in oklab, var(--color-navy) 30%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-cue-line::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-navy);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+html.motion-ok .scroll-cue-line::after { animation: cue 1.6s var(--ease-in-out-quart) infinite; }
+@keyframes cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* Slow tile drift, pure CSS so it costs nothing */
+html.motion-ok .tile-drift [data-tile] {
+  animation: drift 7s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i, 0) * -320ms);
+}
+@keyframes drift {
+  from { transform: translateY(-3px); }
+  to { transform: translateY(3px); }
+}
+
+/* Custom cursor, desktop pointer devices only */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  pointer-events: none;
+  display: none;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: transparent;
+  transition: width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo),
+    background-color 0.3s var(--ease-out-expo), color 0.2s linear;
+}
+@media (hover: hover) and (pointer: fine) {
+  html.motion-ok .cursor-dot { display: grid; }
+}
+.cursor-dot.is-link { width: 40px; height: 40px; background: color-mix(in oklab, var(--color-navy) 25%, transparent); }
+.cursor-dot.is-label {
+  width: 72px;
+  height: 72px;
+  background: var(--color-navy);
+  color: var(--color-linen);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .cursor-dot { display: none !important; }
+}

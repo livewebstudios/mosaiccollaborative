@@ -1,0 +1,196 @@
+---
+import { Image } from "astro:assets";
+import { site } from "../data/site";
+import Icon from "./Icon.astro";
+import MosaicField from "./MosaicField.astro";
+import lockup from "../assets/logo/mosaic_logo_full_lockup.png";
+import mark from "../assets/logo/mosaic_mark_M_only.png";
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || (href !== "/" && path.startsWith(href));
+---
+
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label={`${site.name}, home`}>
+      <Image class="brand-lockup" src={lockup} alt={site.name} widths={[220, 440]} sizes="220px" loading="eager" />
+      <Image class="brand-mark" src={mark} alt="" widths={[48, 96]} sizes="48px" loading="eager" />
+    </a>
+
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul>
+        {site.nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class={item.cta ? "btn btn-primary nav-cta" : "nav-link"}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
+            >{item.label.toUpperCase()}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-nav-toggle>
+      <span class="sr-only">Open menu</span>
+      <Icon name="menu" size={20} />
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobile-menu" hidden data-mobile-menu>
+  <div class="container mobile-menu-inner">
+    <button class="nav-toggle nav-close" type="button" data-nav-close>
+      <span class="sr-only">Close menu</span>
+      <Icon name="close" size={20} />
+    </button>
+    <nav aria-label="Mobile">
+      <ul>
+        {site.nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label.toUpperCase()}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="mobile-menu-field" aria-hidden="true">
+      <MosaicField cols={4} rows={4} cell={90} density={0.55} seed={31} opacity={0.35} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .site-header {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 100;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: transform 0.3s var(--ease-out-expo), background-color 0.3s var(--ease-out-expo),
+      border-color 0.3s var(--ease-out-expo);
+  }
+  .site-header[data-stuck] {
+    background: var(--color-linen);
+    border-bottom-color: var(--rule);
+  }
+  .site-header[data-hide-header] { transform: translateY(-100%); }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: clamp(0.75rem, 1.5vw, 1.25rem);
+  }
+
+  .brand { display: block; flex: none; }
+  .brand-lockup { width: 220px; height: auto; display: none; }
+  .brand-mark { width: 48px; height: auto; }
+  @media (min-width: 1024px) {
+    .brand-lockup { display: block; }
+    .brand-mark { display: none; }
+    .site-header[data-stuck] .brand-lockup { display: none; }
+    .site-header[data-stuck] .brand-mark { display: block; }
+  }
+
+  .nav-desktop { display: none; }
+  @media (min-width: 1024px) { .nav-desktop { display: block; } }
+  .nav-desktop ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-link {
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--color-navy);
+    padding-block: 0.35em;
+    border-bottom: 1.5px solid transparent;
+    transition: border-color 0.3s var(--ease-out-expo);
+  }
+  .nav-link:hover, .nav-link[aria-current="page"] { border-bottom-color: var(--color-burgundy); }
+  .nav-cta { font-size: var(--step--1); letter-spacing: 0.1em; padding: 0.75em 1.4em; }
+
+  .nav-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 1.5px solid var(--rule);
+    border-radius: 999px;
+    color: var(--color-navy);
+    cursor: pointer;
+  }
+  @media (min-width: 1024px) { .nav-toggle { display: none; } }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: var(--color-navy);
+    color: var(--color-linen);
+    overflow: hidden;
+  }
+  .mobile-menu-inner {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 6rem;
+  }
+  .mobile-menu ul { list-style: none; margin: 0; padding: 0; }
+  .mobile-menu li + li { margin-top: 0.5rem; }
+  .mobile-menu a {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    text-decoration: none;
+    color: var(--color-linen);
+    display: inline-block;
+    padding-block: 0.15em;
+  }
+  .mobile-menu a[aria-current="page"] { color: var(--color-gold); }
+  .nav-close {
+    position: absolute;
+    top: 1.5rem;
+    right: var(--gutter);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: var(--color-linen);
+    display: inline-grid;
+  }
+  .mobile-menu-field {
+    position: absolute;
+    right: -12%;
+    bottom: -8%;
+    width: 70%;
+    pointer-events: none;
+  }
+  html.motion-ok .mobile-menu[hidden] { display: none; }
+  html.motion-ok .mobile-menu li {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  html.motion-ok .mobile-menu.is-open li {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+    transition-delay: calc(var(--n, 0) * 70ms);
+  }
+</style>

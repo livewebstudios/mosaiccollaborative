@@ -33,9 +33,7 @@ export const team: Member[] = [
     name: "Debra DeFrancesco",
     title: "Founder, Chief Operating Officer",
     accent: "slate",
-    // TODO: confirm with Roz. The handoff shipped Roz's photograph twice, once under
-    // Debra's filename, so no headshot of Debra exists yet. Initials tile until one arrives.
-    photo: null,
+    photo: "debra-defrancesco.jpg",
     bullets: [
       "Brings 25+ years of leadership experience connecting business decisions with the realities of people and work.",
       "Identifies where roles, processes, and management practices are limiting organizational performance.",
@@ -48,6 +46,9 @@ export const team: Member[] = [
     name: "Amalia Egri Freedman",
     title: "Founder, Chief Strategy Officer",
     accent: "gold",
+    // TODO: ask Roz for a full resolution original. This one is extracted from the
+    // pitch deck PDF at 289px and upscaled, because the file the handoff named
+    // amalia_egri_freedman.png was actually a second photograph of Debra.
     photo: "amalia-egri-freedman.jpg",
     bullets: [
       "Brings a systems perspective to focus attention where it can have the greatest impact.",

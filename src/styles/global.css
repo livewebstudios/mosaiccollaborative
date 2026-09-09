@@ -50,13 +50,51 @@
 
   /* Per-section accent. Components read this rather than hard-coding a color. */
   --accent: var(--color-navy);
+  --accent-text: var(--color-navy);
   --accent-tint: var(--navy-10);
+  --accent-on: #fff;
+
+  /* Text safe accents.
+     Gold and slate are brand colors but they fail WCAG contrast on every light
+     ground we use, even at the large text threshold: gold is 2.31:1 on linen and
+     slate is 2.59:1, against a 4.5:1 requirement. They stay exactly as specified
+     for shapes, tabs, rules and tile art. Text takes a darkened variant built with
+   the same color-mix mechanism the design system already uses for --navy-90, so
+     the hue is unchanged and no new brand color is introduced.
+     Measured on linen, white, gray and linen-dark: gold-text 4.94 to 5.57,
+     slate-text 5.38 to 6.08. Navy and burgundy already pass, so they are untouched. */
+  --gold-text: color-mix(in srgb, var(--color-gold) 65%, black);
+  --slate-text: color-mix(in srgb, var(--color-slate) 65%, black);
+  /* Gold on navy is 4.42:1, just under AA for normal text, so dark sections lift it. */
+  --gold-on-dark: color-mix(in srgb, var(--color-gold) 90%, white);
 }
 
-[data-accent="navy"] { --accent: var(--color-navy); --accent-tint: var(--navy-10); }
-[data-accent="slate"] { --accent: var(--color-slate); --accent-tint: var(--slate-10); }
-[data-accent="gold"] { --accent: var(--color-gold); --accent-tint: var(--gold-10); }
-[data-accent="burgundy"] { --accent: var(--color-burgundy); --accent-tint: var(--burgundy-10); }
+/* --accent drives shapes and fills. --accent-text drives type. --accent-on is the
+   foreground for text sitting on a solid accent fill. */
+[data-accent="navy"] {
+  --accent: var(--color-navy);
+  --accent-text: var(--color-navy);
+  --accent-tint: var(--navy-10);
+  --accent-on: #fff;
+}
+[data-accent="slate"] {
+  --accent: var(--color-slate);
+  --accent-text: var(--slate-text);
+  --accent-tint: var(--slate-10);
+  --accent-on: var(--color-navy);
+}
+[data-accent="gold"] {
+  --accent: var(--color-gold);
+  --accent-text: var(--gold-text);
+  --accent-tint: var(--gold-10);
+  --accent-on: var(--color-navy);
+}
+[data-accent="burgundy"] {
+  --accent: var(--color-burgundy);
+  --accent-text: var(--color-burgundy);
+  --accent-tint: var(--burgundy-10);
+  --accent-on: #fff;
+}
 
 /* ------------------------------------------------------------------
    Base
@@ -139,7 +177,7 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
 .section-dark h1,
 .section-dark h2,
 .section-dark h3 { color: var(--color-linen); }
-.section-dark .eyebrow { color: var(--color-gold); }
+.section-dark .eyebrow { color: var(--gold-on-dark); }
 
 .section-gray { background: var(--color-gray); }
 .section-linen-dark { background: var(--color-linen-dark); }
@@ -355,7 +393,7 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 6vw, 4rem);
   line-height: 1;
-  color: #fff;
+  color: var(--accent-on);
   background: var(--accent);
 }
 

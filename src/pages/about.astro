@@ -1,0 +1,243 @@
+---
+import Base from "../layouts/Base.astro";
+import CtaBand from "../components/CtaBand.astro";
+import MosaicField from "../components/MosaicField.astro";
+import Icon from "../components/Icon.astro";
+import { team } from "../data/team";
+import { site } from "../data/site";
+
+const title = "About The Mosaic Collaborative: Leaders Who Have Led";
+const description =
+  "Meet founders Roz Cohen, PhD, Debra DeFrancesco and Amalia Egri Freedman, and the beliefs that shape every engagement.";
+
+const beliefs = [
+  {
+    lead: "We strengthen organizations while solving problems.",
+    body: "Every engagement should leave an organization more capable than when we arrived. We build leadership, systems, and organizational capacity that support long-term success. We equip leaders with practical tools, shared approaches, and repeatable practices that become the way the organization works. Our work is measured by the strength we leave behind.",
+  },
+  {
+    lead: "We uncover the right answers together.",
+    body: "Every organization is unique. We combine deep inquiry, diverse perspectives, and practical experience to develop solutions tailored to your people, culture, and goals.",
+  },
+  {
+    lead: "We connect strategy to execution.",
+    body: "Strategies that can't be implemented are just notes on a whiteboard. We help organizations translate vision into action by aligning priorities, decision-making, and accountability.",
+  },
+  {
+    lead: "We design solutions that consider the whole organization.",
+    body: "Leadership, culture, operations, and organizational structure are interconnected. Lasting change requires understanding how the pieces work together. We design solutions that strengthen the whole organization, not just individual units or functions.",
+  },
+];
+
+const schema = [
+  ...team.map((m) => ({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: m.name,
+    jobTitle: m.title,
+    worksFor: { "@type": "Organization", name: site.name, url: site.url },
+    ...(m.photo ? { image: new URL(`/media/img/team/${m.photo}`, site.url).href } : {}),
+    ...(m.linkedin ? { sameAs: [m.linkedin] } : {}),
+  })),
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name: "About", item: site.url + "/about/" },
+    ],
+  },
+];
+
+const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).join("");
+---
+
+<Base title={title} description={description} path="/about/" schema={schema}>
+  <section class="section page-hero" aria-labelledby="about-h">
+    <div class="hero-field" aria-hidden="true">
+      <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={41} drift />
+    </div>
+    <div class="container page-hero-inner">
+      <p class="eyebrow" data-reveal>Who we are</p>
+      <h1 id="about-h" data-reveal>Leaders who have led</h1>
+      <p class="lead" data-reveal>
+        We've led organizations ourselves, so we know that the hardest challenges rarely have a single
+        cause. We start by understanding your organization, bringing together different perspectives to
+        help you see the whole picture, make confident decisions, and move forward.
+      </p>
+    </div>
+  </section>
+
+  <!-- Founders -->
+  <section class="section founders" aria-labelledby="founders-h">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>The leadership</p>
+        <h2 id="founders-h" data-reveal>The founders</h2>
+      </div>
+
+      <div class="profiles">
+        {team.map((member) => (
+          <article class="profile" data-accent={member.accent}>
+            <div class="profile-photo" data-reveal>
+              <div class="team-photo">
+                {member.photo ? (
+                  <img
+                    src={`/media/img/team/${member.photo}`}
+                    alt={`${member.name}, ${member.title}`}
+                    width="560"
+                    height="560"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <p class="team-initials" aria-hidden="true">{initials(member.name)}</p>
+                )}
+              </div>
+            </div>
+
+            <div class="profile-body">
+              <h3 data-reveal>{member.name}</h3>
+              <p class="eyebrow" data-reveal>{member.title}</p>
+              <ul class="tri-list profile-bullets" data-reveal>
+                {member.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+              {member.credentials && <p class="credentials" data-reveal>{member.credentials}</p>}
+              {member.linkedin ? (
+                <p data-reveal>
+                  <a class="link-arrow" href={member.linkedin} rel="noopener noreferrer" target="_blank">
+                    <Icon name="linkedin" size={15} /> LinkedIn
+                  </a>
+                </p>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+      <!-- TODO: confirm with Roz. LinkedIn URLs for all three founders. -->
+    </div>
+  </section>
+
+  <!-- Beliefs -->
+  <section class="section section-gray beliefs" aria-labelledby="beliefs-h">
+    <div class="container beliefs-inner">
+      <div class="beliefs-sticky">
+        <p class="eyebrow" data-reveal>Our foundation</p>
+        <h2 id="beliefs-h" data-reveal>What we believe informs what we do</h2>
+      </div>
+      <ol class="beliefs-list" data-beliefs>
+        {beliefs.map((belief, i) => (
+          <li class="belief card" data-accent={["navy", "slate", "gold", "burgundy"][i]} data-reveal>
+            <h3>{belief.lead}</h3>
+            <p>{belief.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Partners -->
+  <section class="section partners" aria-labelledby="partners-h">
+    <div class="container partners-inner">
+      <div class="partners-copy">
+        <p class="eyebrow" data-reveal>Our collaborative partners</p>
+        <h2 id="partners-h" data-reveal>The right expertise for every challenge</h2>
+        <p class="lead" data-reveal>
+          We build each engagement around our client's needs, drawing on a trusted network of
+          experienced partners to bring the right expertise to every challenge.
+        </p>
+      </div>
+      <div class="partners-cluster" aria-hidden="true" data-reveal>
+        <MosaicField cols={4} rows={4} cell={80} density={0.5} seed={131} drift />
+      </div>
+      <!-- TODO: confirm with Roz. Partner names or logos, if she supplies them. -->
+    </div>
+  </section>
+
+  <!-- Who we serve -->
+  <section class="section section-linen-dark serve" aria-labelledby="serve-h">
+    <div class="container serve-inner">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>Who we serve</p>
+        <h2 id="serve-h" data-reveal>Companies at critical inflection points</h2>
+      </div>
+      <div class="serve-copy">
+        <p data-reveal>
+          We work with small and mid-sized companies navigating critical inflection points: periods of
+          rapid growth, mergers and acquisitions, leadership transitions, organizational restructuring,
+          succession planning. Those moments when a company's strategy, leadership, and operations need
+          to evolve together.
+        </p>
+        <p data-reveal>
+          Some inflection points are intentional: growth, acquisitions, leadership transitions. Others
+          emerge unexpectedly: stalled performance, leadership turnover, or organizational misalignment.
+        </p>
+        <p data-reveal>
+          Whether you're pursuing an opportunity or responding to a challenge, we help you prepare your
+          organization for what's next.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand heading="Let's see the whole picture together." />
+</Base>
+
+<style>
+  .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
+  .page-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; display: grid; gap: 1rem; }
+  .hero-field {
+    position: absolute;
+    right: -8%;
+    top: 22%;
+    width: min(38%, 440px);
+    pointer-events: none;
+    opacity: 0.85;
+    mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
+  }
+
+  .section-head { max-width: 40ch; margin-bottom: clamp(2rem, 4vw, 3rem); display: grid; gap: 0.75rem; }
+
+  /* Founders: alternating left and right on desktop, stacked on mobile. */
+  .profiles { display: grid; gap: clamp(3rem, 6vw, 5rem); }
+  .profile { display: grid; gap: clamp(1.5rem, 3vw, 3rem); align-items: start; }
+  @media (min-width: 768px) {
+    .profile { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+    .profile:nth-child(even) .profile-photo { order: 2; }
+  }
+  .profile-photo { display: flex; justify-content: center; }
+  .profile .team-photo { width: clamp(11rem, 26vw, 20rem); }
+  .profile-body { display: grid; gap: 0.75rem; align-content: start; }
+  .profile-body h3 { color: var(--accent-text); }
+  .profile-bullets { margin-top: 0.5rem; max-width: 52ch; }
+  .credentials {
+    font-size: var(--step--1);
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    max-width: 52ch;
+  }
+
+  /* Beliefs */
+  .beliefs-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }
+  @media (min-width: 1024px) { .beliefs-inner { grid-template-columns: 5fr 7fr; align-items: start; } }
+  .beliefs-sticky { display: grid; gap: 1rem; align-content: start; }
+  @media (min-width: 1024px) { .beliefs-sticky { position: sticky; top: 20vh; } }
+  .beliefs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); }
+  .belief h3 { font-size: var(--step-2); margin-bottom: 0.75rem; color: var(--accent-text); }
+
+  /* Partners */
+  .partners-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  @media (min-width: 1024px) { .partners-inner { grid-template-columns: 7fr 5fr; } }
+  .partners-copy { display: grid; gap: 1rem; max-width: 52ch; }
+  .partners-cluster {
+    width: min(100%, 340px);
+    justify-self: center;
+    mask-image: radial-gradient(circle at 50% 50%, #000 42%, transparent 72%);
+  }
+
+  /* Who we serve */
+  .serve-inner { display: grid; gap: clamp(1.5rem, 4vw, 3rem); }
+  @media (min-width: 1024px) { .serve-inner { grid-template-columns: 5fr 7fr; align-items: start; } }
+  .serve-inner .section-head { margin-bottom: 0; }
+  .serve-copy { max-width: 62ch; }
+</style>

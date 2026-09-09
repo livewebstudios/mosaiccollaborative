@@ -213,15 +213,15 @@ const schema = [
   }
   .breadcrumb li + li::before { content: "/"; margin-right: 0.6rem; opacity: 0.45; }
   .breadcrumb a { text-decoration: none; border-bottom: 1px solid var(--rule); }
-  .breadcrumb [aria-current="page"] { color: var(--accent); }
+  .breadcrumb [aria-current="page"] { color: var(--accent-text); }
 
   .journey-number {
     font-family: var(--font-display);
-    color: var(--accent);
+    color: var(--accent-text);
     opacity: 0.28;
     margin: 0 0 -0.15em;
   }
-  .journey-hero h1 { color: var(--accent); }
+  .journey-hero h1 { color: var(--accent-text); }
   .journey-promise { font-size: var(--step-1); font-weight: 500; margin-top: 0.75rem; }
   .journey-quote { margin-top: 2rem; max-width: 26ch; border-left: 3px solid var(--accent); padding-left: 1.25rem; }
 
@@ -250,13 +250,13 @@ const schema = [
     /* The two supporting cards sit offset beneath the three primary ones, as in the deck. */
     .phase-supporting { width: 78%; margin-left: 11%; }
   }
-  .phase-card h3 { font-size: var(--step-2); margin-bottom: 0.6rem; color: var(--accent); }
+  .phase-card h3 { font-size: var(--step-2); margin-bottom: 0.6rem; color: var(--accent-text); }
   .phase-card p { font-size: var(--step--1); }
   .phase-index {
     font-family: var(--font-display);
     font-size: var(--step-2);
     line-height: 1;
-    color: var(--accent);
+    color: var(--accent-text);
     opacity: 0.35;
     margin-bottom: 0.75rem;
   }
@@ -277,7 +277,7 @@ const schema = [
     font-size: var(--step-4);
     line-height: 1.05;
     letter-spacing: -0.02em;
-    color: var(--accent);
+    color: var(--accent-text);
     max-width: 18ch;
   }
 
@@ -288,13 +288,13 @@ const schema = [
   @media (min-width: 1024px) { .others-head { position: sticky; top: 8rem; } }
   .others-list h3 { margin: 0; font-size: inherit; }
   .accordion-label { display: flex; align-items: baseline; gap: 1rem; }
-  .accordion-number { font-size: var(--step-0); color: var(--accent); opacity: 0.6; }
+  .accordion-number { font-size: var(--step-0); color: var(--accent-text); opacity: 0.6; }
   .accordion-content {
     display: grid;
     gap: 0.75rem;
     padding-bottom: clamp(1.25rem, 3vw, 2rem);
     max-width: 52ch;
   }
-  .accordion-promise { font-weight: 500; color: var(--accent); }
+  .accordion-promise { font-weight: 500; color: var(--accent-text); }
   .accordion-quote { font-size: var(--step-1); }
 </style>

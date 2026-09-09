@@ -294,6 +294,31 @@ function initBeliefs() {
   });
 }
 
+/* ---------------------------------------------------------------- services subnav */
+function initSubnav() {
+  const nav = document.querySelector<HTMLElement>("[data-subnav]");
+  if (!nav) return;
+  const families = document.querySelectorAll<HTMLElement>("[data-family]");
+  if (!families.length) return;
+
+  const setActive = (slug: string) => {
+    nav.querySelectorAll<HTMLAnchorElement>("[data-subnav-link]").forEach((a) => {
+      a.classList.toggle("is-active", a.dataset.subnavLink === slug);
+    });
+  };
+  setActive(families[0]!.dataset.family || "");
+
+  families.forEach((family) => {
+    const st = ScrollTrigger.create({
+      trigger: family,
+      start: "top 40%",
+      end: "bottom 40%",
+      onToggle: (self) => { if (self.isActive) setActive(family.dataset.family || ""); },
+    });
+    cleanups.push(() => st.kill());
+  });
+}
+
 /* ---------------------------------------------------------------- boot */
 function boot() {
   initLenis();
@@ -306,6 +331,7 @@ function boot() {
   initParallax();
   initJourneyRail();
   initBeliefs();
+  initSubnav();
   ScrollTrigger.refresh();
 }
 

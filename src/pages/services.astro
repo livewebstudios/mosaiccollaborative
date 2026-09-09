@@ -1,0 +1,219 @@
+---
+import Base from "../layouts/Base.astro";
+import CtaBand from "../components/CtaBand.astro";
+import MosaicField from "../components/MosaicField.astro";
+import Icon from "../components/Icon.astro";
+import { services } from "../data/services";
+import { site } from "../data/site";
+
+const title = "Services: Diagnostic, Development, Belonging & Executive Partnership";
+const description =
+  "Change readiness assessments, leadership alignment workshops, manager bootcamps, belonging programs and embedded executive advisors for growing companies.";
+
+const shortLabel: Record<string, string> = {
+  diagnostic: "Diagnostic",
+  development: "Development",
+  belonging: "Belonging & Inclusion",
+  executive: "Executive Partnership",
+};
+
+const schema = [
+  ...services.map((family) => ({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: family.name,
+    serviceType: family.motto,
+    description: family.intro,
+    provider: { "@type": "Organization", name: site.name, url: site.url },
+    areaServed: { "@type": "Country", name: "United States" },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: family.name,
+      itemListElement: family.offerings.map((o) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: o.name,
+          ...(o.description ? { description: o.description } : {}),
+        },
+      })),
+    },
+  })),
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name: "Services", item: site.url + "/services/" },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} path="/services/" schema={schema}>
+  <section class="section page-hero" aria-labelledby="services-h">
+    <div class="hero-field" aria-hidden="true">
+      <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={97} drift />
+    </div>
+    <div class="container page-hero-inner">
+      <p class="eyebrow" data-reveal>Core offerings</p>
+      <h1 id="services-h" data-reveal>Focused interventions. Lasting capability.</h1>
+      <p class="lead" data-reveal>
+        Each offering stands on its own. Together they cover the full arc from understanding what's
+        going on to building an organization that can sustain the change.
+      </p>
+    </div>
+  </section>
+
+  <div class="services-body">
+    <div class="container services-layout">
+      <nav class="subnav" aria-label="Service families" data-subnav>
+        <p class="eyebrow subnav-title">Jump to</p>
+        <ul>
+          {services.map((family) => (
+            <li>
+              <a href={`#${family.slug}`} data-subnav-link={family.slug}>
+                <span class="subnav-swatch" data-accent={family.accent} aria-hidden="true"></span>
+                {shortLabel[family.slug]}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="families">
+        {services.map((family) => (
+          <section
+            id={family.slug}
+            class="family"
+            data-accent={family.accent}
+            data-family={family.slug}
+            aria-labelledby={`${family.slug}-h`}
+          >
+            <div class="family-head">
+              <p class="eyebrow" data-reveal>{family.name}</p>
+              <h2 id={`${family.slug}-h`} data-reveal>{family.motto}</h2>
+              <p class="lead" data-reveal>{family.intro}</p>
+            </div>
+
+            <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger="90">
+              {family.offerings.map((offering) => (
+                <li class="card offering" data-reveal>
+                  <h3>{offering.name}</h3>
+                  {offering.duration && <p class="duration">{offering.duration}</p>}
+                  {offering.description && <p class="offering-desc">{offering.description}</p>}
+                  <ul class="tri-list offering-includes">
+                    {offering.includes.map((item) => <li>{item}</li>)}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+
+            <p class="deliverable-line" data-reveal>
+              <span class="eyebrow">Deliverable</span>
+              <span class="deliverable-value">{family.deliverable}</span>
+            </p>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <CtaBand
+    heading="Which of these sounds like you?"
+    body="Tell us what's going on and we'll suggest where to start."
+  />
+</Base>
+
+<style>
+  .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
+  .page-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; display: grid; gap: 1rem; }
+  .hero-field {
+    position: absolute;
+    right: -8%;
+    top: 22%;
+    width: min(38%, 440px);
+    pointer-events: none;
+    opacity: 0.85;
+    mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
+  }
+
+  .services-body { padding-bottom: var(--section-y); }
+  .services-layout { display: grid; gap: clamp(2rem, 4vw, 4rem); }
+  @media (min-width: 1024px) { .services-layout { grid-template-columns: 3fr 9fr; align-items: start; } }
+
+  /* Sticky in page nav, desktop only. On mobile the families simply follow each other. */
+  .subnav { display: none; }
+  @media (min-width: 1024px) {
+    .subnav { display: block; position: sticky; top: 11rem; }
+  }
+  .subnav-title { margin-bottom: 1rem; }
+  .subnav ul { list-style: none; margin: 0; padding: 0; }
+  .subnav li + li { margin-top: 0.35rem; }
+  .subnav a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    font-size: var(--step--1);
+    text-decoration: none;
+    color: var(--color-ink);
+    opacity: 0.55;
+    border-left: 2px solid transparent;
+    padding-left: 0.9rem;
+    transition: opacity 0.3s var(--ease-out-expo), border-color 0.3s var(--ease-out-expo);
+  }
+  .subnav a:hover { opacity: 1; }
+  .subnav a.is-active { opacity: 1; font-weight: 500; border-left-color: var(--accent); }
+  .subnav-swatch {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    background: var(--accent);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .families { display: grid; gap: clamp(3rem, 7vw, 6rem); }
+  .family { scroll-margin-top: 10rem; }
+  .family-head { max-width: 52ch; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); display: grid; gap: 0.75rem; }
+  .family-head h2 { color: var(--accent); }
+
+  .offering-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .offering-grid { grid-template-columns: repeat(2, 1fr); } }
+  /* Three offerings sit as a row of three. Four sit as a tidy two by two rather
+     than three across with one stranded underneath. */
+  @media (min-width: 1024px) { .offering-grid[data-count="3"] { grid-template-columns: repeat(3, 1fr); } }
+
+  .offering h3 { font-size: var(--step-1); line-height: 1.2; margin-bottom: 0.4rem; }
+  .duration {
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .offering-desc { font-size: var(--step--1); margin-bottom: 1rem; }
+  .offering-includes { font-size: var(--step--1); }
+  .offering-includes > li + li { margin-top: 0.5em; }
+
+  .deliverable-line {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 0.35rem;
+  }
+  .deliverable-value {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.15;
+    color: var(--accent);
+    max-width: 24ch;
+  }
+</style>

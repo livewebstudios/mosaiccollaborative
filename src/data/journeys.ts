@@ -11,7 +11,10 @@ export type Journey = {
   accent: "navy" | "slate" | "gold" | "burgundy";
   promise: string;          // one-line promise used on Home and How We Work
   ceoQuestion: string;      // from the orientation table
+  friction: string;         // orientation table: sources of friction
+  solutions: string;        // orientation table: solutions
   quote: string;            // the italic hero quote on the journey page
+  homeBlurb: string;        // rail copy on Home, verbatim from 03_CONTENT/home.html
   symptoms: string[];       // "Sound familiar?" list
   phases: JourneyPhase[];
   deliverable: string;
@@ -27,7 +30,10 @@ export const journeys: Journey[] = [
     accent: "navy",
     promise: "Establish strategic direction.",
     ceoQuestion: "What's really going on?",
+    friction: "Strategic direction and alignment. Understand where you are and what matters most.",
+    solutions: "Discover root causes. Understand reality.",
     quote: "We know we need change, but we don't know what to do next.",
+    homeBlurb: "Understand where you are and what matters most. Discover root causes. Understand reality.",
     symptoms: [
       "Too many priorities compete for our attention.",
       "Managers handle similar challenges in different ways.",
@@ -55,7 +61,10 @@ export const journeys: Journey[] = [
     accent: "slate",
     promise: "Develop the capacity to execute.",
     ceoQuestion: "Do we have the right organization for where we're headed?",
+    friction: "Create the leadership, systems, and capabilities needed for success.",
+    solutions: "Design a coherent system. Create the conditions for success.",
     quote: "We have the strategy, now we need the people, processes and systems to support it.",
+    homeBlurb: "Create the leadership, systems, and capabilities needed for success. Design a coherent system. Create the conditions for success.",
     symptoms: [
       "We're struggling to find and retain the talent we need.",
       "Our structure has changed, but the way we work together hasn't.",
@@ -86,7 +95,10 @@ export const journeys: Journey[] = [
     accent: "gold",
     promise: "Turn strategy into sustained action.",
     ceoQuestion: "How do we make it happen?",
+    friction: "Consistent execution, accountability, and momentum. Put strategy into action and drive execution.",
+    solutions: "Embed new ways of working. Make the change real.",
     quote: "We have a plan, but we're struggling to execute.",
+    homeBlurb: "Consistent execution, accountability, and momentum. Put strategy into action and drive execution. Embed new ways of working. Make the change real.",
     symptoms: [
       "Employees understand the vision but aren't changing how they work.",
       "Decisions stall or get revisited repeatedly.",
@@ -115,7 +127,10 @@ export const journeys: Journey[] = [
     accent: "burgundy",
     promise: "Restore trust, engagement, and momentum.",
     ceoQuestion: "How do we strengthen our organization?",
+    friction: "Trust, cohesion, and organizational health. Restore momentum, engagement, and performance.",
+    solutions: "Restore the human side of the organization. Renew trust and connection.",
     quote: "How do we restore trust, engagement, and a shared sense of purpose?",
+    homeBlurb: "Trust, cohesion, and organizational health. Restore momentum, engagement, and performance. Renew trust and connection.",
     symptoms: [
       "Cross-functional work breaks down.",
       "People are protecting their roles instead of working towards shared goals.",

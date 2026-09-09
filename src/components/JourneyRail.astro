@@ -1,0 +1,115 @@
+---
+import { journeys } from "../data/journeys";
+import Icon from "./Icon.astro";
+import MosaicField from "./MosaicField.astro";
+---
+
+<section class="section rail" aria-labelledby="journeys-h" data-journey-rail>
+  <div class="container rail-head">
+    <p class="eyebrow" data-reveal>Signature services</p>
+    <h2 id="journeys-h" data-reveal>Our journey together</h2>
+    <p class="lead" data-reveal>
+      Four focused journeys around a specific organizational challenge. They complement each other,
+      but each stands on its own and leaves your organization stronger.
+    </p>
+  </div>
+
+  <div class="rail-viewport" data-rail-viewport>
+    <ol class="rail-track" data-rail-track>
+      {journeys.map((j, i) => (
+        <li class="rail-panel" data-accent={j.accent} data-reveal>
+          <article>
+            <p class="rail-number" data-rail-number aria-hidden="true">{j.number}</p>
+            <div class="rail-body">
+              <h3>{j.name}</h3>
+              <p class="rail-promise">{j.promise}</p>
+              <blockquote class="quote"><p>{`"${j.ceoQuestion}"`}</p></blockquote>
+              <p class="rail-blurb">{j.homeBlurb}</p>
+              <a class="link-arrow" href={`/how-we-work/${j.slug}/`}>
+                Explore {j.name}
+                <Icon name="arrow" size={15} />
+              </a>
+            </div>
+            <div class="rail-tiles" aria-hidden="true">
+              <MosaicField cols={3} rows={3} cell={64} density={0.6} seed={11 + i * 7} opacity={0.5} drift />
+            </div>
+          </article>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .rail { background: var(--color-linen-dark); overflow: hidden; }
+  .rail-head { max-width: 62ch; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .rail-head h2 { margin-block: 0.5rem 1rem; }
+
+  /* Mobile and no-JS: a plain vertical stack. */
+  .rail-track {
+    list-style: none;
+    margin: 0;
+    padding-inline: var(--gutter);
+    display: grid;
+    gap: var(--grid-gap);
+  }
+
+  .rail-panel article {
+    position: relative;
+    height: 100%;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+    border-top: 4px solid var(--accent);
+    padding: clamp(1.75rem, 3.5vw, 3rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rail-number {
+    font-family: var(--font-display);
+    font-size: var(--step-5);
+    line-height: 0.85;
+    color: var(--accent);
+    opacity: 0.3;
+    margin: 0;
+  }
+  .rail-body { position: relative; z-index: 1; display: grid; gap: 0.75rem; }
+  .rail-body h3 { color: var(--accent); }
+  .rail-promise { font-weight: 500; }
+  .rail-panel .quote { color: var(--color-navy); max-width: 22ch; }
+  .rail-blurb { font-size: var(--step--1); max-width: 42ch; }
+  .rail-panel .link-arrow { margin-top: auto; justify-self: start; }
+
+  .rail-tiles {
+    position: absolute;
+    right: -56px;
+    bottom: -56px;
+    width: 168px;
+    opacity: 0.45;
+    pointer-events: none;
+    mask-image: radial-gradient(circle at 100% 100%, #000 40%, transparent 78%);
+  }
+
+  /* Desktop: horizontal track that the motion layer pins and scrubs.
+     Gated on .motion-ok so that with JavaScript off, or under reduced motion,
+     the panels stay a readable vertical stack rather than an unreachable strip. */
+  @media (min-width: 1024px) {
+    :global(html.motion-ok) .rail-viewport { overflow-x: auto; scrollbar-width: none; }
+    :global(html.motion-ok) .rail-viewport::-webkit-scrollbar { display: none; }
+    :global(html.motion-ok) .rail-track {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 34vw);
+      align-items: stretch;
+      padding-inline: var(--gutter);
+      width: max-content;
+    }
+    :global(html.motion-ok) .rail-panel { display: flex; }
+    :global(html.motion-ok) .rail-number { font-size: clamp(4rem, 7vw, 7rem); }
+
+    /* Two up when the rail is not running. */
+    .rail-track { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

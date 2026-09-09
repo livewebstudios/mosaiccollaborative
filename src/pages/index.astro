@@ -1,6 +1,379 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
+import CtaBand from "../components/CtaBand.astro";
+import JourneyRail from "../components/JourneyRail.astro";
+import MosaicField from "../components/MosaicField.astro";
+import Icon from "../components/Icon.astro";
+import { site } from "../data/site";
+import { services } from "../data/services";
+import { team } from "../data/team";
+
+const title = "The Mosaic Collaborative: Strategy, Leadership & Organizational Consulting";
+const description =
+  "Management consulting for small and mid-sized companies at critical inflection points. We align leadership, culture, operations and structure so your business thrives.";
+
+const inflectionPoints = [
+  { name: "Rapid growth", note: "Growth has outpaced the way you operate." },
+  { name: "Mergers & acquisitions", note: "Two organizations, not yet one team." },
+  { name: "Leadership transitions", note: "New leaders, new expectations." },
+  { name: "Restructuring", note: "The structure changed. The way people work together did not." },
+  { name: "Succession planning", note: "Too much depends on a few key people." },
+  { name: "Stalled performance", note: "Strategy is not turning into results." },
+];
+
+const beliefs = [
+  {
+    lead: "We strengthen organizations while solving problems.",
+    body: "Every engagement should leave an organization more capable than when we arrived. We equip leaders with practical tools, shared approaches, and repeatable practices that become the way the organization works. Our work is measured by the strength we leave behind.",
+  },
+  {
+    lead: "We uncover the right answers together.",
+    body: "Every organization is unique. We combine deep inquiry, diverse perspectives, and practical experience to develop solutions tailored to your people, culture, and goals.",
+  },
+  {
+    lead: "We connect strategy to execution.",
+    body: "Strategies that can't be implemented are just notes on a whiteboard. We help organizations translate vision into action by aligning priorities, decision-making, and accountability.",
+  },
+  {
+    lead: "We design solutions that consider the whole organization.",
+    body: "Leadership, culture, operations, and organizational structure are interconnected. Lasting change requires understanding how the pieces work together.",
+  },
+];
+
+// TODO: confirm with Roz. Any founder with photo === null renders an initials tile.
+// See src/data/team.ts for which headshot is missing and why.
+const accents: Record<string, string> = { navy: "navy", slate: "slate", gold: "gold", burgundy: "burgundy" };
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  url: site.url,
+  slogan: site.tagline,
+  description,
+  logo: new URL("/og.jpg", site.url).href,
+  areaServed: { "@type": "Country", name: "United States" },
+  founder: team.map((m) => ({
+    "@type": "Person",
+    name: m.name,
+    jobTitle: m.title,
+  })),
+};
 ---
-<Base title="Smoke test" description="Smoke test" path="/">
-  <section class="section"><div class="container"><h1>Shell smoke test</h1></div></section>
+
+<Base title={title} description={description} path="/" schema={schema}>
+  <!-- 1. Hero -->
+  <section class="hero" aria-label="Introduction" data-parallax-scope>
+    <div class="hero-media" aria-hidden="true">
+      <video
+        data-autoplay
+        data-parallax="0.12"
+        muted
+        playsinline
+        loop
+        preload="metadata"
+        poster="/media/video/mosaic_hero_light_tiles_720p-poster.jpg"
+        width="1280"
+        height="720"
+      >
+        <source src="/media/video/mosaic_hero_light_tiles_720p.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-scrim"></div>
+    </div>
+
+    <div class="container hero-inner">
+      <p class="eyebrow" data-reveal>{site.name}</p>
+      <h1 data-reveal style="--reveal-delay:120ms">
+        We align the <em class="emphasis">pieces</em>.<br />Your business thrives.
+      </h1>
+      <p class="lead" data-reveal style="--reveal-delay:240ms">
+        Strategy, leadership and organizational consulting for small and mid-sized companies at
+        critical inflection points.
+      </p>
+      <p class="hero-actions" data-reveal style="--reveal-delay:360ms">
+        <a class="btn btn-primary" href="/contact/">
+          <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
+          Start a conversation
+        </a>
+        <a class="link-arrow" href="/how-we-work/">See how we work <Icon name="arrow" size={15} /></a>
+      </p>
+    </div>
+
+    <p class="scroll-cue" aria-hidden="true">
+      <span>Scroll</span>
+      <span class="scroll-cue-line"></span>
+    </p>
+  </section>
+
+  <!-- 2. Vision -->
+  <section class="section vision" aria-labelledby="vision-h">
+    <p class="eyebrow vertical-label" aria-hidden="true">The Vision</p>
+    <div class="container vision-inner">
+      <h2 id="vision-h" class="sr-only">What we do</h2>
+      <p class="text-large" data-reveal>
+        We work with small and mid-sized companies facing challenges that don't have obvious answers.
+        AI is reshaping the workforce. Growth has stalled, or is outpacing current systems. Leaders
+        aren't aligned. Good people are leaving. Strategy isn't translating into action.
+      </p>
+      <p class="text-large" data-reveal style="--reveal-delay:120ms">
+        We've led organizations ourselves, so we know these challenges rarely have a single cause. We
+        start by understanding your organization, bringing together different perspectives to help you
+        see the whole picture, make confident decisions, and move forward.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. Journeys rail -->
+  <JourneyRail />
+
+  <!-- 4. Who we serve -->
+  <section class="section serve" aria-labelledby="serve-h">
+    <div class="container serve-inner">
+      <div class="serve-intro">
+        <p class="eyebrow" data-reveal>Who we serve</p>
+        <h2 id="serve-h" data-reveal>Companies at critical inflection points</h2>
+        <p data-reveal>
+          We work with small and mid-sized companies navigating the moments when a company's strategy,
+          leadership, and operations need to evolve together. Some inflection points are intentional.
+          Others emerge unexpectedly. Whether you're pursuing an opportunity or responding to a
+          challenge, we help you prepare your organization for what's next.
+        </p>
+      </div>
+
+      <ul class="stat-grid" data-reveal-stagger="90">
+        {inflectionPoints.map((point, i) => (
+          <li
+            class="stat-tile"
+            data-accent={["navy", "slate", "gold", "burgundy"][i % 4]}
+            data-reveal
+          >
+            <p class="stat-name">{point.name}</p>
+            <p class="small">{point.note}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. What we believe -->
+  <section class="section section-gray beliefs" aria-labelledby="beliefs-h">
+    <div class="container beliefs-inner">
+      <div class="beliefs-sticky">
+        <p class="eyebrow" data-reveal>Our foundation</p>
+        <h2 id="beliefs-h" data-reveal>What we believe informs what we do</h2>
+      </div>
+      <ol class="beliefs-list" data-beliefs>
+        {beliefs.map((belief, i) => (
+          <li class="belief card" data-accent={["navy", "slate", "gold", "burgundy"][i]} data-reveal>
+            <h3>{belief.lead}</h3>
+            <p>{belief.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 6. Core offerings -->
+  <section class="section offerings" aria-labelledby="offerings-h">
+    <div class="container">
+      <div class="offerings-head">
+        <p class="eyebrow" data-reveal>Core offerings</p>
+        <h2 id="offerings-h" data-reveal>Focused interventions. Lasting capability.</h2>
+      </div>
+      <ul class="card-grid" data-reveal-stagger="80">
+        {services.map((family) => (
+          <li class="card" data-accent={accents[family.accent]} data-reveal>
+            <h3>{family.name}</h3>
+            <p class="offering-motto">{family.motto}</p>
+            <a class="link-arrow" href={`/services/#${family.slug}`}>
+              Explore <Icon name="arrow" size={15} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7. Founders -->
+  <section class="section section-linen-dark founders" aria-labelledby="founders-h">
+    <div class="container">
+      <div class="founders-head">
+        <p class="eyebrow" data-reveal>The leadership</p>
+        <h2 id="founders-h" data-reveal>Leaders who have led</h2>
+      </div>
+      <ul class="team-strip" data-reveal-stagger="100">
+        {team.map((member) => (
+          <li data-accent={accents[member.accent]} data-reveal>
+            <div class="team-photo">
+              {member.photo ? (
+                <img
+                  src={`/media/img/team/${member.photo}`}
+                  alt={`${member.name}, ${member.title}`}
+                  width="480"
+                  height="480"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <p class="team-initials" aria-hidden="true">
+                  {member.name.split(" ").slice(0, 2).map((w) => w[0]).join("")}
+                </p>
+              )}
+            </div>
+            <p class="team-name">{member.name}</p>
+            <p class="eyebrow">{member.title}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="founders-link" data-reveal>
+        <a class="link-arrow" href="/about/">Meet the founders <Icon name="arrow" size={15} /></a>
+      </p>
+    </div>
+
+    <div class="founders-field" aria-hidden="true">
+      <MosaicField cols={5} rows={3} cell={70} density={0.4} seed={53} opacity={0.25} drift />
+    </div>
+  </section>
+
+  <!-- 8. Closing CTA -->
+  <CtaBand
+    heading="Ready to see the whole picture?"
+    body="Tell us what's going on. We'll tell you honestly whether we can help."
+    video
+  />
 </Base>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 8rem 6rem;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero-media { position: absolute; inset: -8% 0; z-index: -1; }
+  .hero-media video { width: 100%; height: 100%; object-fit: cover; }
+  .hero-scrim { position: absolute; inset: 0; background: var(--scrim); }
+  /* Legibility wash behind the transparent header. */
+  .hero-scrim::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 220px;
+    background: linear-gradient(180deg, rgba(250, 240, 224, 0.82), rgba(250, 240, 224, 0));
+  }
+
+  /* Align to the container gutter rather than centering in the 1440 track. */
+  .hero-inner { max-width: 60rem; margin-inline: 0; }
+  .hero-inner h1 { margin-block: 0.6rem 1.5rem; }
+  .hero-inner h1 em { font-style: normal; }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: 2.25rem;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 0;
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-navy);
+  }
+
+  /* Vision */
+  .vision-inner { max-width: 72rem; margin-inline: auto; display: grid; gap: clamp(2rem, 4vw, 3.5rem); }
+  .vision-inner .text-large { max-width: 17em; }
+  @media (min-width: 1280px) { .vision-inner { padding-left: 4rem; } }
+
+  /* Who we serve */
+  .serve-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }
+  @media (min-width: 1024px) { .serve-inner { grid-template-columns: 5fr 7fr; align-items: start; } }
+  .serve-intro { display: grid; gap: 1rem; align-content: start; }
+  @media (min-width: 1024px) { .serve-intro { position: sticky; top: 8rem; } }
+
+  .stat-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat-tile p { margin: 0; }
+  .stat-tile .small { margin-top: 0.5rem; max-width: 26ch; }
+
+  /* Beliefs */
+  .beliefs-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }
+  @media (min-width: 1024px) { .beliefs-inner { grid-template-columns: 5fr 7fr; align-items: start; } }
+  .beliefs-sticky { display: grid; gap: 1rem; align-content: start; }
+  @media (min-width: 1024px) { .beliefs-sticky { position: sticky; top: 20vh; } }
+  .beliefs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); }
+  .belief h3 { font-size: var(--step-2); margin-bottom: 0.75rem; color: var(--accent); }
+
+  /* Offerings */
+  .offerings-head { max-width: 40ch; margin-bottom: clamp(2rem, 4vw, 3rem); display: grid; gap: 0.75rem; }
+  .card-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1280px) { .card-grid { grid-template-columns: repeat(4, 1fr); } }
+  .card-grid h3 { font-size: var(--step-2); margin-bottom: 0.5rem; }
+  .offering-motto { color: var(--accent); font-weight: 500; margin-bottom: 1.5rem; }
+
+  /* Founders */
+  .founders { position: relative; overflow: hidden; }
+  .founders > .container { position: relative; z-index: 1; }
+  .founders-head { max-width: 40ch; margin-bottom: clamp(2rem, 4vw, 3rem); display: grid; gap: 0.75rem; }
+  .team-strip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+  @media (min-width: 768px) { .team-strip { grid-template-columns: repeat(3, 1fr); } }
+  .team-name { font-family: var(--font-display); font-size: var(--step-2); margin: 1.25rem 0 0.35rem; color: var(--color-navy); }
+  .founders-link { margin-top: clamp(2rem, 4vw, 3rem); }
+  .founders-field {
+    position: absolute;
+    right: -5%;
+    top: 10%;
+    width: min(34%, 420px);
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at 70% 50%, #000 35%, transparent 75%);
+  }
+</style>

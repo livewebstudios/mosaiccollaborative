@@ -1,0 +1,71 @@
+---
+import { site } from "../data/site";
+import Icon from "./Icon.astro";
+
+interface Props {
+  heading: string;
+  body?: string;
+  /** Full-bleed dark video band, used on Home. Otherwise a flat navy band. */
+  video?: boolean;
+}
+const { heading, body, video = false } = Astro.props;
+// TODO: confirm with Roz. Until site.email is real, the band links to the contact page.
+const hasEmail = !site.email.startsWith("TODO");
+const headingId = "cta-h";
+---
+
+<section class={`section section-dark cta-band ${video ? "cta-band-video" : ""}`} aria-labelledby={headingId}>
+  {video && (
+    <div class="cta-media" aria-hidden="true">
+      <video
+        data-autoplay
+        muted
+        playsinline
+        loop
+        preload="metadata"
+        poster="/media/video/mosaic_dark_glass_planes_720p-poster.jpg"
+        width="1280"
+        height="720"
+      >
+        <source src="/media/video/mosaic_dark_glass_planes_720p.mp4" type="video/mp4" />
+      </video>
+      <div class="cta-scrim"></div>
+    </div>
+  )}
+
+  <div class="container cta-inner">
+    <h2 id={headingId} data-reveal>{heading}</h2>
+    {body && <p class="lead" data-reveal>{body}</p>}
+    <p class="cta-actions" data-reveal>
+      <a class="btn btn-on-dark" href="/contact/">
+        <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
+        Start a conversation
+      </a>
+    </p>
+    {hasEmail ? (
+      <p class="cta-email" data-reveal><a href={`mailto:${site.email}`}>{site.email}</a></p>
+    ) : (
+      <p class="cta-email" data-reveal><a href="/contact/">Or send us a message</a></p>
+    )}
+  </div>
+</section>
+
+<style>
+  .cta-band { position: relative; overflow: hidden; isolation: isolate; }
+
+  .cta-band-video {
+    clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%);
+    padding-top: calc(var(--section-y) + 4vw);
+  }
+  @media (max-width: 640px) { .cta-band-video { clip-path: none; } }
+
+  .cta-media { position: absolute; inset: 0; z-index: -1; }
+  .cta-media video { width: 100%; height: 100%; object-fit: cover; }
+  .cta-scrim { position: absolute; inset: 0; background: var(--scrim-dark); }
+
+  .cta-inner { text-align: center; display: grid; justify-items: center; gap: 1.25rem; }
+  .cta-inner h2 { font-size: var(--step-3); max-width: 18ch; }
+  .cta-inner .lead { max-width: 46ch; }
+  .cta-actions { margin: 0.5rem 0 0; }
+  .cta-email a { font-size: var(--step--1); letter-spacing: 0.04em; }
+</style>

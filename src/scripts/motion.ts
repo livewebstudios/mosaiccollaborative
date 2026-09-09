@@ -173,10 +173,11 @@ function initVideos() {
   if (!videos.length) return;
 
   if (prefersReduced()) {
+    // Keep the poster frame on screen. Removing the video would leave a bare panel.
     videos.forEach((v) => {
-      v.pause();
       v.removeAttribute("autoplay");
-      v.hidden = true;
+      v.pause();
+      v.currentTime = 0;
     });
     return;
   }
@@ -225,6 +226,62 @@ function initParallax() {
   });
 }
 
+/* ---------------------------------------------------------------- journeys rail */
+function initJourneyRail() {
+  const section = document.querySelector<HTMLElement>("[data-journey-rail]");
+  const viewport = section?.querySelector<HTMLElement>("[data-rail-viewport]");
+  const track = section?.querySelector<HTMLElement>("[data-rail-track]");
+  if (!section || !viewport || !track) return;
+  if (prefersReduced() || !window.matchMedia("(min-width: 1024px)").matches) return;
+
+  const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+  if (distance() <= 0) return;
+
+  const tween = gsap.to(track, {
+    x: () => -distance(),
+    ease: "none",
+    scrollTrigger: {
+      trigger: viewport,
+      start: "center center",
+      end: () => `+=${distance()}`,
+      pin: section,
+      scrub: 0.6,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+    },
+  });
+  cleanups.push(() => tween.scrollTrigger?.kill());
+
+  // Numbers drift slower than their panel text.
+  section.querySelectorAll<HTMLElement>("[data-rail-number]").forEach((n) => {
+    const t = gsap.fromTo(n, { xPercent: 20 }, {
+      xPercent: -20,
+      ease: "none",
+      scrollTrigger: { trigger: viewport, start: "center center", end: () => `+=${distance()}`, scrub: 0.6 },
+    });
+    cleanups.push(() => t.scrollTrigger?.kill());
+  });
+}
+
+/* ---------------------------------------------------------------- beliefs */
+function initBeliefs() {
+  const list = document.querySelector<HTMLElement>("[data-beliefs]");
+  if (!list || prefersReduced()) return;
+
+  const cards = Array.from(list.querySelectorAll<HTMLElement>(".belief"));
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    const st = ScrollTrigger.create({
+      trigger: card,
+      start: "top 65%",
+      end: "bottom 35%",
+      onToggle: (self) => card.classList.toggle("is-active", self.isActive),
+    });
+    cleanups.push(() => st.kill());
+  });
+}
+
 /* ---------------------------------------------------------------- boot */
 function boot() {
   initLenis();
@@ -235,6 +292,8 @@ function boot() {
   initVideos();
   initAccordions();
   initParallax();
+  initJourneyRail();
+  initBeliefs();
   ScrollTrigger.refresh();
 }
 

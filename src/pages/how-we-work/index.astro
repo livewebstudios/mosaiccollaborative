@@ -25,7 +25,7 @@ const schema = [
 <Base title={title} description={description} path="/how-we-work/" schema={schema}>
   <section class="section page-hero" aria-labelledby="hww-h">
     <div class="hero-field" aria-hidden="true">
-      <MosaicField cols={6} rows={4} cell={78} density={0.42} seed={71} opacity={0.3} drift />
+      <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={71} drift />
     </div>
     <div class="container page-hero-inner">
       <p class="eyebrow" data-reveal>How we work</p>
@@ -110,7 +110,7 @@ const schema = [
     border: 0;
   }
 
-  .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 5rem); }
+  .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
   .page-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; display: grid; gap: 1rem; }
   .hero-field {
     position: absolute;
@@ -118,8 +118,8 @@ const schema = [
     top: 22%;
     width: min(38%, 440px);
     pointer-events: none;
-    opacity: 0.75;
-    mask-image: radial-gradient(ellipse at 60% 50%, #000 35%, transparent 76%);
+    opacity: 0.85;
+    mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
   }
 
   /* Descending diagonal staircase, mirroring the deck */

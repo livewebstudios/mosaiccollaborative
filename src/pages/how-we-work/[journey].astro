@@ -1,0 +1,300 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "../../layouts/Base.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import MosaicField from "../../components/MosaicField.astro";
+import Icon from "../../components/Icon.astro";
+import { journeys } from "../../data/journeys";
+import { site } from "../../data/site";
+
+export const getStaticPaths = (() =>
+  journeys.map((journey) => ({
+    params: { journey: journey.slug },
+    props: { journey },
+  }))) satisfies GetStaticPaths;
+
+const { journey } = Astro.props;
+const others = journeys.filter((j) => j.slug !== journey.slug);
+const primary = journey.phases.filter((p) => p.role === "primary");
+const supporting = journey.phases.filter((p) => p.role === "supporting");
+const path = `/how-we-work/${journey.slug}/`;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: journey.name,
+    serviceType: journey.promise,
+    description: journey.metaDescription,
+    provider: { "@type": "Organization", name: site.name, url: site.url },
+    areaServed: { "@type": "Country", name: "United States" },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: `${journey.name} phases`,
+      itemListElement: journey.phases.map((p) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: p.name, description: p.description },
+      })),
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name: "How We Work", item: site.url + "/how-we-work/" },
+      { "@type": "ListItem", position: 3, name: journey.name, item: site.url + path },
+    ],
+  },
+];
+---
+
+<Base
+  title={journey.metaTitle}
+  description={journey.metaDescription}
+  path={path}
+  schema={schema}
+  bodyClass="journey-page"
+>
+  <div data-accent={journey.accent}>
+    <!-- Hero -->
+    <section class="section journey-hero" aria-labelledby="journey-h" data-parallax-scope>
+      <div class="journey-hero-field" aria-hidden="true" data-parallax="0.08">
+        <MosaicField cols={5} rows={4} cell={96} density={0.45} seed={journey.number.charCodeAt(1) * 13} drift />
+      </div>
+
+      <div class="container journey-hero-inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/how-we-work/">HOW WE WORK</a></li>
+            <li aria-current="page">{journey.name.toUpperCase()}</li>
+          </ol>
+        </nav>
+
+        <p class="journey-number display-xl" aria-hidden="true" data-parallax="-0.06">{journey.number}</p>
+        <h1 id="journey-h" data-reveal>{journey.name}</h1>
+        <p class="journey-promise" data-reveal>{journey.promise}</p>
+        <blockquote class="journey-quote quote" data-reveal>
+          <p>{`"${journey.quote}"`}</p>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- Symptoms -->
+    <section class="section section-linen-dark symptoms" aria-labelledby="symptoms-h">
+      <div class="container symptoms-inner">
+        <div class="symptoms-head">
+          <p class="eyebrow" data-reveal>Sound familiar?</p>
+          <h2 id="symptoms-h" data-reveal>You might be hearing this</h2>
+        </div>
+        <ul class="tri-list symptom-list" data-reveal-stagger="90">
+          {journey.symptoms.map((symptom) => <li data-reveal>{symptom}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Phases -->
+    <section class="section phases" aria-labelledby="phases-h">
+      <div class="container">
+        <div class="phases-head">
+          <p class="eyebrow" data-reveal>The journey</p>
+          <h2 id="phases-h" data-reveal>How {journey.name} works</h2>
+        </div>
+
+        <ol class="phase-primary" data-reveal-stagger="110">
+          {primary.map((phase, i) => (
+            <li class="card phase-card" data-reveal>
+              <p class="phase-index" aria-hidden="true">{`0${i + 1}`}</p>
+              <h3>{phase.name}</h3>
+              <p>{phase.description}</p>
+            </li>
+          ))}
+        </ol>
+
+        <p class="phase-label eyebrow" data-reveal>Supporting throughout</p>
+        <ol class="phase-supporting" data-reveal-stagger="110">
+          {supporting.map((phase) => (
+            <li class="card phase-card phase-card-supporting" data-reveal>
+              <h3>{phase.name}</h3>
+              <p>{phase.description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Deliverable -->
+    <section class="section deliverable" aria-labelledby="deliverable-h">
+      <div class="container deliverable-inner">
+        <h2 id="deliverable-h" class="eyebrow">Deliverable</h2>
+        <p class="deliverable-text" data-reveal>{journey.deliverable}</p>
+      </div>
+    </section>
+
+    <!-- Other journeys -->
+    <section class="section section-gray others" aria-labelledby="others-h">
+      <div class="container others-inner">
+        <div class="others-head">
+          <p class="eyebrow" data-reveal>Other journeys</p>
+          <h2 id="others-h" data-reveal>Where else we might start</h2>
+        </div>
+
+        <div class="others-list">
+          {others.map((other, i) => (
+            <div class="accordion-row" data-accent={other.accent} data-open="true" data-collapse-index={i}>
+              <h3>
+                <button
+                  class="accordion-trigger"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls={`panel-${other.slug}`}
+                  id={`trigger-${other.slug}`}
+                >
+                  <span class="accordion-label">
+                    <span class="accordion-number" aria-hidden="true">{other.number}</span>
+                    {other.name}
+                  </span>
+                  <span class="accordion-icon" aria-hidden="true"><Icon name="plus" size={20} /></span>
+                </button>
+              </h3>
+              <div class="accordion-panel" id={`panel-${other.slug}`} role="region" aria-labelledby={`trigger-${other.slug}`}>
+                <div>
+                  <div class="accordion-content">
+                    <p class="accordion-promise">{other.promise}</p>
+                    <p class="quote accordion-quote">{`"${other.ceoQuestion}"`}</p>
+                    <p>{other.homeBlurb}</p>
+                    <a class="link-arrow" href={`/how-we-work/${other.slug}/`}>
+                      Explore {other.name} <Icon name="arrow" size={15} />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <CtaBand
+      heading={`Does ${journey.name} sound like your organization?`}
+      body="Tell us what's going on. We'll tell you honestly whether we can help and where we'd start."
+    />
+  </div>
+</Base>
+
+<style>
+  /* Hero */
+  .journey-hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: calc(var(--section-y) + 8.5rem);
+    background: var(--accent-tint);
+  }
+  .journey-hero-field {
+    position: absolute;
+    right: -10%;
+    top: 14%;
+    width: min(46%, 560px);
+    opacity: 0.85;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at 62% 48%, #000 26%, transparent 72%);
+  }
+  .journey-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; }
+
+  .breadcrumb ol {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+  }
+  .breadcrumb li + li::before { content: "/"; margin-right: 0.6rem; opacity: 0.45; }
+  .breadcrumb a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .breadcrumb [aria-current="page"] { color: var(--accent); }
+
+  .journey-number {
+    font-family: var(--font-display);
+    color: var(--accent);
+    opacity: 0.28;
+    margin: 0 0 -0.15em;
+  }
+  .journey-hero h1 { color: var(--accent); }
+  .journey-promise { font-size: var(--step-1); font-weight: 500; margin-top: 0.75rem; }
+  .journey-quote { margin-top: 2rem; max-width: 26ch; border-left: 3px solid var(--accent); padding-left: 1.25rem; }
+
+  /* Symptoms */
+  .symptoms-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }
+  @media (min-width: 1024px) { .symptoms-inner { grid-template-columns: 4fr 8fr; align-items: start; } }
+  .symptoms-head { display: grid; gap: 0.75rem; align-content: start; }
+  @media (min-width: 1024px) { .symptoms-head { position: sticky; top: 8rem; } }
+  .symptom-list { font-size: var(--step-1); line-height: 1.4; max-width: 46ch; }
+  .symptom-list > li + li { margin-top: 1rem; }
+  .symptom-list > li::before { top: 0.55em; }
+
+  /* Phases */
+  .phases-head { max-width: 40ch; margin-bottom: clamp(2rem, 4vw, 3rem); display: grid; gap: 0.75rem; }
+  .phase-primary, .phase-supporting {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) { .phase-primary { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 768px) { .phase-supporting { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) {
+    /* The two supporting cards sit offset beneath the three primary ones, as in the deck. */
+    .phase-supporting { width: 78%; margin-left: 11%; }
+  }
+  .phase-card h3 { font-size: var(--step-2); margin-bottom: 0.6rem; color: var(--accent); }
+  .phase-card p { font-size: var(--step--1); }
+  .phase-index {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.35;
+    margin-bottom: 0.75rem;
+  }
+  .phase-card-supporting { background: var(--accent-tint); }
+  .phase-label {
+    margin: clamp(2rem, 4vw, 3rem) 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .phase-label::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+
+  /* Deliverable */
+  .deliverable { padding-block: clamp(3rem, 7vw, 7rem); }
+  .deliverable-inner { display: grid; gap: 1rem; }
+  .deliverable-text {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    max-width: 18ch;
+  }
+
+  /* Other journeys */
+  .others-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }
+  @media (min-width: 1024px) { .others-inner { grid-template-columns: 4fr 8fr; align-items: start; } }
+  .others-head { display: grid; gap: 0.75rem; align-content: start; }
+  @media (min-width: 1024px) { .others-head { position: sticky; top: 8rem; } }
+  .others-list h3 { margin: 0; font-size: inherit; }
+  .accordion-label { display: flex; align-items: baseline; gap: 1rem; }
+  .accordion-number { font-size: var(--step-0); color: var(--accent); opacity: 0.6; }
+  .accordion-content {
+    display: grid;
+    gap: 0.75rem;
+    padding-bottom: clamp(1.25rem, 3vw, 2rem);
+    max-width: 52ch;
+  }
+  .accordion-promise { font-weight: 500; color: var(--accent); }
+  .accordion-quote { font-size: var(--step-1); }
+</style>

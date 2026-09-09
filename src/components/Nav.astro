@@ -13,7 +13,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
 <header class="site-header" data-header>
   <div class="container header-inner">
     <a class="brand" href="/" aria-label={`${site.name}, home`}>
-      <Image class="brand-lockup" src={lockup} alt={site.name} widths={[220, 440]} sizes="220px" loading="eager" />
+      <Image class="brand-lockup" src={lockup} alt={site.name} widths={[230, 460]} sizes="230px" loading="eager" />
       <Image class="brand-mark" src={mark} alt="" widths={[48, 96]} sizes="48px" loading="eager" />
     </a>
 
@@ -95,8 +95,8 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
   }
 
   .brand { display: block; flex: none; }
-  .brand-lockup { width: 220px; height: auto; display: none; }
-  .brand-mark { width: 48px; height: auto; }
+  .brand-lockup { width: auto; height: 110px; display: none; }
+  .brand-mark { width: auto; height: 44px; }
   @media (min-width: 1024px) {
     .brand-lockup { display: block; }
     .brand-mark { display: none; }

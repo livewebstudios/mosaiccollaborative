@@ -198,11 +198,23 @@ function initVideos() {
 function initAccordions() {
   document.querySelectorAll<HTMLButtonElement>(".accordion-trigger").forEach((trigger) => {
     const row = trigger.closest<HTMLElement>(".accordion-row");
-    if (!row) return;
+    const panel = row?.querySelector<HTMLElement>(".accordion-panel");
+    if (!row || !panel) return;
+
+    const setOpen = (open: boolean) => {
+      row.dataset.open = String(open);
+      trigger.setAttribute("aria-expanded", String(open));
+      // Keep collapsed links out of the tab order.
+      if (open) panel.removeAttribute("inert");
+      else panel.setAttribute("inert", "");
+    };
+
+    // Rows ship open so the content is readable without JavaScript. Collapse all
+    // but the first now that scripting is available.
+    if (row.dataset.collapseIndex && row.dataset.collapseIndex !== "0") setOpen(false);
+
     on(trigger, "click", () => {
-      const open = row.dataset.open === "true";
-      row.dataset.open = String(!open);
-      trigger.setAttribute("aria-expanded", String(!open));
+      setOpen(row.dataset.open !== "true");
       ScrollTrigger.refresh();
     });
   });

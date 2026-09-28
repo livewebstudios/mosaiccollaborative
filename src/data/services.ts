@@ -1,5 +1,6 @@
 // src/data/services.ts
-// Source: Mosaic pitch deck (Aug 2026), "04 Core Offerings" slides. Verbatim, typos fixed.
+// Source: Mosaic pitch deck (Aug 2026), "04 Core Offerings" slides (renamed Core Services
+// in round 1 revisions, Sep 2026). Verbatim, typos fixed.
 // Durations are shown only where the deck gives one. Do not invent durations or prices.
 
 export type Offering = { name: string; duration?: string; includes: string[]; description?: string };
@@ -20,7 +21,7 @@ export const services: ServiceFamily[] = [
     name: "Diagnostic Services",
     motto: "Assess. Understand. Prioritize.",
     accent: "navy",
-    intro: "Structured assessments that show you what's really going on, what matters most, and where to focus first.",
+    intro: "Structured assessments that show what's really going on, what matters most, and where to focus first.",
     offerings: [
       { name: "Change Readiness Assessment", duration: "6 to 8 weeks", includes: ["Stakeholder interviews", "Readiness survey", "Risk analysis", "Readiness scorecard"] },
       { name: "Leadership Effectiveness Assessment", duration: "8 to 12 weeks", includes: ["Interviews", "Leadership survey", "Management practices review"] },

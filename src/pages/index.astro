@@ -69,10 +69,11 @@ const schema = {
     <div class="hero-media" aria-hidden="true">
       <video
         data-autoplay
+        data-hold="4"
+        data-rate="0.85"
         data-parallax="0.12"
         muted
         playsinline
-        loop
         preload="metadata"
         poster="/media/video/mosaic_hero_light_tiles_720p-poster.jpg"
         width="1280"
@@ -101,7 +102,7 @@ const schema = {
           <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
           Start a conversation
         </a>
-        <a class="link-arrow" href="/how-we-work/">See how we work <Icon name="arrow" size={15} /></a>
+        <a class="link-arrow" href="/services/">Explore our services <Icon name="arrow" size={15} /></a>
       </p>
     </div>
 
@@ -190,12 +191,13 @@ const schema = {
     </div>
   </section>
 
-  <!-- 6. Core offerings -->
+  <!-- 6. Core services -->
   <section class="section offerings" aria-labelledby="offerings-h">
     <div class="container">
       <div class="offerings-head">
-        <p class="eyebrow" data-reveal>Core offerings</p>
-        <h2 id="offerings-h" data-reveal>Focused interventions. Lasting capability.</h2>
+        <p class="eyebrow" data-reveal>Core services</p>
+        {/* TODO: confirm with Roz. Placeholder for the retired "Focused interventions" headline. */}
+        <h2 id="offerings-h" data-reveal>Focused services. Lasting capability.</h2>
       </div>
       <ul class="card-grid" data-reveal-stagger="80">
         {services.map((family) => (
@@ -217,7 +219,7 @@ const schema = {
     <div class="container">
       <div class="founders-head">
         <p class="eyebrow" data-reveal>The leadership</p>
-        <h2 id="founders-h" data-reveal>Leaders who have led</h2>
+        <h2 id="founders-h" data-reveal>We know leadership because we've lived it</h2>
       </div>
       <ul class="team-strip" data-reveal-stagger="100">
         {team.map((member) => (

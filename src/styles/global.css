@@ -620,3 +620,7 @@ html.motion-ok [data-beliefs] .belief.is-active > * { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
   [data-beliefs] .belief > * { opacity: 1 !important; }
 }
+
+/* Held video loops (see initVideos in motion.ts): a soft fade covers the reset to frame one. */
+video[data-hold] { transition: opacity 0.7s ease; }
+video[data-hold].is-resetting { opacity: 0; }

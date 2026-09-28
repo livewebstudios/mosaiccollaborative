@@ -29,5 +29,12 @@
   status = 301
   force = true
 
+# How We Work index retired in round 1. Journey pages below it keep their URLs.
+[[redirects]]
+  from = "/how-we-work/"
+  to = "/services/#custom-offerings"
+  status = 301
+  force = true
+
 # TODO: confirm with Jon. Add the misspelled and "the" alias domains Roz owns
 # as Netlify domain aliases, then add matching 301 blocks here.

@@ -6,11 +6,15 @@ import CtaBand from "../components/CtaBand.astro";
 import MosaicField from "../components/MosaicField.astro";
 import Icon from "../components/Icon.astro";
 import { services } from "../data/services";
+import { journeys } from "../data/journeys";
 import { site } from "../data/site";
 
-const title = "Services: Diagnostic, Development, Belonging & Executive Partnership";
+// Round 1 revisions (Sep 2026): Services now carries both offering types. Custom Offerings
+// are the four journeys (their pages keep the /how-we-work/ URLs). Core Services are the
+// packaged, a la carte services. How We Work was dropped from the nav and redirects here.
+const title = "Leadership Consulting Services | Mosaic Collaborative";
 const description =
-  "Change readiness assessments, leadership alignment workshops, manager bootcamps, belonging programs and embedded executive advisors for growing companies.";
+  "Custom journeys that combine the right mix of services, plus focused core services: diagnostics, workshops and embedded advisors for growing companies.";
 
 const shortLabel: Record<string, string> = {
   diagnostic: "Diagnostic",
@@ -20,6 +24,21 @@ const shortLabel: Record<string, string> = {
 };
 
 const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "OfferCatalog",
+    name: "Custom Offerings",
+    itemListElement: journeys.map((j) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: j.name,
+        description: j.framework,
+        url: `${site.url}/how-we-work/${j.slug}/`,
+        provider: { "@type": "Organization", name: site.name, url: site.url },
+      },
+    })),
+  },
   ...services.map((family) => ({
     "@context": "https://schema.org",
     "@type": "Service",
@@ -58,18 +77,120 @@ const schema = [
       <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={97} drift />
     </div>
     <div class="container page-hero-inner">
-      <p class="eyebrow" data-reveal>Core offerings</p>
-      <h1 id="services-h" data-reveal>Focused interventions. Lasting capability.</h1>
+      <p class="eyebrow" data-reveal>Services</p>
+      <h1 id="services-h" data-reveal>Two ways to work together</h1>
       <p class="lead" data-reveal>
-        Each offering stands on its own. Together they cover the full arc from understanding what's
-        going on to building an organization that can sustain the change.
+        Shape a journey around a set of connected needs, or bring in a focused service for a specific
+        one. Many engagements combine both.
       </p>
+      {/* TODO: confirm with Roz. The Services H1 and this lead line are new; the docx only
+          supplied the two intros below. */}
+    </div>
+
+    <div class="container">
+      <ul class="paths" data-reveal-stagger="110">
+        <li class="card path" data-accent="burgundy" data-reveal>
+          <Image class="path-img" src={gen("vision-whole")} alt="" widths={[480, 800]} sizes="(min-width: 768px) 46vw, 92vw" />
+          <p class="eyebrow">Custom offerings</p>
+          <h2 class="path-title">Four journeys, shaped around you</h2>
+          <p>
+            Our Custom Offerings bring together the right mix of services to address a set of
+            interconnected organizational needs. Rather than following a prescribed path, we shape the
+            journey around your organization. Each journey leaves your organization stronger and better
+            equipped to move forward.
+          </p>
+          <a class="link-arrow" href="#custom-offerings">See the journeys <Icon name="arrow" size={15} /></a>
+        </li>
+        <li class="card path" data-accent="navy" data-reveal>
+          <Image class="path-img" src={gen("vision-puzzle")} alt="" widths={[480, 800]} sizes="(min-width: 768px) 46vw, 92vw" />
+          <p class="eyebrow">Core services</p>
+          <h2 class="path-title">Focused, standalone services</h2>
+          <p>
+            These are scoped, standalone engagements designed to address a specific need: diagnostics,
+            workshops, and embedded advisory roles you can bring in when you need them and combine
+            seamlessly with others.
+          </p>
+          <a class="link-arrow" href="#core-services">See the core services <Icon name="arrow" size={15} /></a>
+        </li>
+      </ul>
     </div>
   </section>
 
-  <div class="services-body">
+  <!-- Custom Offerings -->
+  <section id="custom-offerings" class="section section-linen-dark custom" aria-labelledby="custom-h">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>Custom offerings</p>
+        <h2 id="custom-h" data-reveal>Our journey together</h2>
+        <p class="lead" data-reveal>
+          Our custom offerings bring together a customized mix of services to address a set of
+          interconnected organizational needs. We work alongside you to surface what matters, test
+          what's possible, and shape solutions that fit your organization. We shape the journey around
+          where you are and what you need, combining services as appropriate. Each journey is designed
+          to leave your organization stronger and better equipped to move forward.
+        </p>
+      </div>
+
+      <ol class="journey-grid" data-reveal-stagger="100">
+        {journeys.map((j) => (
+          <li class="card journey-card" data-accent={j.accent} data-reveal>
+            <Image class="journey-img" src={gen(`rail-${j.slug}`)} alt="" widths={[400, 800]} sizes="(min-width: 768px) 44vw, 92vw" />
+            <p class="journey-num" aria-hidden="true">{j.number}</p>
+            <h3>{j.name}</h3>
+            <p class="journey-promise">{j.promise}</p>
+            <p class="journey-question">{`"${j.ceoQuestion}"`}</p>
+            <a class="link-arrow" href={`/how-we-work/${j.slug}/`}>Explore {j.name} <Icon name="arrow" size={15} /></a>
+          </li>
+        ))}
+      </ol>
+
+      <div class="orientation">
+        <div class="orientation-head">
+          <p class="eyebrow" data-reveal>Conceptual orientation</p>
+          <h3 id="orientation-h" class="orientation-title" data-reveal>Which journey is yours?</h3>
+        </div>
+        <div class="table-scroll">
+          <table class="journey-table" aria-labelledby="orientation-h">
+            <thead>
+              <tr>
+                <th scope="col">Journey</th>
+                <th scope="col">The CEO is asking</th>
+                <th scope="col">Sources of friction</th>
+                <th scope="col">Solutions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {journeys.map((j) => (
+                <tr data-accent={j.accent}>
+                  <th scope="row"><a href={`/how-we-work/${j.slug}/`}>{j.name}</a></th>
+                  <td class="td-question" data-label="The CEO is asking">{`"${j.ceoQuestion}"`}</td>
+                  <td data-label="Sources of friction">{j.friction}</td>
+                  <td data-label="Solutions">{j.solutions}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Services -->
+  <section id="core-services" class="section core" aria-labelledby="core-h">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>Core services</p>
+        {/* TODO: confirm with Roz. Placeholder for the retired "Focused interventions" headline. */}
+        <h2 id="core-h" data-reveal>Focused services. Lasting capability.</h2>
+        <p class="lead" data-reveal>
+          These are targeted services with a defined scope and outcome, addressing a specific challenge
+          and designed to combine seamlessly with others.
+        </p>
+      </div>
+    </div>
+
     <div class="container services-layout">
-      <nav class="subnav" aria-label="Service families" data-subnav>
+      <nav class="subnav" aria-label="Core service families" data-subnav>
         <p class="eyebrow subnav-title">Jump to</p>
         <ul>
           {services.map((family) => (
@@ -94,8 +215,12 @@ const schema = [
           >
             <div class="family-head">
               <p class="eyebrow" data-reveal>{family.name}</p>
-              <h2 id={`${family.slug}-h`} data-reveal>{family.motto}</h2>
+              <h3 id={`${family.slug}-h`} class="family-motto" data-reveal>{family.motto}</h3>
               <p class="lead" data-reveal>{family.intro}</p>
+              <p class="deliverable-line" data-reveal>
+                <span class="deliverable-label">Deliverable:</span>
+                <span class="deliverable-value">{family.deliverable}</span>
+              </p>
             </div>
 
             <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger="90">
@@ -103,7 +228,7 @@ const schema = [
                 <li class="card offering" data-reveal>
                   <Image class="offering-bg" src={gen(`svc-${slugify(offering.name)}`)} alt="" widths={[400, 800]} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw" />
                   <span class="offering-scrim" aria-hidden="true"></span>
-                  <h3>{offering.name}</h3>
+                  <h4>{offering.name}</h4>
                   {offering.duration && <p class="duration">{offering.duration}</p>}
                   {offering.description && <p class="offering-desc">{offering.description}</p>}
                   <ul class="tri-list offering-includes">
@@ -112,16 +237,11 @@ const schema = [
                 </li>
               ))}
             </ul>
-
-            <p class="deliverable-line" data-reveal>
-              <span class="eyebrow">Deliverable</span>
-              <span class="deliverable-value">{family.deliverable}</span>
-            </p>
           </section>
         ))}
       </div>
     </div>
-  </div>
+  </section>
 
   <CtaBand
     heading="Which of these sounds like you?"
@@ -144,7 +264,122 @@ const schema = [
     mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
   }
 
-  .services-body { padding-bottom: var(--section-y); }
+  /* Two offering types, side by side */
+  .paths {
+    position: relative;
+    z-index: 1;
+    list-style: none;
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+  }
+  @media (min-width: 768px) { .paths { grid-template-columns: repeat(2, 1fr); } }
+  .path { display: flex; flex-direction: column; gap: 0.85rem; }
+  .path-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+  }
+  .path-title { font-size: var(--step-2); line-height: 1.14; letter-spacing: -0.022em; color: var(--accent-text); }
+  .path .link-arrow { margin-top: auto; padding-top: 0.5rem; }
+
+  .section-head { max-width: 62ch; margin-bottom: clamp(2rem, 4vw, 3rem); display: grid; gap: 0.75rem; }
+  #custom-offerings, #core-services { scroll-margin-top: 6rem; }
+
+  /* Custom offerings: the four journeys */
+  .journey-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+  }
+  @media (min-width: 768px) { .journey-grid { grid-template-columns: repeat(2, 1fr); } }
+  .journey-card { display: flex; flex-direction: column; gap: 0.6rem; border-top: 4px solid var(--accent); }
+  .journey-img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+  }
+  .journey-num {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1;
+    color: var(--accent-text);
+    opacity: 0.45;
+  }
+  .journey-card h3 { color: var(--accent-text); }
+  .journey-promise { font-weight: 500; }
+  .journey-question { font-family: var(--font-display); font-style: italic; font-size: var(--step-1); line-height: 1.3; color: var(--color-navy); }
+  .journey-card .link-arrow { margin-top: auto; padding-top: 0.5rem; }
+
+  .orientation { margin-top: clamp(3rem, 6vw, 5rem); }
+  .orientation-head { max-width: 40ch; margin-bottom: clamp(1.5rem, 3vw, 2.25rem); display: grid; gap: 0.75rem; }
+  .orientation-title { font-size: var(--step-3); line-height: 1.06; letter-spacing: -0.027em; }
+  .table-scroll { overflow-x: auto; }
+  .journey-table { width: 100%; border-collapse: collapse; min-width: 46rem; text-align: left; }
+  .journey-table th, .journey-table td {
+    padding: clamp(0.9rem, 2vw, 1.4rem);
+    vertical-align: top;
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--step--1);
+  }
+  .journey-table thead th {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: var(--color-burgundy);
+    border-bottom: 2px solid var(--color-navy);
+  }
+  .journey-table tbody th[scope="row"] {
+    font-family: var(--font-display);
+    font-weight: 460;
+    font-size: var(--step-1);
+    letter-spacing: -0.008em;
+    color: var(--accent-text);
+    border-left: 4px solid var(--accent);
+    white-space: nowrap;
+  }
+  .journey-table tbody th a { text-decoration: none; }
+  .journey-table tbody th a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .journey-table tbody tr { background: #fff; }
+  .td-question { font-family: var(--font-display); font-style: italic; font-size: var(--step-0); }
+  /* Stacked cards on small screens */
+  @media (max-width: 767px) {
+    .journey-table { min-width: 0; }
+    .journey-table thead { position: absolute; left: -9999px; }
+    .journey-table tr {
+      display: grid;
+      gap: 0.35rem;
+      margin-bottom: var(--grid-gap);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+      padding: 1rem;
+    }
+    .journey-table th, .journey-table td { border-bottom: 0; padding: 0.35rem 0; }
+    .journey-table tbody th[scope="row"] { border-left: 0; }
+    .journey-table td::before {
+      content: attr(data-label);
+      display: block;
+      font-family: var(--font-sans);
+      font-style: normal;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-burgundy);
+      margin-bottom: 0.15rem;
+    }
+  }
+
+  /* Core services */
   .services-layout { display: grid; gap: clamp(2rem, 4vw, 4rem); }
   @media (min-width: 1024px) { .services-layout { grid-template-columns: 3fr 9fr; align-items: start; } }
 
@@ -182,7 +417,7 @@ const schema = [
   .families { display: grid; gap: clamp(3rem, 7vw, 6rem); }
   .family { scroll-margin-top: 10rem; }
   .family-head { max-width: 52ch; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); display: grid; gap: 0.75rem; }
-  .family-head h2 { color: var(--accent-text); }
+  .family-motto { font-size: var(--step-3); line-height: 1.06; letter-spacing: -0.027em; color: var(--accent-text); }
 
   .offering-grid {
     list-style: none;
@@ -226,7 +461,15 @@ const schema = [
     background: linear-gradient(180deg, rgba(20, 35, 58, 0) 0%, rgba(20, 35, 58, 0.3) 30%, rgba(20, 35, 58, 0.86) 58%, rgba(20, 35, 58, 0.95) 100%);
   }
   .offering.card:hover { border-color: rgba(255, 255, 255, 0.35); }
-  .offering h3 { font-size: var(--step-1); line-height: 1.2; margin-bottom: 0.4rem; color: #fff; }
+  .offering h4 {
+    font-family: var(--font-display);
+    font-weight: 460;
+    font-size: var(--step-1);
+    line-height: 1.2;
+    letter-spacing: -0.014em;
+    margin-bottom: 0.4rem;
+    color: #fff;
+  }
   .offering .duration { color: var(--gold-on-dark); }
   .offering .tri-list > li::before { background: var(--gold-on-dark); }
   .duration {
@@ -239,18 +482,25 @@ const schema = [
   .offering-includes { font-size: var(--step--1); }
   .offering-includes > li + li { margin-top: 0.5em; }
 
+  /* Deliverable: one line under the category intro, set as a label rather than a heading. */
   .deliverable-line {
-    margin-top: clamp(1.5rem, 3vw, 2.25rem);
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--rule);
-    display: grid;
-    gap: 0.35rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.6rem;
+    row-gap: 0.2rem;
+    margin-top: 0.25rem;
+    padding-left: 0.9rem;
+    border-left: 3px solid var(--accent);
+    font-size: var(--step-0);
+    line-height: 1.45;
   }
-  .deliverable-value {
-    font-family: var(--font-display);
-    font-size: var(--step-2);
-    line-height: 1.15;
-    color: var(--accent-text);
-    max-width: 24ch;
+  .deliverable-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-burgundy);
   }
+  .deliverable-value { font-weight: 500; color: var(--color-navy); }
 </style>

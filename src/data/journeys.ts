@@ -1,22 +1,21 @@
 // src/data/journeys.ts
 // Source: Mosaic pitch deck (Aug 2026), "A Journey Framework" slides. Copy is verbatim with typos fixed.
-// Phases: the first three are "primary" (top row in the deck), the last two are "supporting" (offset row).
-
-export type JourneyPhase = { name: string; description: string; role: "primary" | "supporting" };
+// Round 1 revisions (Sep 2026): the "How it works" phases were removed at the client's request
+// (they give away the methodology). Each journey page is now Problem, Solution framework, Deliverable.
 
 export type Journey = {
   slug: "clarify" | "build" | "activate" | "reignite";
   number: string;
   name: string;
   accent: "navy" | "slate" | "gold" | "burgundy";
-  promise: string;          // one-line promise used on Home and How We Work
+  promise: string;          // one-line tagline used on Home, Services and the journey hero
   ceoQuestion: string;      // from the orientation table
   friction: string;         // orientation table: sources of friction
   solutions: string;        // orientation table: solutions
   quote: string;            // the italic hero quote on the journey page
   homeBlurb: string;        // rail copy on Home, verbatim from 03_CONTENT/home.html
-  symptoms: string[];       // "Sound familiar?" list
-  phases: JourneyPhase[];
+  symptoms: string[];       // "Sound familiar?" list (the Problem)
+  framework: string;        // Solution framework, 2 to 3 sentences
   deliverable: string;
   metaTitle: string;
   metaDescription: string;
@@ -43,16 +42,11 @@ export const journeys: Journey[] = [
       "We're spending a lot of time coordinating without making clear progress.",
       "Growth has outpaced the way we operate."
     ],
-    phases: [
-      { role: "primary", name: "Organizational Assessment", description: "Evaluate leadership, structure, culture, and operations to identify opportunities for stronger alignment and organizational effectiveness." },
-      { role: "primary", name: "Roadmap Development", description: "Turn insights into a practical roadmap with defined priorities, timelines, and accountability." },
-      { role: "primary", name: "Implementation Toolkit", description: "Develop a practical playbook that defines roles, responsibilities, decision-making, and next steps so your team can carry the work forward." },
-      { role: "supporting", name: "Executive Alignment", description: "Create a shared understanding of the challenges and a unified approach to addressing them." },
-      { role: "supporting", name: "Stakeholder Alignment", description: "Bring together the people who will develop and lead the solutions, building shared understanding, aligned priorities, and a common approach to moving forward." }
-    ],
+    framework:
+      "We assess what's happening across your organization, from strategy and leadership to structure, people, and processes. We connect perspectives and build alignment around what matters most. The result is a practical roadmap and the tools to move forward with clarity and confidence.",
     deliverable: "A shared direction.",
-    metaTitle: "Clarify: Establish Strategic Direction | The Mosaic Collaborative",
-    metaDescription: "When you know you need change but don't know what to do next. Assessment, roadmap and toolkit that deliver a shared direction."
+    metaTitle: "Clarify: Set Strategic Direction | Mosaic Collaborative",
+    metaDescription: "When you know you need change but not what to do next. We build alignment around what matters most and leave you with a practical roadmap."
   },
   {
     slug: "build",
@@ -66,66 +60,53 @@ export const journeys: Journey[] = [
     quote: "We have the strategy, now we need the people, processes and systems to support it.",
     homeBlurb: "Create the leadership, systems, and capabilities needed for success. Design a coherent system. Create the conditions for success.",
     symptoms: [
-      "We're struggling to find and retain the talent we need.",
-      "Our structure has changed, but the way we work together hasn't.",
-      "Our systems and processes haven't kept pace with our growth.",
-      "AI is changing the work, and we need to rethink what skills and tools managers need.",
-      "Teams adopt new processes at different rates.",
-      "We promote strong contributors who need help becoming strong leaders.",
-      "Too much depends on a few key people.",
-      "We merged organizations, but we haven't become one team.",
-      "We're relying on heroic effort instead of reliable systems.",
-      "Managers need support leading change."
+      "We're relying on heroic effort instead of reliable systems, and teams aren't working consistently.",
+      "We're struggling to find and retain the talent we need, and too much depends on a few key people.",
+      "Our structure has changed, but our roles, processes, and ways of working haven't kept pace.",
+      "We're promoting strong contributors into management, but they need support to lead people and change.",
+      "We've merged or reorganized, but we haven't yet figured out how to work as one team.",
+      "Teams are adopting new processes at different rates.",
+      "AI is changing the work, and we need to rethink roles, skills, career paths, and processes.",
+      "We're not clear enough about who owns what, who makes which decisions, or how we measure success."
     ],
-    phases: [
-      { role: "primary", name: "Leadership Structure & Governance", description: "Assess leadership structure, decision-making, roles, and governance to identify opportunities for stronger alignment and accountability." },
-      { role: "primary", name: "Operating Model", description: "Establish clear workflows and operating routines that improve consistency, efficiency, and execution." },
-      { role: "primary", name: "Measurement & Reinforcement", description: "Align performance measures, incentives, recognition, and accountability to reinforce the behaviors and results that support your strategy for the long term." },
-      { role: "supporting", name: "Structure & Role Design", description: "Refine organizational structure to align roles, responsibilities, and teams with your strategic priorities." },
-      { role: "supporting", name: "Talent Strategy & Acquisition", description: "Build a talent strategy to attract, develop, and retain the people who will drive your success." }
-    ],
+    framework:
+      "We assess what you have today against where you want to go, then build what's needed to support sustainable growth: roles and talent, processes, systems, and measures of success. The result is an organization designed to scale with clarity and intention.",
     deliverable: "A stronger foundation.",
-    metaTitle: "Build: Develop the Capacity to Execute | The Mosaic Collaborative",
-    metaDescription: "You have the strategy. Now you need the people, processes and systems to support it. We build a stronger foundation."
+    metaTitle: "Build: Develop Capacity to Execute | Mosaic Collaborative",
+    metaDescription: "You have the strategy. Now you need the people, processes and systems to support it. We build an organization designed to scale with intention."
   },
   {
     slug: "activate",
     number: "03",
     name: "Activate",
     accent: "gold",
-    promise: "Turn strategy into sustained action.",
+    promise: "Turn plans into action.",
     ceoQuestion: "How do we make it happen?",
     friction: "Consistent execution, accountability, and momentum. Put strategy into action and drive execution.",
     solutions: "Embed new ways of working. Make the change real.",
     quote: "We have a plan, but we're struggling to execute.",
     homeBlurb: "Consistent execution, accountability, and momentum. Put strategy into action and drive execution. Embed new ways of working. Make the change real.",
     symptoms: [
-      "Employees understand the vision but aren't changing how they work.",
-      "Decisions stall or get revisited repeatedly.",
+      "Employees understand the vision, but they aren't changing how they work.",
+      "Decisions stall or get revisited repeatedly, slowing progress.",
       "Strategic priorities compete with day-to-day demands.",
       "We're using AI to change how we work, but new practices aren't taking hold.",
-      "Key efforts lose momentum before they're completed.",
-      "We're struggling to turn strategy into measurable results.",
-      "Managers need support leading change.",
-      "Adoption is inconsistent, creating inefficiencies and frustration."
+      "Key initiatives start strong but lose momentum before they're completed.",
+      "Managers need support leading change and helping their teams adopt new ways of working.",
+      "We're struggling to turn strategic goals into results we can see and measure."
     ],
-    phases: [
-      { role: "primary", name: "Change Readiness", description: "Identify who will lead the change, what's standing in the way, and what it will take for the organization to adopt new ways of working." },
-      { role: "primary", name: "Manager Effectiveness", description: "Equip managers with the tools and practices to set clear expectations, coach performance, and reinforce accountability." },
-      { role: "primary", name: "Shared Ownership", description: "Refine and codify the tools, processes, and practices your team uses to confidently sustain and build on the work into the future." },
-      { role: "supporting", name: "Stakeholder Alignment", description: "Bring together the people who need to make change happen, building shared understanding, aligned priorities, and a common approach to moving forward." },
-      { role: "supporting", name: "Guided Application", description: "Support leaders and teams as they translate new processes and expectations into everyday practice." }
-    ],
+    framework:
+      "We identify what's standing in the way of change and work with leaders and managers to build alignment, strengthen ownership, and translate strategy into day-to-day practice. The focus is on the people and practices that make change real and sustain it over time.",
     deliverable: "Sustainable traction.",
-    metaTitle: "Activate: Turn Strategy into Sustained Action | The Mosaic Collaborative",
-    metaDescription: "You have a plan but execution stalls. Change readiness, manager effectiveness and shared ownership that turn strategy into sustainable traction."
+    metaTitle: "Activate: Turn Plans into Action | Mosaic Collaborative",
+    metaDescription: "You have a plan but execution stalls. We work alongside your leaders and managers to turn plans into action and build sustainable traction."
   },
   {
     slug: "reignite",
     number: "04",
     name: "Reignite",
     accent: "burgundy",
-    promise: "Restore trust, engagement, and momentum.",
+    promise: "Restore trust, engagement, and commitment.",
     ceoQuestion: "How do we strengthen our organization?",
     friction: "Trust, cohesion, and organizational health. Restore momentum, engagement, and performance.",
     solutions: "Restore the human side of the organization. Renew trust and connection.",
@@ -142,15 +123,10 @@ export const journeys: Journey[] = [
       "High performers are leaving.",
       "People no longer feel connected to the organization's mission or one another."
     ],
-    phases: [
-      { role: "primary", name: "Organizational Assessment", description: "Assess organizational trust, engagement, leadership, and culture to identify what's eroding momentum and where to focus first." },
-      { role: "primary", name: "Culture & Engagement Strategy", description: "Develop practical strategies that strengthen communication, trust, engagement, and connection to your organization's purpose." },
-      { role: "primary", name: "Internal Capability", description: "Equip your organization with the ownership, tools, and practices to sustain a strong, engaged organization." },
-      { role: "supporting", name: "Stakeholder Alignment", description: "Build shared understanding and commitment among leaders to restore trust, strengthen relationships, and establish a common path forward." },
-      { role: "supporting", name: "Guided Application", description: "Support leaders and teams as they rebuild trust, strengthen collaboration, and establish new ways of working together." }
-    ],
+    framework:
+      "We uncover what's eroding trust and engagement, then reconnect the pieces that shape how people experience work, from leadership and culture to relationships and everyday practices. Together, we create the conditions for people to re-engage, work differently, and thrive.",
     deliverable: "Renewed momentum.",
-    metaTitle: "Reignite: Restore Trust, Engagement and Momentum | The Mosaic Collaborative",
-    metaDescription: "When trust has eroded and high performers are leaving. Assessment, culture and engagement strategy that deliver renewed momentum."
+    metaTitle: "Reignite: Restore Trust & Engagement | Mosaic Collaborative",
+    metaDescription: "When trust has eroded and high performers are leaving. We help restore trust, engagement and commitment so your people re-engage and thrive."
   }
 ];

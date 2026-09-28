@@ -6,13 +6,17 @@ export const site = {
   strapline: "Strategy. Insight. Impact.",
   descriptor: "Consulting for meaningful progress.",
   url: "https://mosaiccollaborative.com",
-  email: "TODO@mosaiccollaborative.com", // TODO confirm with Roz
+  // TODO: new public address from Roz (leaning letstalk@, hello@ or contact@ also floated).
+  // Do NOT use info@: it still receives mail for the previous Mosaic organization.
+  // While this starts with "TODO" the site shows no address and routes people to the contact form.
+  email: "TODO@mosaiccollaborative.com",
   location: "New York metro area, working nationally", // TODO confirm
   linkedinCompany: "", // TODO
   nav: [
     { label: "About", href: "/about/" },
-    { label: "How We Work", href: "/how-we-work/" },
-    { label: "Services", href: "/services/" },
+    // How We Work was dropped in round 1. The journey pages keep their /how-we-work/ URLs
+    // and count as part of Services for the active nav state.
+    { label: "Services", href: "/services/", match: ["/how-we-work/"] },
     { label: "Insights", href: "/insights/" },
     { label: "Contact", href: "/contact/", cta: true }
   ],

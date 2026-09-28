@@ -7,7 +7,10 @@ import lockup from "../assets/logo/mosaic_logo_lockup.png";
 import mark from "../assets/logo/mosaic_mark_M_only.png";
 
 const path = Astro.url.pathname;
-const isCurrent = (href: string) => path === href || (href !== "/" && path.startsWith(href));
+const isCurrent = (item: (typeof site.nav)[number]) =>
+  [item.href, ...((item as { match?: string[] }).match ?? [])].some(
+    (href) => path === href || (href !== "/" && path.startsWith(href))
+  );
 ---
 
 <header class="site-header" data-header>
@@ -24,7 +27,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
             <a
               href={item.href}
               class={item.cta ? "btn btn-primary nav-cta" : "nav-link"}
-              aria-current={isCurrent(item.href) ? "page" : undefined}
+              aria-current={isCurrent(item) ? "page" : undefined}
             >{item.label.toUpperCase()}</a>
           </li>
         ))}
@@ -48,7 +51,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
       <ul>
         {site.nav.map((item) => (
           <li>
-            <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label.toUpperCase()}</a>
+            <a href={item.href} aria-current={isCurrent(item) ? "page" : undefined}>{item.label.toUpperCase()}</a>
           </li>
         ))}
       </ul>

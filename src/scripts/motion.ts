@@ -182,16 +182,61 @@ function initVideos() {
     return;
   }
 
+  const visible = new WeakSet<HTMLVideoElement>();
+  const holding = new WeakSet<HTMLVideoElement>();
+  const timers: number[] = [];
+
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       const v = entry.target as HTMLVideoElement;
-      if (entry.isIntersecting) void v.play().catch(() => {});
-      else v.pause();
+      if (entry.isIntersecting) {
+        visible.add(v);
+        if (!holding.has(v)) void v.play().catch(() => {});
+      } else {
+        visible.delete(v);
+        v.pause();
+      }
     });
   }, { threshold: 0.05 });
 
+  // data-hold="seconds": play once, rest on the final (assembled) frame, fade out, restart.
+  // data-rate slows playback so the assembly itself reads calmer. Replaces a hard loop cut.
+  videos.forEach((v) => {
+    const hold = Number(v.dataset.hold);
+    if (!hold) return;
+    const rate = Number(v.dataset.rate) || 1;
+    v.loop = false;
+    const applyRate = () => {
+      v.defaultPlaybackRate = rate;
+      v.playbackRate = rate;
+    };
+    applyRate();
+    v.addEventListener("loadedmetadata", applyRate);
+
+    const onEnded = () => {
+      holding.add(v);
+      timers.push(window.setTimeout(() => {
+        v.classList.add("is-resetting");
+        timers.push(window.setTimeout(() => {
+          v.currentTime = 0;
+          holding.delete(v);
+          if (visible.has(v)) void v.play().catch(() => {});
+          v.classList.remove("is-resetting");
+        }, 700));
+      }, hold * 1000));
+    };
+    v.addEventListener("ended", onEnded);
+    cleanups.push(() => {
+      v.removeEventListener("ended", onEnded);
+      v.removeEventListener("loadedmetadata", applyRate);
+    });
+  });
+
   videos.forEach((v) => io.observe(v));
-  cleanups.push(() => io.disconnect());
+  cleanups.push(() => {
+    io.disconnect();
+    timers.forEach((t) => window.clearTimeout(t));
+  });
 }
 
 /* ---------------------------------------------------------------- accordion */

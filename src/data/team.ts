@@ -51,9 +51,9 @@ export const team: Member[] = [
     // amalia_egri_freedman.png was actually a second photograph of Debra.
     photo: "amalia-egri-freedman.jpg",
     bullets: [
-      "Brings a systems perspective to focus attention where it can have the greatest impact.",
+      "Brings a systems perspective to connect people, processes, and priorities for greater organizational impact.",
       "Builds leadership capacity to navigate change with clarity, trust, and shared ownership.",
-      "Turns strategy into action through clear priorities, strong structures, and accountability."
+      "Turns strategy into action by creating clear priorities, strong structures, and accountability."
     ],
     linkedin: "" // TODO: confirm with Roz
   }

@@ -13,7 +13,8 @@ const headingId = "cta-h";
 ---
 
 <section class="section section-dark cta-band" aria-labelledby={headingId}>
-  {/* Slow drift of the cta-dark still (ffmpeg, 24s seamless loop). Reduced motion keeps the poster. */}
+  {/* Procedural triangles, each drifting and rotating on its own (assets/tools/cta_triangles.py,
+      36s seamless loop). Reduced motion keeps the poster. */}
   <div class="cta-media" aria-hidden="true">
     <video
       data-autoplay
@@ -21,12 +22,12 @@ const headingId = "cta-h";
       playsinline
       loop
       preload="metadata"
-      poster="/media/video/mosaic_cta_drift_900p-poster.jpg"
+      poster="/media/video/mosaic_cta_triangles_900p-poster.jpg"
       width="1600"
       height="904"
     >
-      <source src="/media/video/mosaic_cta_drift_900p.webm" type="video/webm" />
-      <source src="/media/video/mosaic_cta_drift_900p.mp4" type="video/mp4" />
+      <source src="/media/video/mosaic_cta_triangles_900p.webm" type="video/webm" />
+      <source src="/media/video/mosaic_cta_triangles_900p.mp4" type="video/mp4" />
     </video>
     <div class="cta-scrim"></div>
   </div>

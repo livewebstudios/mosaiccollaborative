@@ -61,7 +61,12 @@ const hasEmail = !site.email.startsWith("TODO");
       <p class="small">&copy; {year} {site.name}. All rights reserved.</p>
       <ul class="footer-legal-links">
         <li><a href="/privacy/">PRIVACY</a></li>
-        <li><a href={site.credit.href} rel="noopener noreferrer" target="_blank">{site.credit.label}</a></li>
+        <li><span class="footer-credit">Powered by <a href="https://livewebstudios.com" target="_blank" rel="noopener">Live Web Studios</a></span></li>
+        <li>
+          <a class="footer-badge" href="https://livewebstudios.com" target="_blank" rel="noopener">
+            <img src="/images/verifiedsecured.png" alt="Verified and Secured by Live Web Studios" width="150" height="37" loading="lazy" />
+          </a>
+        </li>
       </ul>
     </div>
   </div>
@@ -134,7 +139,7 @@ const hasEmail = !site.email.startsWith("TODO");
     gap: 1rem;
   }
   .footer-legal p { opacity: 0.75; }
-  .footer-legal-links { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+  .footer-legal-links { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
   .footer-legal-links a {
     font-size: var(--step--1);
     letter-spacing: 0.06em;
@@ -142,6 +147,26 @@ const hasEmail = !site.email.startsWith("TODO");
     border-bottom: 1px solid transparent;
   }
   .footer-legal-links a:hover { border-bottom-color: var(--color-gold); }
+
+  .footer-credit {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .footer-legal-links .footer-credit a {
+    color: inherit;
+    letter-spacing: 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    border-bottom: 0;
+  }
+  .footer-legal-links .footer-credit a:hover,
+  .footer-legal-links .footer-credit a:focus-visible { color: #fff; }
+  .footer-legal-links .footer-badge { display: block; border-bottom: 0; }
+  /* Native size so the mark stays crisp. */
+  .footer-badge img {
+    width: 150px;
+    height: 37px;
+  }
 
   .footer-field {
     position: absolute;

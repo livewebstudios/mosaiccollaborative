@@ -66,7 +66,8 @@ const contactLabel = hasEmail ? site.email : "our contact form";
 
 <style>
   .legal { padding-top: calc(var(--section-y) + 8.5rem); }
-  .legal-inner { max-width: 52rem; margin-inline: 0; }
+  /* Centered in the 1200 track like the header; only the text measure is capped. */
+  .legal-inner > * { max-width: 52rem; }
   .legal-inner h1 { margin-block: 0.5rem 1rem; }
   .legal-body { margin-top: clamp(2rem, 4vw, 3rem); max-width: 62ch; }
   .legal-body h2 {

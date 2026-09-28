@@ -179,7 +179,7 @@ const schema = [
     background: #fff;
     border: 1px solid var(--rule);
     border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
-    padding: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(var(--space-24), 3vw, var(--space-40));
   }
   .contact-form { display: grid; gap: 1.5rem; }
   .field-row { display: grid; gap: 1.5rem; }
@@ -194,11 +194,11 @@ const schema = [
     grid-template-columns: auto 1fr;
     gap: 0.75rem;
     align-items: start;
-    padding: 0.75rem 0.9rem;
+    padding: var(--space-12) var(--space-16);
     border: 1px solid var(--rule);
-    border-radius: 10px 0 10px 0;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: border-color 0.3s var(--ease-out-expo), background-color 0.3s var(--ease-out-expo);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
   }
   .choice:hover { background: var(--color-gray); }
   .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-tint); }

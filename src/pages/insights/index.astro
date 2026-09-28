@@ -105,7 +105,9 @@ const schema = [
 
 <style>
   .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
-  .page-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; display: grid; gap: 1rem; }
+  .page-hero-inner { position: relative; z-index: 1; display: grid; gap: 1rem; }
+  /* Centered in the 1200 track like the header; only the text measure is capped. */
+  .page-hero-inner > * { max-width: 58rem; }
   .hero-field {
     position: absolute;
     right: -8%;
@@ -130,9 +132,9 @@ const schema = [
     font-size: var(--step--1);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 0.4em 0.9em;
+    padding: var(--space-4) var(--space-12);
     border: 1px solid var(--rule);
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
   }
 
   .post-grid {

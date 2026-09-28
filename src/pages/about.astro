@@ -185,7 +185,9 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
 
 <style>
   .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
-  .page-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; display: grid; gap: 1rem; }
+  .page-hero-inner { position: relative; z-index: 1; display: grid; gap: 1rem; }
+  /* Centered in the 1200 track like the header; only the text measure is capped. */
+  .page-hero-inner > * { max-width: 58rem; }
   .hero-field {
     position: absolute;
     right: -8%;

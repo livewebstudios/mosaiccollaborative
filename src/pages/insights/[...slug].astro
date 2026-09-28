@@ -82,7 +82,8 @@ const schema = [
     background: var(--accent-tint);
     padding-top: calc(var(--section-y) + 8.5rem);
   }
-  .post-inner { max-width: 52rem; margin-inline: 0; }
+  /* Centered in the 1200 track like the header; only the text measure is capped. */
+  .post-inner > * { max-width: 52rem; }
   .post-inner h1 { margin-bottom: 1rem; }
   .breadcrumb ol {
     list-style: none;

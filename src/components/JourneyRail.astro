@@ -61,22 +61,23 @@ import MosaicField from "./MosaicField.astro";
     border: 1px solid var(--rule);
     border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
     border-top: 4px solid var(--accent);
-    padding: clamp(1.75rem, 3.5vw, 3rem);
+    padding: clamp(var(--space-24), 2.8vw, var(--space-40));
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--space-16);
   }
 
   .rail-number {
     font-family: var(--font-display);
     font-size: var(--step-5);
     line-height: 0.85;
+    letter-spacing: -0.04em;
     color: var(--accent-text);
     opacity: 0.3;
     margin: 0;
   }
-  .rail-body { position: relative; z-index: 1; display: grid; gap: 0.75rem; }
+  .rail-body { position: relative; z-index: 1; display: grid; gap: var(--space-12); }
   .rail-body h3 { color: var(--accent-text); }
   .rail-promise { font-weight: 500; }
   .rail-panel .quote { color: var(--color-navy); max-width: 22ch; }

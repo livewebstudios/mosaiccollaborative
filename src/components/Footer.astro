@@ -13,6 +13,7 @@ const hasEmail = !site.email.startsWith("TODO");
     <div class="footer-brand">
       <p class="display footer-tagline">{site.tagline}</p>
       <p class="eyebrow">{site.strapline}</p>
+      <p class="footer-descriptor">{site.descriptor}</p>
     </div>
 
     <nav class="footer-col" aria-label="Footer">
@@ -73,14 +74,14 @@ const hasEmail = !site.email.startsWith("TODO");
 <style>
   .site-footer {
     position: relative;
-    padding-block: var(--section-y) 2.5rem;
+    padding-block: var(--space-64) var(--space-40);
     overflow: hidden;
   }
   .footer-inner {
     position: relative;
     z-index: 1;
     display: grid;
-    gap: clamp(2rem, 4vw, 3rem);
+    gap: var(--space-40);
     grid-template-columns: 1fr;
   }
   @media (min-width: 640px) { .footer-inner { grid-template-columns: repeat(2, 1fr); } }
@@ -89,26 +90,38 @@ const hasEmail = !site.email.startsWith("TODO");
   .footer-tagline {
     font-size: var(--step-2);
     max-width: 16ch;
+    letter-spacing: -0.022em;
     color: var(--color-linen);
     margin-bottom: 1rem;
   }
 
-  .footer-col ul { list-style: none; margin: 1rem 0 0; padding: 0; }
-  .footer-col li + li { margin-top: 0.6rem; }
+  .footer-descriptor {
+    margin-top: var(--space-8);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-linen);
+    opacity: 0.8;
+  }
+
+  .footer-col ul { list-style: none; margin: var(--space-16) 0 0; padding: 0; }
+  .footer-col li + li { margin-top: var(--space-12); }
   .footer-col a {
-    font-size: var(--step--1);
+    font-size: 0.875rem;
     letter-spacing: 0.06em;
     text-decoration: none;
     color: var(--color-linen);
+    opacity: 0.75;
     border-bottom: 1px solid transparent;
-    transition: border-color 0.3s var(--ease-out-expo);
+    transition: border-color 0.2s ease, opacity 0.2s ease;
   }
-  .footer-col a:hover { border-bottom-color: var(--color-gold); }
+  .footer-col a:hover, .footer-col a:focus-visible { opacity: 1; border-bottom-color: var(--color-gold); }
   .footer-linkedin { display: inline-flex; align-items: center; gap: 0.5em; }
-  .footer-location { font-size: var(--step--1); opacity: 0.75; max-width: 22ch; }
+  .footer-location { font-size: 0.875rem; opacity: 0.75; max-width: 22ch; }
 
   .footer-rule {
-    margin-block: clamp(2.5rem, 5vw, 4rem) 1.5rem;
+    margin-block: var(--space-64) var(--space-24);
     border-top: 1px solid var(--color-gold);
   }
   .footer-legal {

@@ -199,7 +199,9 @@ const schema = [
     pointer-events: none;
     mask-image: radial-gradient(ellipse at 62% 48%, #000 26%, transparent 72%);
   }
-  .journey-hero-inner { position: relative; z-index: 1; max-width: 58rem; margin-inline: 0; }
+  .journey-hero-inner { position: relative; z-index: 1; }
+  /* Centered in the 1200 track like the header; only the text measure is capped. */
+  .journey-hero-inner > * { max-width: 58rem; }
 
   .breadcrumb ol {
     list-style: none;
@@ -275,8 +277,8 @@ const schema = [
   .deliverable-text {
     font-family: var(--font-display);
     font-size: var(--step-4);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    line-height: 1;
+    letter-spacing: -0.028em;
     color: var(--accent-text);
     max-width: 18ch;
   }

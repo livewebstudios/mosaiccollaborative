@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import { site } from "../data/site";
 import Icon from "./Icon.astro";
 import MosaicField from "./MosaicField.astro";
-import lockup from "../assets/logo/mosaic_logo_full_lockup.png";
+import lockup from "../assets/logo/mosaic_logo_lockup.png";
 import mark from "../assets/logo/mosaic_mark_M_only.png";
 
 const path = Astro.url.pathname;
@@ -13,7 +13,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
 <header class="site-header" data-header>
   <div class="container header-inner">
     <a class="brand" href="/" aria-label={`${site.name}, home`}>
-      <Image class="brand-lockup" src={lockup} alt={site.name} widths={[230, 460]} sizes="230px" loading="eager" />
+      <Image class="brand-lockup" src={lockup} alt={site.name} widths={[120, 240]} sizes="120px" loading="eager" />
       <Image class="brand-mark" src={mark} alt="" widths={[48, 96]} sizes="48px" loading="eager" />
     </a>
 
@@ -77,11 +77,14 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     z-index: 100;
     background: transparent;
     border-bottom: 1px solid transparent;
-    transition: transform 0.3s var(--ease-out-expo), background-color 0.3s var(--ease-out-expo),
-      border-color 0.3s var(--ease-out-expo);
+    transition: transform 0.3s var(--ease-out-expo), background-color 0.3s ease,
+      border-color 0.3s ease;
   }
+  /* Translucent linen with a backdrop blur once content scrolls underneath. */
   .site-header[data-stuck] {
-    background: var(--color-linen);
+    background: color-mix(in oklab, var(--color-linen) 78%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     border-bottom-color: var(--rule);
   }
   .site-header[data-hide-header] { transform: translateY(-100%); }
@@ -90,12 +93,14 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
-    padding-block: clamp(0.75rem, 1.5vw, 1.25rem);
+    gap: var(--space-24);
+    min-height: 64px;
+    padding-block: var(--space-12);
   }
+  .site-header[data-stuck] .header-inner { padding-block: var(--space-8); }
 
   .brand { display: block; flex: none; }
-  .brand-lockup { width: auto; height: 110px; display: none; }
+  .brand-lockup { width: auto; height: 96px; display: none; }
   .brand-mark { width: auto; height: 44px; }
   @media (min-width: 1024px) {
     .brand-lockup { display: block; }
@@ -109,7 +114,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
   .nav-desktop ul {
     display: flex;
     align-items: center;
-    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    gap: var(--space-32);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -121,11 +126,17 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     text-decoration: none;
     color: var(--color-navy);
     padding-block: 0.35em;
-    border-bottom: 1.5px solid transparent;
-    transition: border-color 0.3s var(--ease-out-expo);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
   }
   .nav-link:hover, .nav-link[aria-current="page"] { border-bottom-color: var(--color-burgundy); }
-  .nav-cta { font-size: var(--step--1); letter-spacing: 0.1em; padding: 0.75em 1.4em; }
+  .nav-cta {
+    font-size: var(--step--1);
+    letter-spacing: 0.1em;
+    min-height: 40px;
+    padding: var(--space-8) var(--space-16);
+    border-radius: var(--radius-sm);
+  }
 
   .nav-toggle {
     display: inline-grid;
@@ -133,8 +144,8 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     width: 44px;
     height: 44px;
     background: none;
-    border: 1.5px solid var(--rule);
-    border-radius: 999px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
     color: var(--color-navy);
     cursor: pointer;
   }
@@ -161,6 +172,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
   .mobile-menu a {
     font-family: var(--font-display);
     font-size: var(--step-3);
+    letter-spacing: -0.027em;
     text-decoration: none;
     color: var(--color-linen);
     display: inline-block;

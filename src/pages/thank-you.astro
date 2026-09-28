@@ -36,7 +36,9 @@ const description = "Your message has been received. We reply within two busines
     align-items: center;
     padding-top: calc(var(--section-y) + 8.5rem);
   }
-  .slim-inner { position: relative; z-index: 1; max-width: 46rem; margin-inline: 0; display: grid; gap: 1.25rem; }
+  .slim-inner { position: relative; z-index: 1; display: grid; gap: 1.25rem; }
+  /* Centered in the 1200 track like the header; only the text measure is capped. */
+  .slim-inner > * { max-width: 46rem; }
   .slim-field {
     position: absolute;
     right: -8%;

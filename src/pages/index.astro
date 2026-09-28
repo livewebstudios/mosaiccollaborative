@@ -83,7 +83,10 @@ const schema = {
     </div>
 
     <div class="container hero-inner">
-      <p class="eyebrow" data-reveal>{site.name}</p>
+      <p class="hero-strap" data-reveal>
+        <span class="hero-strap-main">{site.strapline}</span>
+        <span class="hero-strap-sub">{site.descriptor}</span>
+      </p>
       <h1 data-reveal style="--reveal-delay:120ms">
         We align the <em class="emphasis">pieces</em>.<br />Your business thrives.
       </h1>
@@ -279,9 +282,35 @@ const schema = {
     background: linear-gradient(180deg, rgba(250, 240, 224, 0.82), rgba(250, 240, 224, 0));
   }
 
-  /* Align to the container gutter rather than centering in the 1440 track. */
-  .hero-inner { max-width: 60rem; margin-inline: 0; }
-  .hero-inner h1 { margin-block: 0.6rem 1.5rem; }
+  /* Centered in the 1200 track like the header; only the text measure is capped. */
+  .hero-inner > * { max-width: 60rem; }
+  .hero-inner h1 { margin-block: var(--space-24); }
+
+  /* The two lines lifted out of the logo lockup. Ruled like the original lockup. */
+  .hero-strap { display: grid; gap: var(--space-8); margin: 0; }
+  .hero-strap-main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1.0625rem);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-burgundy);
+  }
+  .hero-strap-main::after {
+    content: "";
+    width: var(--space-40);
+    height: 1px;
+    background: currentColor;
+  }
+  .hero-strap-sub {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-navy);
+  }
   .hero-inner h1 em { font-style: normal; }
   .hero-actions {
     display: flex;
@@ -293,7 +322,7 @@ const schema = {
 
   .scroll-cue {
     position: absolute;
-    left: var(--gutter);
+    left: max(var(--gutter), calc((100% - var(--content-max)) / 2));
     bottom: 2rem;
     display: flex;
     flex-direction: column;

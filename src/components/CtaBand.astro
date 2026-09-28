@@ -1,11 +1,13 @@
 ---
+import { Image } from "astro:assets";
 import { site } from "../data/site";
+import { gen } from "../lib/gen";
 import Icon from "./Icon.astro";
 
 interface Props {
   heading: string;
   body?: string;
-  /** Full-bleed dark video band, used on Home. Otherwise a flat navy band. */
+  /** Full-bleed dark video band, used on Home. Otherwise a dark mosaic photo band. */
   video?: boolean;
 }
 const { heading, body, video = false } = Astro.props;
@@ -14,7 +16,13 @@ const hasEmail = !site.email.startsWith("TODO");
 const headingId = "cta-h";
 ---
 
-<section class={`section section-dark cta-band ${video ? "cta-band-video" : ""}`} aria-labelledby={headingId}>
+<section class={`section section-dark cta-band ${video ? "cta-band-video" : "cta-band-photo"}`} aria-labelledby={headingId}>
+  {!video && (
+    <div class="cta-media" aria-hidden="true">
+      <Image src={gen("cta-dark")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
+      <div class="cta-scrim"></div>
+    </div>
+  )}
   {video && (
     <div class="cta-media" aria-hidden="true">
       <video
@@ -61,7 +69,11 @@ const headingId = "cta-h";
   @media (max-width: 640px) { .cta-band-video { clip-path: none; } }
 
   .cta-media { position: absolute; inset: 0; z-index: -1; }
-  .cta-media video { width: 100%; height: 100%; object-fit: cover; }
+  .cta-media video,
+  .cta-media img { width: 100%; height: 100%; object-fit: cover; }
+  .cta-band-photo .cta-scrim {
+    background: radial-gradient(ellipse at 50% 50%, rgba(20, 35, 58, 0.72) 25%, rgba(20, 35, 58, 0.4) 80%);
+  }
   .cta-scrim { position: absolute; inset: 0; background: var(--scrim-dark); }
 
   .cta-inner { text-align: center; display: grid; justify-items: center; gap: var(--space-20); }

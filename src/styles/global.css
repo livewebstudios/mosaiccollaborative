@@ -203,6 +203,21 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
 .section-dark .eyebrow { color: var(--gold-on-dark); }
 
 .section-gray { background: var(--color-gray); }
+
+/* Full-bleed photo behind a light section, washed so text and cards stay readable. */
+.has-bg { overflow: hidden; isolation: isolate; }
+.has-bg > .container { position: relative; z-index: 1; }
+.section-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.section-bg img { width: 100%; height: 100%; object-fit: cover; }
+.section-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(240, 242, 245, 0.9) 0%, rgba(240, 242, 245, 0.72) 45%, rgba(240, 242, 245, 0.35) 100%);
+}
+@media (max-width: 1023px) {
+  .section-bg::after { background: rgba(240, 242, 245, 0.8); }
+}
 .section-linen-dark { background: var(--color-linen-dark); }
 
 .measure { max-width: 62ch; }
@@ -596,11 +611,12 @@ html.motion-ok .tile-drift [data-tile] {
 }
 
 /* Beliefs: the card nearest viewport center reads as active */
-html.motion-ok [data-beliefs] .belief {
+/* Only the words fade, so the white card stays solid over a photo background. */
+html.motion-ok [data-beliefs] .belief > * {
   opacity: 0.4;
   transition: opacity 0.5s var(--ease-out-expo);
 }
-html.motion-ok [data-beliefs] .belief.is-active { opacity: 1; }
+html.motion-ok [data-beliefs] .belief.is-active > * { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  [data-beliefs] .belief { opacity: 1 !important; }
+  [data-beliefs] .belief > * { opacity: 1 !important; }
 }

@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import CtaBand from "../components/CtaBand.astro";
 import JourneyRail from "../components/JourneyRail.astro";
@@ -7,18 +8,19 @@ import Icon from "../components/Icon.astro";
 import { site } from "../data/site";
 import { services } from "../data/services";
 import { team } from "../data/team";
+import { gen } from "../lib/gen";
 
 const title = "The Mosaic Collaborative: Strategy & Leadership Consulting";
 const description =
   "Management consulting for small and mid-sized companies at critical inflection points. We align leadership, culture, operations and structure.";
 
 const inflectionPoints = [
-  { name: "Rapid growth", note: "Growth has outpaced the way you operate." },
-  { name: "Mergers & acquisitions", note: "Two organizations, not yet one team." },
-  { name: "Leadership transitions", note: "New leaders, new expectations." },
-  { name: "Restructuring", note: "The structure changed. The way people work together did not." },
-  { name: "Succession planning", note: "Too much depends on a few key people." },
-  { name: "Stalled performance", note: "Strategy is not turning into results." },
+  { name: "Rapid growth", note: "Growth has outpaced the way you operate.", img: "serve-rapid-growth" },
+  { name: "Mergers & acquisitions", note: "Two organizations, not yet one team.", img: "serve-mergers" },
+  { name: "Leadership transitions", note: "New leaders, new expectations.", img: "serve-leadership-transitions" },
+  { name: "Restructuring", note: "The structure changed. The way people work together did not.", img: "serve-restructuring" },
+  { name: "Succession planning", note: "Too much depends on a few key people.", img: "serve-succession" },
+  { name: "Stalled performance", note: "Strategy is not turning into results.", img: "serve-stalled" },
 ];
 
 const beliefs = [
@@ -114,16 +116,22 @@ const schema = {
     <p class="eyebrow vertical-label" aria-hidden="true">The Vision</p>
     <div class="container vision-inner">
       <h2 id="vision-h" class="sr-only">What we do</h2>
-      <p class="text-large" data-reveal>
-        We work with small and mid-sized companies facing challenges that don't have obvious answers.
-        AI is reshaping the workforce. Growth has stalled, or is outpacing current systems. Leaders
-        aren't aligned. Good people are leaving. Strategy isn't translating into action.
-      </p>
-      <p class="text-large" data-reveal style="--reveal-delay:120ms">
-        We've led organizations ourselves, so we know these challenges rarely have a single cause. We
-        start by understanding your organization, bringing together different perspectives to help you
-        see the whole picture, make confident decisions, and move forward.
-      </p>
+      <div class="vision-row">
+        <p class="text-large" data-reveal>
+          We work with small and mid-sized companies facing challenges that don't have obvious answers.
+          AI is reshaping the workforce. Growth has stalled, or is outpacing current systems. Leaders
+          aren't aligned. Good people are leaving. Strategy isn't translating into action.
+        </p>
+        <Image class="vision-img" src={gen("vision-puzzle")} alt="" widths={[480, 800, 1200]} sizes="(min-width: 1024px) 40vw, 92vw" data-reveal />
+      </div>
+      <div class="vision-row vision-row-flip">
+        <p class="text-large" data-reveal>
+          We've led organizations ourselves, so we know these challenges rarely have a single cause. We
+          start by understanding your organization, bringing together different perspectives to help you
+          see the whole picture, make confident decisions, and move forward.
+        </p>
+        <Image class="vision-img" src={gen("vision-whole")} alt="" widths={[480, 800, 1200]} sizes="(min-width: 1024px) 40vw, 92vw" data-reveal />
+      </div>
     </div>
   </section>
 
@@ -147,10 +155,12 @@ const schema = {
       <ul class="stat-grid" data-reveal-stagger="90">
         {inflectionPoints.map((point, i) => (
           <li
-            class="stat-tile"
+            class="stat-tile stat-tile-photo"
             data-accent={["navy", "slate", "gold", "burgundy"][i % 4]}
             data-reveal
           >
+            <Image class="stat-bg" src={gen(point.img)} alt="" widths={[400, 700]} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 46vw, 92vw" />
+            <span class="stat-scrim" aria-hidden="true"></span>
             <p class="stat-name">{point.name}</p>
             <p class="small">{point.note}</p>
           </li>
@@ -160,7 +170,10 @@ const schema = {
   </section>
 
   <!-- 5. What we believe -->
-  <section class="section section-gray beliefs" aria-labelledby="beliefs-h">
+  <section class="section section-gray beliefs has-bg" aria-labelledby="beliefs-h">
+    <div class="section-bg" aria-hidden="true">
+      <Image src={gen("foundation")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
+    </div>
     <div class="container beliefs-inner">
       <div class="beliefs-sticky">
         <p class="eyebrow" data-reveal>Our foundation</p>
@@ -189,6 +202,7 @@ const schema = {
           <li class="card" data-accent={accents[family.accent]} data-reveal>
             <h3>{family.name}</h3>
             <p class="offering-motto">{family.motto}</p>
+            <Image class="card-img" src={gen(`offer-${family.slug}`)} alt="" widths={[320, 640]} sizes="(min-width: 1280px) 22vw, (min-width: 640px) 44vw, 90vw" />
             <a class="link-arrow" href={`/services/#${family.slug}`}>
               Explore <Icon name="arrow" size={15} />
             </a>
@@ -284,6 +298,28 @@ const schema = {
 
   /* Centered in the 1200 track like the header; only the text measure is capped. */
   .hero-inner > * { max-width: 60rem; }
+
+  /* Linen glow so the type reads over the moving tiles. */
+  .hero-inner { position: relative; }
+  .hero-inner::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: -6%;
+    top: -18%;
+    width: min(64rem, 100%);
+    height: 136%;
+    background: radial-gradient(ellipse at 35% 50%, rgba(250, 240, 224, 0.9) 20%, rgba(250, 240, 224, 0) 70%);
+    pointer-events: none;
+  }
+  .hero-inner h1,
+  .hero-inner .lead,
+  .hero-strap span {
+    text-shadow:
+      0 0 12px rgba(250, 240, 224, 0.95),
+      0 0 28px rgba(250, 240, 224, 0.9),
+      0 0 56px rgba(250, 240, 224, 0.75);
+  }
   .hero-inner h1 { margin-block: var(--space-24); }
 
   /* The two lines lifted out of the logo lockup. Ruled like the original lockup. */
@@ -337,7 +373,21 @@ const schema = {
 
   /* Vision */
   .vision-inner { max-width: 72rem; margin-inline: auto; display: grid; gap: clamp(2rem, 4vw, 3.5rem); }
-  .vision-inner .text-large { max-width: 17em; }
+  .vision-inner { gap: clamp(3rem, 7vw, 6rem); }
+  .vision-row { display: grid; gap: var(--space-32); align-items: center; }
+  .vision-row .text-large { font-size: var(--step-2); line-height: 1.3; letter-spacing: -0.018em; max-width: 30ch; }
+  .vision-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+  }
+  @media (min-width: 900px) {
+    .vision-row { grid-template-columns: 6fr 5fr; gap: clamp(2.5rem, 5vw, 5rem); }
+    .vision-row-flip > .vision-img { order: -1; }
+    .vision-row-flip { grid-template-columns: 5fr 6fr; }
+  }
   @media (min-width: 1280px) { .vision-inner { padding-left: 4rem; } }
 
   /* Who we serve */
@@ -356,6 +406,28 @@ const schema = {
   }
   @media (min-width: 640px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
   .stat-tile p { margin: 0; }
+
+  /* Photo tiles: image fills the tile, a navy scrim rises from the bottom where the words sit. */
+  .stat-tile-photo { min-height: clamp(14rem, 22vw, 17rem); background: var(--color-navy); }
+  .stat-tile-photo .stat-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+  .stat-tile-photo:hover .stat-bg { transform: scale(1.04); }
+  .stat-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(20, 35, 58, 0) 20%, rgba(20, 35, 58, 0.55) 52%, rgba(20, 35, 58, 0.92) 100%);
+  }
+  .stat-tile-photo::before { display: none; }
+  .stat-tile-photo .stat-name,
+  .stat-tile-photo .small { color: #fff; }
   .stat-tile .small { margin-top: 0.5rem; max-width: 26ch; }
 
   /* Beliefs */
@@ -378,8 +450,18 @@ const schema = {
   }
   @media (min-width: 640px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1280px) { .card-grid { grid-template-columns: repeat(4, 1fr); } }
+  .card-grid .card { display: flex; flex-direction: column; }
   .card-grid h3 { font-size: var(--step-2); margin-bottom: 0.5rem; }
-  .offering-motto { color: var(--accent-text); font-weight: 500; margin-bottom: 1.5rem; }
+  .offering-motto { color: var(--accent-text); font-weight: 500; margin-bottom: var(--space-20); }
+  .card-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-top: auto;
+    margin-bottom: var(--space-20);
+  }
 
   /* Founders */
   .founders { position: relative; overflow: hidden; }

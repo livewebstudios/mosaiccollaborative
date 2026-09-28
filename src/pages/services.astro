@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
+import { gen, slugify } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import MosaicField from "../components/MosaicField.astro";
 import Icon from "../components/Icon.astro";
@@ -99,6 +101,8 @@ const schema = [
             <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger="90">
               {family.offerings.map((offering) => (
                 <li class="card offering" data-reveal>
+                  <Image class="offering-bg" src={gen(`svc-${slugify(offering.name)}`)} alt="" widths={[400, 800]} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw" />
+                  <span class="offering-scrim" aria-hidden="true"></span>
                   <h3>{offering.name}</h3>
                   {offering.duration && <p class="duration">{offering.duration}</p>}
                   {offering.description && <p class="offering-desc">{offering.description}</p>}
@@ -193,7 +197,38 @@ const schema = [
      than three across with one stranded underneath. */
   @media (min-width: 1024px) { .offering-grid[data-count="3"] { grid-template-columns: repeat(3, 1fr); } }
 
-  .offering h3 { font-size: var(--step-1); line-height: 1.2; margin-bottom: 0.4rem; }
+  /* Dark photo cards: mosaic still behind, navy scrim, white type. */
+  .offering.card {
+    isolation: isolate;
+    background: var(--color-navy);
+    border-color: transparent;
+    color: #fff;
+    min-height: clamp(20rem, 26vw, 24rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .offering-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+  .offering.card:hover .offering-bg { transform: scale(1.04); }
+  .offering-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(20, 35, 58, 0) 0%, rgba(20, 35, 58, 0.3) 30%, rgba(20, 35, 58, 0.86) 58%, rgba(20, 35, 58, 0.95) 100%);
+  }
+  .offering.card:hover { border-color: rgba(255, 255, 255, 0.35); }
+  .offering h3 { font-size: var(--step-1); line-height: 1.2; margin-bottom: 0.4rem; color: #fff; }
+  .offering .duration { color: var(--gold-on-dark); }
+  .offering .tri-list > li::before { background: var(--gold-on-dark); }
   .duration {
     font-size: var(--step--1);
     font-weight: 500;

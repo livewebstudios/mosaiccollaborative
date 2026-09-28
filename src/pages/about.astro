@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
+import { gen } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import MosaicField from "../components/MosaicField.astro";
 import Icon from "../components/Icon.astro";
@@ -119,7 +121,10 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
   </section>
 
   <!-- Beliefs -->
-  <section class="section section-gray beliefs" aria-labelledby="beliefs-h">
+  <section class="section section-gray beliefs has-bg" aria-labelledby="beliefs-h">
+    <div class="section-bg" aria-hidden="true">
+      <Image src={gen("foundation")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
+    </div>
     <div class="container beliefs-inner">
       <div class="beliefs-sticky">
         <p class="eyebrow" data-reveal>Our foundation</p>

@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import { journeys } from "../data/journeys";
+import { gen } from "../lib/gen";
 import Icon from "./Icon.astro";
 import MosaicField from "./MosaicField.astro";
 ---
@@ -19,6 +21,7 @@ import MosaicField from "./MosaicField.astro";
       {journeys.map((j, i) => (
         <li class="rail-panel" data-accent={j.accent} data-reveal>
           <article>
+            <Image class="rail-img" src={gen(`rail-${j.slug}`)} alt="" widths={[400, 800]} sizes="(min-width: 1024px) 34vw, 90vw" />
             <p class="rail-number" data-rail-number aria-hidden="true">{j.number}</p>
             <div class="rail-body">
               <h3>{j.name}</h3>
@@ -42,7 +45,8 @@ import MosaicField from "./MosaicField.astro";
 
 <style>
   .rail { background: var(--color-linen-dark); overflow: hidden; }
-  .rail-head { max-width: 62ch; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .rail-head { margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .rail-head > * { max-width: 62ch; }
   .rail-head h2 { margin-block: 0.5rem 1rem; }
 
   /* Mobile and no-JS: a plain vertical stack. */
@@ -66,6 +70,16 @@ import MosaicField from "./MosaicField.astro";
     display: flex;
     flex-direction: column;
     gap: var(--space-16);
+  }
+
+  .rail-img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
   }
 
   .rail-number {

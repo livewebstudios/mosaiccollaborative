@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import CtaBand from "../components/CtaBand.astro";
 import Icon from "../components/Icon.astro";
 import markSvg from "../assets/logo/mosaic_mark_animatable.svg?raw";
 
@@ -28,6 +29,10 @@ const description = "The page you're looking for has moved or never existed.";
       </div>
     </div>
   </section>
+  <CtaBand
+    heading="Looking for something specific?"
+    body="Tell us what you need and we'll point you in the right direction."
+  />
 </Base>
 
 <style>

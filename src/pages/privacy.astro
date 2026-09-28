@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import CtaBand from "../components/CtaBand.astro";
 import { site } from "../data/site";
 
 const title = "Privacy Policy | The Mosaic Collaborative";
@@ -62,6 +63,10 @@ const contactLabel = hasEmail ? site.email : "our contact form";
       </div>
     </div>
   </section>
+  <CtaBand
+    heading="Questions about how we handle your information?"
+    body="Tell us what's on your mind. We read every note personally."
+  />
 </Base>
 
 <style>

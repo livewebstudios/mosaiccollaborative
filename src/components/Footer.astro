@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import { site } from "../data/site";
+import logoReversed from "../assets/logo/mosaic_logo_lockup_reversed.png";
 import { journeys } from "../data/journeys";
 import MosaicField from "./MosaicField.astro";
 import Icon from "./Icon.astro";
@@ -11,6 +13,9 @@ const hasEmail = !site.email.startsWith("TODO");
 <footer class="site-footer section-dark">
   <div class="container footer-inner">
     <div class="footer-brand">
+      <a class="footer-logo" href="/" aria-label={`${site.name}, home`}>
+        <Image src={logoReversed} alt={site.name} widths={[160, 320]} sizes="160px" loading="lazy" />
+      </a>
       <p class="display footer-tagline">{site.tagline}</p>
       <p class="eyebrow">{site.strapline}</p>
       <p class="footer-descriptor">{site.descriptor}</p>
@@ -91,6 +96,10 @@ const hasEmail = !site.email.startsWith("TODO");
   }
   @media (min-width: 640px) { .footer-inner { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1024px) { .footer-inner { grid-template-columns: 1.6fr 1fr 1fr 1.2fr; } }
+
+  /* Reversed lockup: navy parts recolored to linen so it reads on the navy footer. */
+  .footer-logo { display: inline-block; margin-bottom: var(--space-24); }
+  .footer-logo img { width: 160px; height: auto; }
 
   .footer-tagline {
     font-size: var(--step-2);

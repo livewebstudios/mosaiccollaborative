@@ -1,46 +1,35 @@
 ---
-import { Image } from "astro:assets";
 import { site } from "../data/site";
-import { gen } from "../lib/gen";
 import Icon from "./Icon.astro";
 
 interface Props {
   heading: string;
   body?: string;
-  /** Full-bleed dark video band, used on Home. Otherwise a dark mosaic photo band. */
-  video?: boolean;
 }
-const { heading, body, video = false } = Astro.props;
+const { heading, body } = Astro.props;
 // TODO: confirm with Roz. Until site.email is real, the band links to the contact page.
 const hasEmail = !site.email.startsWith("TODO");
 const headingId = "cta-h";
 ---
 
-<section class={`section section-dark cta-band ${video ? "cta-band-video" : "cta-band-photo"}`} aria-labelledby={headingId}>
-  {!video && (
-    <div class="cta-media" aria-hidden="true">
-      <Image src={gen("cta-dark")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
-      <div class="cta-scrim"></div>
-    </div>
-  )}
-  {video && (
-    <div class="cta-media" aria-hidden="true">
-      <video
-        data-autoplay
-        muted
-        playsinline
-        loop
-        preload="metadata"
-        poster="/media/video/mosaic_dark_glass_planes_720p-poster.jpg"
-        width="1280"
-        height="720"
-      >
-        <source src="/media/video/mosaic_dark_glass_planes_720p.webm" type="video/webm" />
-        <source src="/media/video/mosaic_dark_glass_planes_720p.mp4" type="video/mp4" />
-      </video>
-      <div class="cta-scrim"></div>
-    </div>
-  )}
+<section class="section section-dark cta-band" aria-labelledby={headingId}>
+  {/* Slow drift of the cta-dark still (ffmpeg, 24s seamless loop). Reduced motion keeps the poster. */}
+  <div class="cta-media" aria-hidden="true">
+    <video
+      data-autoplay
+      muted
+      playsinline
+      loop
+      preload="metadata"
+      poster="/media/video/mosaic_cta_drift_900p-poster.jpg"
+      width="1600"
+      height="904"
+    >
+      <source src="/media/video/mosaic_cta_drift_900p.webm" type="video/webm" />
+      <source src="/media/video/mosaic_cta_drift_900p.mp4" type="video/mp4" />
+    </video>
+    <div class="cta-scrim"></div>
+  </div>
 
   <div class="container cta-inner">
     <h2 id={headingId} data-reveal>{heading}</h2>
@@ -62,19 +51,13 @@ const headingId = "cta-h";
 <style>
   .cta-band { position: relative; overflow: hidden; isolation: isolate; }
 
-  .cta-band-video {
-    clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%);
-    padding-top: calc(var(--section-y) + 4vw);
-  }
-  @media (max-width: 640px) { .cta-band-video { clip-path: none; } }
-
   .cta-media { position: absolute; inset: 0; z-index: -1; }
-  .cta-media video,
-  .cta-media img { width: 100%; height: 100%; object-fit: cover; }
-  .cta-band-photo .cta-scrim {
+  .cta-media video { width: 100%; height: 100%; object-fit: cover; }
+  .cta-scrim {
+    position: absolute;
+    inset: 0;
     background: radial-gradient(ellipse at 50% 50%, rgba(20, 35, 58, 0.72) 25%, rgba(20, 35, 58, 0.4) 80%);
   }
-  .cta-scrim { position: absolute; inset: 0; background: var(--scrim-dark); }
 
   .cta-inner { text-align: center; display: grid; justify-items: center; gap: var(--space-20); }
   .cta-inner h2 { font-size: var(--step-3); max-width: 18ch; }

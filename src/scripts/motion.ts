@@ -283,41 +283,26 @@ function initParallax() {
   });
 }
 
-/* ---------------------------------------------------------------- journeys rail */
-function initJourneyRail() {
-  const section = document.querySelector<HTMLElement>("[data-journey-rail]");
-  const viewport = section?.querySelector<HTMLElement>("[data-rail-viewport]");
-  const track = section?.querySelector<HTMLElement>("[data-rail-track]");
-  if (!section || !viewport || !track) return;
-  if (prefersReduced() || !window.matchMedia("(min-width: 1024px)").matches) return;
+/* ---------------------------------------------------------------- statement band */
+// Home Band 2 ships as a plain navy band. With motion allowed, it blends in from linen
+// to navy, and its text from ink to linen, as it scrolls up the screen.
+function initStatement() {
+  const band = document.querySelector<HTMLElement>("[data-statement]");
+  if (!band || prefersReduced()) return;
+  const root = getComputedStyle(document.documentElement);
+  const token = (name: string) => root.getPropertyValue(name).trim();
 
-  const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
-  if (distance() <= 0) return;
-
-  const tween = gsap.to(track, {
-    x: () => -distance(),
-    ease: "none",
-    scrollTrigger: {
-      trigger: viewport,
-      start: "center center",
-      end: () => `+=${distance()}`,
-      pin: section,
-      scrub: 0.6,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-    },
-  });
-  cleanups.push(() => tween.scrollTrigger?.kill());
-
-  // Numbers drift slower than their panel text.
-  section.querySelectorAll<HTMLElement>("[data-rail-number]").forEach((n) => {
-    const t = gsap.fromTo(n, { xPercent: 20 }, {
-      xPercent: -20,
+  const tween = gsap.fromTo(
+    band,
+    { backgroundColor: token("--color-linen"), color: token("--color-ink") },
+    {
+      backgroundColor: token("--color-navy"),
+      color: token("--color-linen"),
       ease: "none",
-      scrollTrigger: { trigger: viewport, start: "center center", end: () => `+=${distance()}`, scrub: 0.6 },
-    });
-    cleanups.push(() => t.scrollTrigger?.kill());
-  });
+      scrollTrigger: { trigger: band, start: "top 85%", end: "top 35%", scrub: true },
+    }
+  );
+  cleanups.push(() => tween.scrollTrigger?.kill());
 }
 
 /* ---------------------------------------------------------------- beliefs */
@@ -374,7 +359,7 @@ function boot() {
   initVideos();
   initAccordions();
   initParallax();
-  initJourneyRail();
+  initStatement();
   initBeliefs();
   initSubnav();
   ScrollTrigger.refresh();

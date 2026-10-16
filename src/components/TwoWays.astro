@@ -1,0 +1,116 @@
+---
+/**
+ * TwoWays: the two offering types as two wide, short bands.
+ * Shared by Home (Band 3, heading as H2) and the top of Services (heading as H1),
+ * so the copy and graphics stay identical on both pages.
+ * Both graphics use MosaicField at the same cell size and palette: Custom Offerings
+ * shows the pieces assembled, Core Services shows separate pieces drifting.
+ */
+import MosaicField from "./MosaicField.astro";
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** 1 on Services, where this heads the page. 2 on Home. */
+  level?: 1 | 2;
+  /** Links point at the Services sections. On Services itself they stay in-page. */
+  base?: string;
+  /** Home ends the band with a Let's talk button. */
+  cta?: boolean;
+}
+
+const { level = 2, base = "/services/", cta = false } = Astro.props;
+const Heading = level === 1 ? "h1" : "h2";
+const BoxHeading = level === 1 ? "h2" : "h3";
+const headingId = "two-ways-h";
+
+const ways = [
+  {
+    id: "custom",
+    name: "Custom Offerings",
+    body: "Our Custom Offerings bring together the right mix of services to address a set of interconnected organizational needs.",
+    href: `${base}#custom-offerings`,
+    link: "See the custom offerings",
+    field: { density: 0.95, seed: 61, drift: false },
+  },
+  {
+    id: "core",
+    name: "Core Services",
+    body: "These are scoped, standalone engagements designed to address a specific need: diagnostics, workshops, and embedded advisory roles you can bring in when you need them.",
+    href: `${base}#core-services`,
+    link: "See the core services",
+    field: { density: 0.38, seed: 67, drift: true },
+  },
+];
+---
+
+<div class="two-ways">
+  <div class="two-ways-head">
+    <Heading id={headingId} data-reveal>Two ways to work together</Heading>
+    <p class="lead" data-reveal>
+      Shape a journey around a set of connected needs, or bring in a focused service for a specific
+      one. Many engagements combine both.
+    </p>
+  </div>
+
+  <ul class="ways" data-reveal-stagger="110">
+    {ways.map((way) => (
+      <li class="way" data-reveal>
+        <div class="way-art" aria-hidden="true">
+          <MosaicField cols={4} rows={3} cell={55} {...way.field} />
+        </div>
+        <div class="way-body">
+          <BoxHeading class="way-name">{way.name}</BoxHeading>
+          <p>{way.body}</p>
+          <p class="way-action">
+            <a class="btn btn-secondary" href={way.href}>
+              {way.link} <Icon name="arrow" size={15} />
+            </a>
+          </p>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  {cta && (
+    <p class="band-cta" data-reveal>
+      <a class="btn btn-primary" href="/contact/">
+        <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
+        Let's talk
+      </a>
+    </p>
+  )}
+</div>
+
+<style>
+  .two-ways-head { display: grid; gap: var(--space-20); max-width: 60ch; }
+  /* On Services this is the H1; keep it at the H2 size so both pages read the same. */
+  .two-ways-head :is(h1, h2) { font-size: var(--step-4); line-height: 1; letter-spacing: -0.028em; }
+
+  .ways {
+    list-style: none;
+    margin: clamp(3rem, 6vw, 5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--grid-gap);
+  }
+  .way {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--color-navy);
+    border-radius: var(--radius-tile);
+    padding: clamp(var(--space-24), 3.5vw, var(--space-48));
+  }
+  @media (min-width: 768px) {
+    .way { grid-template-columns: minmax(0, 220px) minmax(0, 1fr); }
+  }
+  .way-art { width: min(100%, 220px); }
+  .way-art :global(svg) { width: 100%; height: auto; }
+  .way-body { display: grid; gap: var(--space-16); max-width: 60ch; }
+  .way-name { font-size: var(--step-3); line-height: 1.06; letter-spacing: -0.027em; }
+  .way-body p { margin: 0; }
+  .way-action { margin-top: var(--space-8) !important; }
+
+  .band-cta { margin-top: clamp(3rem, 6vw, 4.5rem); }
+</style>

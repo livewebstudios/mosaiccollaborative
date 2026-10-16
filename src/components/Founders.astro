@@ -1,0 +1,101 @@
+---
+/**
+ * Founders: photo, name, title, the three bullets and a LinkedIn link for each founder.
+ * "compact" is the Home version (three across). "full" is the About version: larger
+ * photos, alternating sides, plus Roz's credentials line. Same data from team.ts.
+ */
+import Icon from "./Icon.astro";
+import { team } from "../data/team";
+
+interface Props {
+  variant?: "compact" | "full";
+  /** Heading level for each founder's name, so it nests under the section heading. */
+  level?: 2 | 3;
+}
+
+const { variant = "compact", level = 3 } = Astro.props;
+const Name = level === 2 ? "h2" : "h3";
+const full = variant === "full";
+const size = full ? 560 : 480;
+const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).join("");
+---
+
+<ul class:list={["founders-list", variant]} data-reveal-stagger={full ? undefined : "100"}>
+  {team.map((member) => (
+    <li class="founder" data-accent={member.accent} data-reveal>
+      <div class="founder-photo">
+        <div class="team-photo">
+          {member.photo ? (
+            <img
+              src={`/media/img/team/${member.photo}`}
+              alt={`${member.name}, ${member.title}`}
+              width={size}
+              height={size}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <p class="team-initials" aria-hidden="true">{initials(member.name)}</p>
+          )}
+        </div>
+      </div>
+
+      <div class="founder-body">
+        <Name class="founder-name">{member.name}</Name>
+        <p class="founder-title">{member.title}</p>
+        {member.linkedin && (
+          <p class="founder-link">
+            <a class="link-arrow" href={member.linkedin} rel="noopener noreferrer" target="_blank">
+              <Icon name="linkedin" size={15} /> LinkedIn
+            </a>
+          </p>
+        )}
+        <ul class="tri-list founder-bullets">
+          {member.bullets.map((b) => <li>{b}</li>)}
+        </ul>
+        {full && member.credentials && <p class="credentials">{member.credentials}</p>}
+      </div>
+    </li>
+  ))}
+</ul>
+<!-- TODO: confirm with Roz. LinkedIn URLs for all three founders, and the new headshots
+     (same filenames in public/media/img/team/; Amalia's current photo is the upscaled one). -->
+
+<style>
+  .founders-list { list-style: none; margin: 0; padding: 0; display: grid; }
+  .founder p { margin: 0; }
+  .founder-body { display: grid; gap: var(--space-12); align-content: start; }
+  .founder-name { font-size: var(--step-2); color: var(--color-navy); }
+  .founder-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-burgundy);
+    line-height: 1.3;
+  }
+  .founder-bullets { margin-top: var(--space-8); max-width: 52ch; }
+
+  /* Compact: three across from 768px, photo above the words. */
+  .compact { gap: clamp(3rem, 5vw, 4rem); }
+  @media (min-width: 768px) { .compact { grid-template-columns: repeat(3, 1fr); } }
+  .compact .founder { display: grid; gap: var(--space-24); align-content: start; }
+  .compact .founder-bullets { font-size: var(--step--1); }
+
+  /* Full: alternating left and right on desktop, stacked on mobile. */
+  .full { gap: clamp(4rem, 8vw, 7rem); }
+  .full .founder { display: grid; gap: clamp(1.5rem, 3vw, 3rem); align-items: start; }
+  @media (min-width: 768px) {
+    .full .founder { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+    .full .founder:nth-child(even) .founder-photo { order: 2; }
+  }
+  .full .founder-photo { display: flex; justify-content: center; }
+  .full .team-photo { width: clamp(11rem, 26vw, 20rem); }
+  .full .founder-name { font-size: var(--step-3); }
+  .credentials {
+    font-size: var(--step--1);
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    max-width: 52ch;
+  }
+</style>

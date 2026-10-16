@@ -13,6 +13,7 @@
   --color-linen-dark: #f3e6d0;
   --color-gray: #f0f2f5;
   --color-ink: #14233a;
+  /* --color-text-green: TODO confirm hex from Roz's new deck */
 
   /* One family, per the editorial restyle. Display type is Inter at a light 460 cut
      with tight tracking, rather than a separate serif. */
@@ -21,7 +22,7 @@
 
   --radius-tile: 16px;
   --radius-sm: 8px;
-  --radius-btn: 16px;
+  --radius-btn: 999px;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
@@ -64,7 +65,7 @@
   --space-96: 96px;
 
   --content-max: 1200px;
-  --section-y: clamp(4rem, 7vw, 6rem);
+  --section-y: clamp(5rem, 9vw, 8.5rem);
   --gutter: clamp(1rem, 4vw, 3rem);
   --grid-gap: clamp(1rem, 1.6vw, 1.5rem);
 
@@ -220,7 +221,7 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
 }
 .section-linen-dark { background: var(--color-linen-dark); }
 
-.measure { max-width: 62ch; }
+.measure { max-width: 60ch; }
 
 .grid-12 {
   display: grid;
@@ -278,7 +279,7 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
 /* ------------------------------------------------------------------
    Components
    ------------------------------------------------------------------ */
-/* Buttons: flat, no lift, no shadow. 48px tall, 16px radius. */
+/* Buttons: flat, no lift, no shadow. 48px tall ovals (round 2). */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -288,7 +289,7 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
   font-weight: 500;
   font-size: 1rem;
   line-height: 1;
-  padding: var(--space-12) var(--space-20);
+  padding: var(--space-12) var(--space-24);
   border-radius: var(--radius-btn);
   border: 1px solid transparent;
   text-decoration: none;
@@ -299,12 +300,12 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
 .btn-primary { background: var(--color-navy); color: #fff; }
 .btn-primary:hover { background: var(--navy-90); }
 
-/* Secondary: light tint fill, 1px ink border, small radius. */
+/* Secondary: light tint fill, 1px navy border, same oval as the primary. */
 .btn-secondary {
   background: var(--navy-10);
   border-color: var(--color-navy);
   color: var(--color-navy);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-btn);
 }
 .btn-secondary:hover { background: var(--color-navy); color: #fff; }
 
@@ -322,21 +323,31 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
 }
 .btn:hover .btn-tri, .btn:focus-visible .btn-tri { width: 0.55em; }
 
-/* Inline links: no underline at rest, underline fades in on hover. */
+/* Links read as links without hover (round 2): a visible 1px underline at rest that
+   thickens to 2px on hover. Nav and footer menu links keep their own styles. */
 .link-arrow {
   display: inline-flex;
   align-items: center;
   gap: var(--space-8);
   font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  text-decoration-line: underline;
   text-decoration-thickness: 1px;
-  text-decoration-color: transparent;
-  transition: text-decoration-color 0.2s ease;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
 }
 .link-arrow svg { transition: transform 0.2s ease; }
 .link-arrow:hover svg, .link-arrow:focus-visible svg { transform: translateX(4px); }
-.link-arrow:hover, .link-arrow:focus-visible { text-decoration-color: currentColor; }
+.link-arrow:hover, .link-arrow:focus-visible { text-decoration-thickness: 2px; }
+
+/* In-body links get the same treatment. */
+main :where(p, li, dd, td, address) a:not(.btn, .link-arrow) {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
+}
+main :where(p, li, dd, td, address) a:not(.btn, .link-arrow):hover,
+main :where(p, li, dd, td, address) a:not(.btn, .link-arrow):focus-visible { text-decoration-thickness: 2px; }
 
 /* Asymmetric card, echoes a cut tile. Flat: depth comes from the white surface on
    linen and a hairline edge, never from a drop shadow. */

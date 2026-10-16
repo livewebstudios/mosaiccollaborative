@@ -3,6 +3,8 @@ import Base from "../layouts/Base.astro";
 import MosaicField from "../components/MosaicField.astro";
 import Icon from "../components/Icon.astro";
 import { journeys } from "../data/journeys";
+import { services } from "../data/services";
+import { slugify } from "../lib/gen";
 import { site } from "../data/site";
 
 const title = "Contact The Mosaic Collaborative";
@@ -10,6 +12,12 @@ const description =
   "Tell us what's going on. We'll tell you honestly whether we can help and where we'd start.";
 
 const hasEmail = !site.email.startsWith("TODO");
+
+// Core service boxes on /services/ link here as /contact/?service=<slug>. Only known slugs
+// are accepted, so the note and the submitted value always show a real service name.
+const serviceNames = Object.fromEntries(
+  services.flatMap((family) => family.offerings.map((o) => [slugify(o.name), o.name]))
+);
 
 const schema = [
   {
@@ -81,8 +89,10 @@ const schema = [
             action="/thank-you/"
             data-netlify="true"
             netlify-honeypot="bot-field"
+            data-services={JSON.stringify(serviceNames)}
           >
             <input type="hidden" name="form-name" value="contact" />
+            <input type="hidden" name="service" value="" data-service-input />
             <p class="honeypot" aria-hidden="true">
               <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
             </p>
@@ -128,18 +138,11 @@ const schema = [
               </label>
             </fieldset>
 
+            <p class="service-note" hidden data-service-note></p>
+
             <div class="field">
               <label for="message">What's going on?</label>
               <textarea id="message" name="message" rows="6" required></textarea>
-            </div>
-
-            <div class="field field-check">
-              <label class="choice">
-                <input type="checkbox" name="consent" required />
-                <span class="choice-text">
-                  I'm happy for The Mosaic Collaborative to contact me about this inquiry.
-                </span>
-              </label>
             </div>
 
             <button class="btn btn-primary" type="submit">
@@ -206,9 +209,32 @@ const schema = [
   .choice-text { font-size: var(--step--1); line-height: 1.45; }
   .choice-set .choice-text { font-family: var(--font-display); font-style: italic; font-size: var(--step-0); }
 
-  .field-check { margin-top: 0.5rem; }
-  .field-check .choice { border: 0; padding: 0; }
-  .field-check .choice:hover { background: none; }
+  .service-note {
+    margin: 0;
+    padding: var(--space-12) var(--space-16);
+    border-left: 3px solid var(--color-navy);
+    background: var(--navy-10);
+    font-weight: 500;
+    color: var(--color-navy);
+  }
 
   .contact-form button { justify-self: start; margin-top: 0.5rem; }
 </style>
+
+<script>
+  // Prefill from /contact/?service=<slug>. Without JavaScript the plain form still works.
+  function prefillService() {
+    const form = document.querySelector<HTMLFormElement>("form[data-services]");
+    const input = form?.querySelector<HTMLInputElement>("[data-service-input]");
+    const note = form?.querySelector<HTMLElement>("[data-service-note]");
+    if (!form || !input || !note) return;
+
+    const names: Record<string, string> = JSON.parse(form.dataset.services || "{}");
+    const slug = new URLSearchParams(window.location.search).get("service") || "";
+    const name = Object.hasOwn(names, slug) ? names[slug] : "";
+    input.value = name ?? "";
+    note.textContent = name ? `About: ${name}` : "";
+    note.hidden = !name;
+  }
+  document.addEventListener("astro:page-load", prefillService);
+</script>

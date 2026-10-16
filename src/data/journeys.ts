@@ -10,8 +10,11 @@ export type Journey = {
   accent: "navy" | "slate" | "gold" | "burgundy";
   promise: string;          // one-line tagline used on Home, Services and the journey hero
   ceoQuestion: string;      // from the orientation table
-  friction: string;         // orientation table: sources of friction
-  solutions: string;        // orientation table: solutions
+  solutions: string;        // orientation table: solutions (source of solutionLine)
+  /** Services "Which journey is yours?" row, in Roz's pattern (round 2, Oct 2026). */
+  solutionLine: string;
+  /** true until Roz signs off on a line we built from her pattern. */
+  solutionLinePending?: boolean;
   quote: string;            // the italic hero quote on the journey page
   homeBlurb: string;        // rail copy on Home, verbatim from 03_CONTENT/home.html
   symptoms: string[];       // "Sound familiar?" list (the Problem)
@@ -29,8 +32,8 @@ export const journeys: Journey[] = [
     accent: "navy",
     promise: "Establish strategic direction.",
     ceoQuestion: "What's really going on?",
-    friction: "Strategic direction and alignment. Understand where you are and what matters most.",
     solutions: "Discover root causes. Understand reality.",
+    solutionLine: "The CEO is asking, \"What's really going on?\" The solution is to discover the root cause.",
     quote: "We know we need change, but we don't know what to do next.",
     homeBlurb: "Understand where you are and what matters most. Discover root causes. Understand reality.",
     symptoms: [
@@ -55,8 +58,8 @@ export const journeys: Journey[] = [
     accent: "slate",
     promise: "Develop the capacity to execute.",
     ceoQuestion: "Do we have the right organization for where we're headed?",
-    friction: "Create the leadership, systems, and capabilities needed for success.",
     solutions: "Design a coherent system. Create the conditions for success.",
+    solutionLine: "The CEO is asking, \"Do we have the right organization for where we're headed?\" The solution is to design and create the conditions for success.",
     quote: "We have the strategy, now we need the people, processes and systems to support it.",
     homeBlurb: "Create the leadership, systems, and capabilities needed for success. Design a coherent system. Create the conditions for success.",
     symptoms: [
@@ -82,8 +85,10 @@ export const journeys: Journey[] = [
     accent: "gold",
     promise: "Turn plans into action.",
     ceoQuestion: "How do we make it happen?",
-    friction: "Consistent execution, accountability, and momentum. Put strategy into action and drive execution.",
     solutions: "Embed new ways of working. Make the change real.",
+    // TODO: confirm with Roz. Built from the solutions field in her pattern; needs her sign-off.
+    solutionLine: "The CEO is asking, \"How do we make it happen?\" The solution is to embed new ways of working and make the change real.",
+    solutionLinePending: true,
     quote: "We have a plan, but we're struggling to execute.",
     homeBlurb: "Consistent execution, accountability, and momentum. Put strategy into action and drive execution. Embed new ways of working. Make the change real.",
     symptoms: [
@@ -108,8 +113,10 @@ export const journeys: Journey[] = [
     accent: "burgundy",
     promise: "Restore trust, engagement, and commitment.",
     ceoQuestion: "How do we strengthen our organization?",
-    friction: "Trust, cohesion, and organizational health. Restore momentum, engagement, and performance.",
     solutions: "Restore the human side of the organization. Renew trust and connection.",
+    // TODO: confirm with Roz. Built from the solutions field in her pattern; needs her sign-off.
+    solutionLine: "The CEO is asking, \"How do we strengthen our organization?\" The solution is to restore the human side of the organization and renew trust and connection.",
+    solutionLinePending: true,
     quote: "How do we restore trust, engagement, and a shared sense of purpose?",
     homeBlurb: "Trust, cohesion, and organizational health. Restore momentum, engagement, and performance. Renew trust and connection.",
     symptoms: [

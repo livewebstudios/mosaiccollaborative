@@ -1,7 +1,6 @@
 ---
-import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
-import { gen, slugify } from "../lib/gen";
+import { slugify } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import TwoWays from "../components/TwoWays.astro";
 import MosaicField from "../components/MosaicField.astro";
@@ -113,8 +112,8 @@ const schema = [
   <section id="core-services" class="section core" aria-labelledby="core-h">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow" data-reveal>Core services</p>
-        {/* TODO: confirm with Roz. Placeholder for the retired "Focused interventions" headline. */}
+        {/* TODO: confirm with Roz. Placeholder for the retired "Focused interventions" headline.
+            Roz wrote "Focus services, lasting capability"; the existing wording stays for now. */}
         <h2 id="core-h" data-reveal>Focused services. Lasting capability.</h2>
         <p class="lead" data-reveal>
           These are targeted services with a defined scope and outcome, addressing a specific challenge
@@ -130,7 +129,7 @@ const schema = [
           {services.map((family) => (
             <li>
               <a href={`#${family.slug}`} data-subnav-link={family.slug}>
-                <span class="subnav-swatch" data-accent={family.accent} aria-hidden="true"></span>
+                <span class="subnav-swatch" aria-hidden="true"></span>
                 {shortLabel[family.slug]}
               </a>
             </li>
@@ -143,13 +142,13 @@ const schema = [
           <section
             id={family.slug}
             class="family"
-            data-accent={family.accent}
+            data-accent="navy"
             data-family={family.slug}
             aria-labelledby={`${family.slug}-h`}
           >
             <div class="family-head">
-              <p class="eyebrow" data-reveal>{family.name}</p>
-              <h3 id={`${family.slug}-h`} class="family-motto" data-reveal>{family.motto}</h3>
+              <h3 id={`${family.slug}-h`} class="family-name" data-reveal>{family.name}</h3>
+              <p class="family-motto" data-reveal>{family.motto}</p>
               <p class="lead" data-reveal>{family.intro}</p>
               <p class="deliverable-line" data-reveal>
                 <span class="deliverable-label">Deliverable:</span>
@@ -159,15 +158,18 @@ const schema = [
 
             <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger="90">
               {family.offerings.map((offering) => (
-                <li class="card offering" data-reveal>
-                  <Image class="offering-bg" src={gen(`svc-${slugify(offering.name)}`)} alt="" widths={[400, 800]} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw" />
-                  <span class="offering-scrim" aria-hidden="true"></span>
+                <li class="offering" data-reveal>
                   <h4>{offering.name}</h4>
                   {offering.duration && <p class="duration">{offering.duration}</p>}
                   {offering.description && <p class="offering-desc">{offering.description}</p>}
                   <ul class="tri-list offering-includes">
                     {offering.includes.map((item) => <li>{item}</li>)}
                   </ul>
+                  <p class="offering-cta">
+                    <a class="link-arrow" href={`/contact/?service=${slugify(offering.name)}`}>
+                      Let's talk<span class="sr-only"> about {offering.name}</span> <Icon name="arrow" size={15} />
+                    </a>
+                  </p>
                 </li>
               ))}
             </ul>
@@ -241,26 +243,31 @@ const schema = [
     font-size: var(--step--1);
     text-decoration: none;
     color: var(--color-ink);
-    opacity: 0.55;
+    /* 0.7 keeps the resting links above 4.5:1 on linen. */
+    opacity: 0.7;
     border-left: 2px solid transparent;
     padding-left: 0.9rem;
     transition: opacity 0.3s var(--ease-out-expo), border-color 0.3s var(--ease-out-expo);
   }
   .subnav a:hover { opacity: 1; }
-  .subnav a.is-active { opacity: 1; font-weight: 500; border-left-color: var(--accent); }
+  .subnav a.is-active { opacity: 1; font-weight: 500; border-left-color: var(--color-navy); }
   .subnav-swatch {
     width: 10px;
     height: 10px;
     flex: none;
-    background: var(--accent);
+    background: var(--color-navy);
     clip-path: polygon(0 0, 100% 50%, 0 100%);
   }
 
-  .families { display: grid; gap: clamp(3rem, 7vw, 6rem); }
+  .families { display: grid; gap: clamp(4rem, 8vw, 7rem); }
   .family { scroll-margin-top: 10rem; }
-  .family-head { max-width: 52ch; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); display: grid; gap: 0.75rem; }
-  .family-motto { font-size: var(--step-3); line-height: 1.06; letter-spacing: -0.027em; color: var(--accent-text); }
+  .family-head { max-width: 60ch; margin-bottom: clamp(2rem, 3.5vw, 3rem); display: grid; gap: 0.75rem; }
+  .family-name { font-size: var(--step-3); line-height: 1.06; letter-spacing: -0.027em; }
+  /* The motto is a subline, sized to stay on one line at laptop widths. */
+  .family-motto { font-size: var(--step-1); font-weight: 500; color: var(--color-navy); margin: 0; }
+  @media (min-width: 1024px) { .family-motto { white-space: nowrap; } }
 
+  /* Two across from 640px. An odd last box takes the full row rather than sitting alone. */
   .offering-grid {
     list-style: none;
     margin: 0;
@@ -269,60 +276,41 @@ const schema = [
     gap: var(--grid-gap);
     grid-template-columns: 1fr;
   }
-  @media (min-width: 640px) { .offering-grid { grid-template-columns: repeat(2, 1fr); } }
-  /* Three offerings sit as a row of three. Four sit as a tidy two by two rather
-     than three across with one stranded underneath. */
-  @media (min-width: 1024px) { .offering-grid[data-count="3"] { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 640px) {
+    .offering-grid { grid-template-columns: repeat(2, 1fr); }
+    .offering-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  }
 
-  /* Dark photo cards: mosaic still behind, navy scrim, white type. */
-  .offering.card {
-    isolation: isolate;
-    background: var(--color-navy);
-    border-color: transparent;
-    color: #fff;
-    min-height: clamp(20rem, 26vw, 24rem);
+  /* Uniform box: white ground, navy hairline, ink text. No gold text anywhere. */
+  .offering {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    background: #fff;
+    border: 1px solid var(--color-navy);
+    border-radius: var(--radius-tile);
+    padding: clamp(var(--space-24), 2.6vw, var(--space-32));
+    color: var(--color-ink);
   }
-  .offering-bg {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    transition: transform 0.6s var(--ease-out-expo);
-  }
-  .offering.card:hover .offering-bg { transform: scale(1.04); }
-  .offering-scrim {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(180deg, rgba(20, 35, 58, 0) 0%, rgba(20, 35, 58, 0.3) 30%, rgba(20, 35, 58, 0.86) 58%, rgba(20, 35, 58, 0.95) 100%);
-  }
-  .offering.card:hover { border-color: rgba(255, 255, 255, 0.35); }
+  .offering p { margin: 0; }
   .offering h4 {
     font-family: var(--font-display);
     font-weight: 460;
-    font-size: var(--step-1);
-    line-height: 1.2;
-    letter-spacing: -0.014em;
-    margin-bottom: 0.4rem;
-    color: #fff;
+    font-size: var(--step-2);
+    line-height: 1.14;
+    letter-spacing: -0.022em;
+    color: var(--color-navy);
   }
-  .offering .duration { color: var(--gold-on-dark); }
-  .offering .tri-list > li::before { background: var(--gold-on-dark); }
   .duration {
+    margin-top: var(--space-8) !important;
     font-size: var(--step--1);
     font-weight: 500;
-    color: var(--accent-text);
-    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+    color: var(--color-navy);
   }
-  .offering-desc { font-size: var(--step--1); margin-bottom: 1rem; }
-  .offering-includes { font-size: var(--step--1); }
+  .offering-desc { margin-top: var(--space-16) !important; }
+  .offering-includes { margin-top: var(--space-20); max-width: 52ch; }
   .offering-includes > li + li { margin-top: 0.5em; }
+  .offering-cta { margin-top: auto !important; padding-top: var(--space-24); }
 
   /* Deliverable: one line under the category intro, set as a label rather than a heading. */
   .deliverable-line {

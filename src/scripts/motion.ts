@@ -285,7 +285,7 @@ function initParallax() {
 
 /* ---------------------------------------------------------------- statement band */
 // Home Band 2 ships as a plain navy band. With motion allowed, it blends in from linen
-// to navy, and its text from green to linen, as it scrolls up the screen.
+// to navy, and its text from ink to linen, as it scrolls up the screen.
 function initStatement() {
   const band = document.querySelector<HTMLElement>("[data-statement]");
   if (!band || prefersReduced()) return;
@@ -294,7 +294,7 @@ function initStatement() {
 
   const tween = gsap.fromTo(
     band,
-    { backgroundColor: token("--color-linen"), color: token("--color-text-green") },
+    { backgroundColor: token("--color-linen"), color: token("--color-ink") },
     {
       backgroundColor: token("--color-navy"),
       color: token("--color-linen"),

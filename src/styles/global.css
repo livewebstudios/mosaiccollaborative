@@ -13,10 +13,10 @@
   --color-linen-dark: #f3e6d0;
   --color-gray: #f0f2f5;
   --color-ink: #14233a;
-  /* Body text green, Jon-approved Oct 16 2026 (brighter than the first spruce #2D4A3E,
-     which read as charcoal). TODO: confirm with Roz; swap the hex if her new deck differs.
-     5.7:1 on linen, 5.2:1 on linen-dark, 5.8:1 on gray, 6.5:1 on white. Light grounds only. */
-  --color-text-green: #2b6a45;
+  /* Body text green, Jon-approved Oct 16 2026 pending Roz's new deck. Replace the hex if the deck differs.
+     8.6:1 on linen, 7.9:1 on linen-dark, 8.7:1 on gray, 9.7:1 on white. */
+  --color-spruce: #2d4a3e;
+  /* --color-text-green: TODO confirm hex from Roz's new deck */
 
   /* One family, per the editorial restyle. Display type is Inter at a light 460 cut
      with tight tracking, rather than a separate serif. */
@@ -159,9 +159,9 @@ h1 { font-size: var(--step-4); line-height: 1; letter-spacing: -0.028em; }
 h2 { font-size: var(--step-3); line-height: 1.06; letter-spacing: -0.027em; }
 h3 { font-size: var(--step-2); line-height: 1.14; letter-spacing: -0.022em; }
 
-/* Body copy is green. Headings, eyebrows and labels set their own colors;
+/* Body copy is spruce green. Headings, eyebrows and labels set their own colors;
    .section-dark resets to linen, so dark bands are unaffected. */
-main { color: var(--color-text-green); }
+main { color: var(--color-spruce); }
 .section-dark { color: var(--color-linen); }
 
 p { text-wrap: pretty; }

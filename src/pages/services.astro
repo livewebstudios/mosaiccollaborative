@@ -4,6 +4,7 @@ import { slugify } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import TwoWays from "../components/TwoWays.astro";
 import MosaicField from "../components/MosaicField.astro";
+import MosaicGlow from "../components/MosaicGlow.astro";
 import Icon from "../components/Icon.astro";
 import { services } from "../data/services";
 import { journeys } from "../data/journeys";
@@ -15,6 +16,20 @@ import { site } from "../data/site";
 const title = "Leadership Consulting Services | Mosaic Collaborative";
 const description =
   "Custom journeys that combine the right mix of services, plus focused core services: diagnostics, workshops and embedded advisors for growing companies.";
+
+// Eyebrow wording (round 3, Jon's call). Roz's doc says "Signature Offerings / Core
+// Offerings"; round 1 retired "signature", so the site keeps the names the nav anchors and
+// the Two Ways cards use. Swap these two lines if Roz insists.
+const CUSTOM_EYEBROW = "Custom Offerings";
+const CORE_EYEBROW = "Core Services";
+
+// Journey card tiles, one brand color each (round 3 mapping).
+const accentHex: Record<string, string> = {
+  navy: "#1E3A5F",
+  burgundy: "#8B1A3A",
+  gold: "#D4942A",
+  moss: "#4E7254",
+};
 
 const shortLabel: Record<string, string> = {
   diagnostic: "Diagnostic",
@@ -73,9 +88,6 @@ const schema = [
 
 <Base title={title} description={description} path="/services/" schema={schema}>
   <section class="section page-hero" aria-labelledby="two-ways-h">
-    <div class="hero-field" aria-hidden="true">
-      <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={97} drift />
-    </div>
     <div class="container page-hero-inner">
       <!-- TODO: confirm with Roz. The Services H1 and its lead line are new; the docx only
            supplied the two intros. -->
@@ -83,19 +95,41 @@ const schema = [
     </div>
   </section>
 
-  <!-- Custom Offerings -->
-  <section id="custom-offerings" class="section section-linen-dark custom" aria-labelledby="custom-h">
+  <!-- Round 3: Roz asked for this in a blue band, in sans-serif. A statement, not a
+       section title, so it has no heading of its own. -->
+  <section class="section section-dark friction-band" aria-label="Why friction costs">
     <div class="container">
-      <h2 id="custom-h" class="custom-h" data-reveal>Which journey is yours?</h2>
+      <p class="friction-text" data-reveal>
+        A shift in strategy can expose gaps in structure, people, processes, or systems. A leadership
+        change can affect culture and performance. And sometimes several things are happening at once,
+        making it hard to know where to start. And there are costs to this kind of friction: missed
+        goals, lack of alignment and engagement all hit the bottom line.
+      </p>
+    </div>
+  </section>
+
+  <!-- Custom Offerings -->
+  <section id="custom-offerings" class="section section-linen-dark custom has-glow" aria-labelledby="custom-h">
+    <MosaicGlow position="top-left" seed={113} />
+    <div class="container">
+      <div class="section-head">
+        <!-- TODO: confirm with Roz: "Custom Offerings / Core Services" vs her doc's "Signature Offerings / Core Offerings" -->
+        <p class="eyebrow" data-reveal>{CUSTOM_EYEBROW}</p>
+        <h2 id="custom-h" data-reveal>What's going on?</h2>
+      </div>
       <!-- TODO: confirm with Roz. The Activate and Reignite lines below are built from her
            pattern and need her sign-off (see solutionLinePending in src/data/journeys.ts). -->
-      <ul class="journey-rows" data-reveal-stagger="90">
+      <ul class="journey-cards" data-reveal-stagger="90">
         {journeys.map((j) => (
-          <li class="journey-row" data-accent={j.accent} data-reveal>
-            <h3 class="journey-name">
-              <a class="link-arrow" href={`/how-we-work/${j.slug}/`}>{j.name} <Icon name="arrow" size={18} /></a>
-            </h3>
-            <p>{j.solutionLine}</p>
+          <li data-accent={j.accent} data-reveal>
+            <a class="journey-card surface lift" href={`/how-we-work/${j.slug}/`}>
+              <span class="journey-card-art" aria-hidden="true">
+                <MosaicField cols={5} rows={6} cell={56} density={0.7} seed={j.number.charCodeAt(1) * 7} palette={[accentHex[j.accent]!]} />
+              </span>
+              <h3 class="journey-name">{j.name}</h3>
+              <p class="journey-line">{j.solutionLine}</p>
+              <span class="journey-arrow" aria-hidden="true"><Icon name="arrow" size={20} /></span>
+            </a>
           </li>
         ))}
       </ul>
@@ -109,9 +143,11 @@ const schema = [
   </section>
 
   <!-- Core Services -->
-  <section id="core-services" class="section core" aria-labelledby="core-h">
+  <section id="core-services" class="section core has-glow" aria-labelledby="core-h">
+    <MosaicGlow position="bottom-right" size="lg" seed={97} />
     <div class="container">
       <div class="section-head">
+        <p class="eyebrow" data-reveal>{CORE_EYEBROW}</p>
         {/* TODO: confirm with Roz. Placeholder for the retired "Focused interventions" headline.
             Roz wrote "Focus services, lasting capability"; the existing wording stays for now. */}
         <h2 id="core-h" data-reveal>Focused services. Lasting capability.</h2>
@@ -158,7 +194,7 @@ const schema = [
 
             <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger="90">
               {family.offerings.map((offering) => (
-                <li class="offering" data-reveal>
+                <li class="offering surface lift" data-reveal>
                   <h4>{offering.name}</h4>
                   {offering.duration && <p class="duration">{offering.duration}</p>}
                   {offering.description && <p class="offering-desc">{offering.description}</p>}
@@ -185,42 +221,85 @@ const schema = [
 <style>
   .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
   .page-hero-inner { position: relative; z-index: 1; display: grid; gap: 1rem; }
-  .hero-field {
-    position: absolute;
-    right: -8%;
-    top: 22%;
-    width: min(38%, 440px);
-    pointer-events: none;
-    opacity: 0.85;
-    mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
+
+  /* Friction band: Inter, one paragraph, centered block. */
+  .friction-text {
+    margin: 0 auto;
+    max-width: 62ch;
+    font-family: var(--font-sans);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--color-linen);
   }
+  @media (min-width: 768px) { .friction-text { font-size: var(--step-2); line-height: 1.45; } }
 
   #custom-offerings, #core-services { scroll-margin-top: 6rem; }
   .section-head { max-width: 60ch; margin-bottom: clamp(2rem, 4vw, 3rem); display: grid; gap: 0.75rem; }
 
-  /* Custom offerings: four slim rows, one per journey */
-  .custom-h { margin-bottom: clamp(2.5rem, 5vw, 4rem); }
-  .journey-rows {
+  /* Custom offerings: four journey cards, one line at 1024+, two by two at 768. */
+  .journey-cards {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     gap: var(--grid-gap);
   }
-  @media (min-width: 1024px) { .journey-rows { grid-template-columns: repeat(2, 1fr); } }
-  .journey-row {
-    display: grid;
+  @media (min-width: 768px) { .journey-cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .journey-cards { grid-template-columns: repeat(4, 1fr); } }
+  .journey-cards > li { display: flex; }
+
+  /* The whole card is the link. Color comes from the heading, the 4px top rule and the
+     tile wash; never a full color fill. */
+  .journey-card {
+    --wash: 0%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     gap: var(--space-12);
-    align-content: start;
-    background: var(--color-linen);
-    border: 1px solid var(--color-navy);
-    border-left: 4px solid var(--accent);
-    border-radius: var(--radius-sm);
-    padding: clamp(var(--space-20), 2.5vw, var(--space-32));
+    overflow: hidden;
+    isolation: isolate;
+    padding: clamp(var(--space-24), 2.4vw, var(--space-32));
+    padding-bottom: clamp(3.5rem, 5vw, 4.5rem);
+    text-decoration: none;
+    color: var(--color-ink);
+    background: linear-gradient(0deg, color-mix(in oklab, var(--accent) 10%, #fff), #fff 70%);
+    border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+    border-top: 4px solid var(--accent);
   }
-  .journey-row p { margin: 0; max-width: 56ch; }
-  .journey-name { font-size: var(--step-2); }
-  .journey-name .link-arrow { font-weight: 460; }
+  .journey-card-art {
+    position: absolute;
+    z-index: -1;
+    right: -12%;
+    bottom: -10%;
+    width: 110%;
+    opacity: 0.12;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at 100% 100%, #000 30%, transparent 75%);
+    transition: opacity 0.4s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+  }
+  .journey-card-art :global(svg) { width: 100%; height: auto; }
+  .journey-card:hover .journey-card-art,
+  .journey-card:focus-visible .journey-card-art { opacity: 0.2; }
+  @media (prefers-reduced-motion: no-preference) {
+    .journey-card:hover .journey-card-art,
+    .journey-card:focus-visible .journey-card-art { transform: translate(-6px, -6px); }
+  }
+  .journey-name {
+    font-size: var(--step-3);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: var(--accent-display);
+  }
+  .journey-line { margin: 0; font-size: var(--step-0); }
+  .journey-arrow {
+    position: absolute;
+    right: clamp(var(--space-20), 2.2vw, var(--space-32));
+    bottom: clamp(var(--space-20), 2.2vw, var(--space-24));
+    color: var(--accent-text);
+    transition: transform 0.25s var(--ease-out-expo);
+  }
+  .journey-card:hover .journey-arrow,
+  .journey-card:focus-visible .journey-arrow { transform: translateX(4px); }
   .band-cta { margin-top: clamp(3rem, 6vw, 4.5rem); }
 
   /* Core services */
@@ -262,7 +341,7 @@ const schema = [
   .families { display: grid; gap: clamp(4rem, 8vw, 7rem); }
   .family { scroll-margin-top: 10rem; }
   .family-head { max-width: 60ch; margin-bottom: clamp(2rem, 3.5vw, 3rem); display: grid; gap: 0.75rem; }
-  .family-name { font-size: var(--step-3); line-height: 1.15; letter-spacing: 0; }
+  .family-name { font-size: var(--step-3); line-height: 1.08; letter-spacing: -0.01em; }
   /* The motto is a subline, sized to stay on one line at laptop widths. */
   .family-motto { font-size: var(--step-1); font-weight: 500; color: var(--color-navy); margin: 0; }
   @media (min-width: 1024px) { .family-motto { white-space: nowrap; } }
@@ -281,13 +360,12 @@ const schema = [
     .offering-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   }
 
-  /* Uniform box: white ground, navy hairline, ink text. No gold text anywhere. */
+  /* Uniform box (round 3): every offering the same white card, navy hairline at 15%, a
+     6% navy wash from the top-left, identical padding. No gold text anywhere. */
   .offering {
+    --wash: 6%;
     display: flex;
     flex-direction: column;
-    background: #fff;
-    border: 1px solid var(--color-navy);
-    border-radius: var(--radius-tile);
     padding: clamp(var(--space-24), 2.6vw, var(--space-32));
     color: var(--color-ink);
   }
@@ -320,8 +398,6 @@ const schema = [
     column-gap: 0.6rem;
     row-gap: 0.2rem;
     margin-top: 0.25rem;
-    padding-left: 0.9rem;
-    border-left: 3px solid var(--accent);
     font-size: var(--step-0);
     line-height: 1.45;
   }

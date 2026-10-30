@@ -19,9 +19,11 @@ interface Props {
   ogImage?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
   bodyClass?: string;
+  /** Keep the page live and linked but out of search results (the journey pages, round 3). */
+  noindex?: boolean;
 }
 
-const { title, description, path, ogImage = "/og.jpg", schema, bodyClass = "" } = Astro.props;
+const { title, description, path, ogImage = "/og.jpg", schema, bodyClass = "", noindex = false } = Astro.props;
 
 const canonical = new URL(path, site.url).href;
 const ogUrl = new URL(ogImage, site.url).href;
@@ -36,6 +38,7 @@ const schemaList = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     <link rel="preload" href={loraRoman} as="font" type="font/woff2" crossorigin />
 

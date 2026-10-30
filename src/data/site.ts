@@ -4,7 +4,6 @@ export const site = {
   name: "The Mosaic Collaborative",
   tagline: "We align the pieces. Your business thrives.",
   strapline: "Strategy. Insight. Impact.",
-  descriptor: "Consulting for meaningful progress.",
   url: "https://mosaiccollaborative.com",
   // TODO: confirm with Roz that the letstalk@ alias is live in Microsoft 365.
   // Never use the old "info" mailbox: it still receives mail for the previous Mosaic organization.

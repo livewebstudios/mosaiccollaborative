@@ -2,7 +2,6 @@
 import { Image } from "astro:assets";
 import { site } from "../data/site";
 import logoReversed from "../assets/logo/mosaic_logo_lockup_reversed.png";
-import { journeys } from "../data/journeys";
 import MosaicField from "./MosaicField.astro";
 import Icon from "./Icon.astro";
 
@@ -19,22 +18,12 @@ const hasEmail = !site.email.startsWith("TODO");
       </a>
       <p class="display footer-tagline">{taglineHead}<em class="emphasis">thrives</em>{taglineTail}</p>
       <p class="eyebrow-plain">{site.strapline}</p>
-      <p class="footer-descriptor">{site.descriptor}</p>
     </div>
 
     <nav class="footer-col" aria-label="Footer">
       <h2 class="eyebrow-plain">EXPLORE</h2>
       <ul>
         {site.nav.map((item) => <li><a href={item.href}>{item.label.toUpperCase()}</a></li>)}
-      </ul>
-    </nav>
-
-    <nav class="footer-col" aria-label="Custom offerings">
-      <h2 class="eyebrow-plain">CUSTOM OFFERINGS</h2>
-      <ul>
-        {journeys.map((j) => (
-          <li><a href={`/how-we-work/${j.slug}/`}>{j.name.toUpperCase()}</a></li>
-        ))}
       </ul>
     </nav>
 
@@ -48,7 +37,6 @@ const hasEmail = !site.email.startsWith("TODO");
         )}
         <!-- TODO: confirm with Roz. Direct email address for the site. -->
         <li class="footer-location">{site.location}</li>
-        <!-- TODO: confirm with Roz. Exact location line. -->
         {site.linkedinCompany && (
           <li>
             <a class="footer-linkedin" href={site.linkedinCompany} rel="noopener noreferrer" target="_blank">
@@ -96,7 +84,7 @@ const hasEmail = !site.email.startsWith("TODO");
     grid-template-columns: 1fr;
   }
   @media (min-width: 640px) { .footer-inner { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px) { .footer-inner { grid-template-columns: 1.6fr 1fr 1fr 1.2fr; } }
+  @media (min-width: 1024px) { .footer-inner { grid-template-columns: 1.6fr 1fr 1.2fr; } }
 
   /* Reversed lockup: navy parts recolored to linen so it reads on the navy footer. */
   .footer-logo { display: inline-block; margin-bottom: var(--space-24); }
@@ -113,16 +101,6 @@ const hasEmail = !site.email.startsWith("TODO");
     margin-bottom: 1rem;
   }
 
-  .footer-descriptor {
-    margin-top: var(--space-8);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--color-linen);
-    opacity: 0.8;
-  }
-
   .footer-col ul { list-style: none; margin: var(--space-16) 0 0; padding: 0; }
   .footer-col li + li { margin-top: var(--space-12); }
   .footer-col a {
@@ -136,7 +114,7 @@ const hasEmail = !site.email.startsWith("TODO");
   }
   .footer-col a:hover, .footer-col a:focus-visible { opacity: 1; border-bottom-color: var(--color-gold); }
   .footer-linkedin { display: inline-flex; align-items: center; gap: 0.5em; }
-  .footer-location { font-size: 0.875rem; opacity: 0.75; max-width: 22ch; }
+  .footer-location { font-size: 0.875rem; opacity: 0.75; max-width: 30ch; }
 
   .footer-rule {
     margin-block: var(--space-64) var(--space-24);

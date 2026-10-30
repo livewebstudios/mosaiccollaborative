@@ -1,10 +1,12 @@
 ---
 /**
- * TwoWays: the two offering types as two wide, short bands.
+ * TwoWays: the two offering types as two cards, side by side from 1024px.
  * Shared by Home (Band 3, heading as H2) and the top of Services (heading as H1),
  * so the copy and graphics stay identical on both pages.
- * Both graphics use MosaicField at the same cell size and palette: Custom Offerings
- * shows the pieces assembled, Core Services shows separate pieces drifting.
+ * Both graphics use MosaicField at the same cell size: Custom Offerings shows the pieces
+ * assembled, Core Services shows separate pieces drifting.
+ * Round 3: the round 1 card look Deb and Amalia liked (white, hairline, accent wash,
+ * accent heading), minus the dark images.
  */
 import MosaicField from "./MosaicField.astro";
 import Icon from "./Icon.astro";
@@ -27,17 +29,19 @@ const ways = [
   {
     id: "custom",
     name: "Custom Offerings",
+    accent: "navy",
     body: "Our Custom Offerings bring together the right mix of services to address a set of interconnected organizational needs.",
     href: `${base}#custom-offerings`,
-    link: "See the custom offerings",
+    link: "See our custom offerings",
     field: { density: 0.95, seed: 61, drift: false },
   },
   {
     id: "core",
     name: "Core Services",
+    accent: "burgundy",
     body: "These are scoped, standalone engagements designed to address a specific need: diagnostics, workshops, and embedded advisory roles you can bring in when you need them.",
     href: `${base}#core-services`,
-    link: "See the core services",
+    link: "See our core services",
     field: { density: 0.38, seed: 67, drift: true },
   },
 ];
@@ -47,26 +51,24 @@ const ways = [
   <div class="two-ways-head">
     <Heading id={headingId} data-reveal>Two ways to work together</Heading>
     <p class="lead" data-reveal>
-      Shape a journey around a set of connected needs, or bring in a focused service for a specific
-      one. Many engagements combine both.
+      Address a broader set of connected challenges through a tailored engagement, or bring us in for a
+      focused need that requires the right expertise and attention.
     </p>
   </div>
 
   <ul class="ways" data-reveal-stagger="110">
     {ways.map((way) => (
-      <li class="way" data-reveal>
+      <li class="way surface lift" data-accent={way.accent} data-reveal>
+        <BoxHeading class="way-name">{way.name}</BoxHeading>
         <div class="way-art" aria-hidden="true">
-          <MosaicField cols={4} rows={3} cell={55} {...way.field} />
+          <MosaicField cols={4} rows={3} cell={55} opacity={0.7} {...way.field} />
         </div>
-        <div class="way-body">
-          <BoxHeading class="way-name">{way.name}</BoxHeading>
-          <p>{way.body}</p>
-          <p class="way-action">
-            <a class="btn btn-secondary" href={way.href}>
-              {way.link} <Icon name="arrow" size={15} />
-            </a>
-          </p>
-        </div>
+        <p class="way-text">{way.body}</p>
+        <p class="way-action">
+          <a class="btn btn-secondary" href={way.href}>
+            {way.link} <Icon name="arrow" size={15} />
+          </a>
+        </p>
       </li>
     ))}
   </ul>
@@ -93,24 +95,35 @@ const ways = [
     display: grid;
     gap: var(--grid-gap);
   }
+  @media (min-width: 1024px) { .ways { grid-template-columns: 1fr 1fr; } }
+
+  /* Heading and art share the top row; the art never crowds the words. */
   .way {
     display: grid;
-    gap: clamp(1.5rem, 3vw, 3rem);
-    align-items: center;
-    background: #fff;
-    border: 1px solid var(--color-navy);
-    border-radius: var(--radius-tile);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name art"
+      "text text"
+      "action action";
+    column-gap: var(--space-24);
+    row-gap: var(--space-16);
+    align-items: start;
+    align-content: start;
     padding: clamp(var(--space-24), 3.5vw, var(--space-48));
   }
-  @media (min-width: 768px) {
-    .way { grid-template-columns: minmax(0, 220px) minmax(0, 1fr); }
+  .way-name {
+    grid-area: name;
+    align-self: center;
+    font-size: var(--step-3);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: var(--accent-display);
   }
-  .way-art { width: min(100%, 220px); }
+  .way-art { grid-area: art; width: clamp(110px, 14vw, 200px); }
   .way-art :global(svg) { width: 100%; height: auto; }
-  .way-body { display: grid; gap: var(--space-16); max-width: 60ch; }
-  .way-name { font-size: var(--step-3); line-height: 1.08; letter-spacing: -0.01em; }
-  .way-body p { margin: 0; }
-  .way-action { margin-top: var(--space-8) !important; }
+  .way-text { grid-area: text; max-width: 52ch; margin: 0; }
+  .way-action { grid-area: action; margin: var(--space-8) 0 0; align-self: end; }
+  .way-action .btn { flex-wrap: nowrap; }
 
   .band-cta { margin-top: clamp(3rem, 6vw, 4.5rem); }
 </style>

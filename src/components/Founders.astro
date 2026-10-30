@@ -1,8 +1,9 @@
 ---
 /**
- * Founders: photo, name, title, the three bullets and a LinkedIn link for each founder.
- * "compact" is the Home version (three across). "full" is the About version: larger
- * photos, alternating sides, plus Roz's credentials line. Same data from team.ts.
+ * Founders: photo, name, title and a LinkedIn link for each founder, plus the three
+ * bullets on About. "compact" is the Home version (three across, no bullets, each photo
+ * links to /about/). "full" is the About version: larger photos, alternating sides.
+ * Same data from team.ts.
  */
 import Icon from "./Icon.astro";
 import { team } from "../data/team";
@@ -24,20 +25,37 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
   {team.map((member) => (
     <li class="founder" data-accent={member.accent} data-reveal>
       <div class="founder-photo">
-        <div class="team-photo">
-          {member.photo ? (
-            <img
-              src={`/media/img/team/${member.photo}`}
-              alt={`${member.name}, ${member.title}`}
-              width={size}
-              height={size}
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <p class="team-initials" aria-hidden="true">{initials(member.name)}</p>
-          )}
-        </div>
+        {full ? (
+          <div class="team-photo">
+            {member.photo ? (
+              <img
+                src={`/media/img/team/${member.photo}`}
+                alt={`${member.name}, ${member.title}`}
+                width={size}
+                height={size}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <p class="team-initials" aria-hidden="true">{initials(member.name)}</p>
+            )}
+          </div>
+        ) : (
+          <a class="team-photo team-photo-link" href="/about/" aria-label={`About ${member.name}`}>
+            {member.photo ? (
+              <img
+                src={`/media/img/team/${member.photo}`}
+                alt=""
+                width={size}
+                height={size}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span class="team-initials" aria-hidden="true">{initials(member.name)}</span>
+            )}
+          </a>
+        )}
       </div>
 
       <div class="founder-body">
@@ -50,9 +68,11 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
             </a>
           </p>
         )}
-        <ul class="tri-list founder-bullets">
-          {member.bullets.map((b) => <li>{b}</li>)}
-        </ul>
+        {full && (
+          <ul class="tri-list founder-bullets">
+            {member.bullets.map((b) => <li>{b}</li>)}
+          </ul>
+        )}
         {full && member.credentials && <p class="credentials">{member.credentials}</p>}
       </div>
     </li>
@@ -66,13 +86,12 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
   .founder p { margin: 0; }
   .founder-body { display: grid; gap: var(--space-12); align-content: start; }
   .founder-name { font-size: var(--step-2); color: var(--color-navy); }
+  /* Round 3: titles about two-thirds the name size, as in the deck. */
   .founder-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-burgundy);
-    line-height: 1.3;
+    font-size: var(--step-1);
+    font-weight: 500;
+    color: var(--color-navy);
+    line-height: 1.35;
   }
   .founder-bullets { margin-top: var(--space-8); max-width: 52ch; }
 
@@ -80,7 +99,20 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
   .compact { gap: clamp(3rem, 5vw, 4rem); }
   @media (min-width: 768px) { .compact { grid-template-columns: repeat(3, 1fr); } }
   .compact .founder { display: grid; gap: var(--space-24); align-content: start; }
-  .compact .founder-bullets { font-size: var(--step--1); }
+  /* Photos never render past 220px on Home, so the 420px headshots stay above 1.9x. */
+  .compact .team-photo { width: min(100%, 220px); }
+  .team-photo-link {
+    display: block;
+    transition: transform 220ms var(--ease-out-expo), box-shadow 220ms var(--ease-out-expo);
+  }
+  .team-photo-link:hover,
+  .team-photo-link:focus-visible {
+    box-shadow: 0 0 0 6px var(--accent), var(--lift-shadow-hover);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .team-photo-link:hover,
+    .team-photo-link:focus-visible { transform: translateY(-4px); }
+  }
 
   /* Full: alternating left and right on desktop, stacked on mobile. */
   .full { gap: clamp(4rem, 8vw, 7rem); }

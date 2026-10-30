@@ -286,23 +286,61 @@ function initParallax() {
 /* ---------------------------------------------------------------- statement band */
 // Home Band 2 ships as a plain navy band. With motion allowed, it blends in from linen
 // to navy, and its text from ink to linen, as it scrolls up the screen.
+// The band's [data-assemble] cluster rides the same ScrollTrigger (round 3).
 function initStatement() {
   const band = document.querySelector<HTMLElement>("[data-statement]");
   if (!band || prefersReduced()) return;
   const root = getComputedStyle(document.documentElement);
   const token = (name: string) => root.getPropertyValue(name).trim();
 
-  const tween = gsap.fromTo(
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: band, start: "top 85%", end: "top 35%", scrub: true },
+  });
+  tl.fromTo(
     band,
     { backgroundColor: token("--color-linen"), color: token("--color-ink") },
-    {
-      backgroundColor: token("--color-navy"),
-      color: token("--color-linen"),
-      ease: "none",
-      scrollTrigger: { trigger: band, start: "top 85%", end: "top 35%", scrub: true },
-    }
+    { backgroundColor: token("--color-navy"), color: token("--color-linen"), ease: "none" },
+    0
   );
-  cleanups.push(() => tween.scrollTrigger?.kill());
+  const field = band.querySelector<HTMLElement>("[data-assemble]");
+  if (field) tl.add(assembleFrom(field), 0);
+  cleanups.push(() => { tl.scrollTrigger?.kill(); tl.kill(); });
+}
+
+/* ---------------------------------------------------------------- assembling clusters */
+// "The pieces aligning": tiles start scattered at 60% opacity and settle into the block.
+// The markup is the assembled block, so JS off and reduced motion show it finished.
+// Offsets come from the tile index, so the scatter is the same on every visit.
+function assembleFrom(field: HTMLElement) {
+  const tiles = Array.from(field.querySelectorAll<SVGPolygonElement>("polygon"));
+  const jitter = (i: number, salt: number) => {
+    const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453;
+    return (x - Math.floor(x)) * 2 - 1;
+  };
+  return gsap.from(tiles, {
+    x: (i) => jitter(i, 1) * 90,
+    y: (i) => jitter(i, 2) * 70,
+    rotation: (i) => jitter(i, 3) * 40,
+    opacity: 0.6,
+    transformOrigin: "50% 50%",
+    ease: "none",
+  });
+}
+
+function initAssemble() {
+  if (prefersReduced()) return;
+  document.querySelectorAll<HTMLElement>("[data-assemble]").forEach((field) => {
+    if (field.closest("[data-statement]")) return;
+    const tween = assembleFrom(field);
+    const st = ScrollTrigger.create({
+      trigger: field,
+      start: "top 92%",
+      end: "center 55%",
+      scrub: true,
+      animation: tween,
+    });
+    cleanups.push(() => { st.kill(); tween.kill(); });
+  });
 }
 
 /* ---------------------------------------------------------------- beliefs */
@@ -410,6 +448,7 @@ function boot() {
   initStatement();
   initBeliefs();
   initSubnav();
+  initAssemble();
   initDrift();
   initCountUp();
   ScrollTrigger.refresh();

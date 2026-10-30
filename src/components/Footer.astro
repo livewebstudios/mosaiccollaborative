@@ -7,6 +7,7 @@ import MosaicField from "./MosaicField.astro";
 import Icon from "./Icon.astro";
 
 const year = new Date().getFullYear();
+const [taglineHead, taglineTail] = site.tagline.split("thrives");
 const hasEmail = !site.email.startsWith("TODO");
 ---
 
@@ -16,7 +17,7 @@ const hasEmail = !site.email.startsWith("TODO");
       <a class="footer-logo" href="/" aria-label={`${site.name}, home`}>
         <Image src={logoReversed} alt={site.name} widths={[160, 320]} sizes="160px" loading="lazy" />
       </a>
-      <p class="display footer-tagline">{site.tagline}</p>
+      <p class="display footer-tagline">{taglineHead}<em class="emphasis">thrives</em>{taglineTail}</p>
       <p class="eyebrow-plain">{site.strapline}</p>
       <p class="footer-descriptor">{site.descriptor}</p>
     </div>

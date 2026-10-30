@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import MosaicField from "../components/MosaicField.astro";
+import MosaicGlow from "../components/MosaicGlow.astro";
 import Icon from "../components/Icon.astro";
 import { journeys } from "../data/journeys";
 import { services } from "../data/services";
@@ -12,6 +12,9 @@ const description =
   "Tell us what's going on. We'll tell you honestly whether we can help and where we'd start.";
 
 const hasEmail = !site.email.startsWith("TODO");
+
+// "How did you hear about us?" (round 3). Referral and Other each reveal a follow-up field.
+const sources = ["Referral", "LinkedIn", "Conference", "Podcast", "Other"];
 
 // Core service boxes on /services/ link here as /contact/?service=<slug>. Only known slugs
 // are accepted, so the note and the submitted value always show a real service name.
@@ -51,19 +54,13 @@ const schema = [
 ---
 
 <Base title={title} description={description} path="/contact/" schema={schema}>
-  <div class="contact-page" data-parallax-scope>
-    <div class="contact-field" aria-hidden="true" data-parallax="0.15">
-      <MosaicField cols={7} rows={6} cell={110} density={0.3} seed={211} opacity={0.5} drift />
-    </div>
-
-    <section class="section contact" aria-labelledby="contact-h">
+  <div class="contact-page">
+    <section class="section contact has-glow" aria-labelledby="contact-h">
+      <MosaicGlow position="top-right" seed={211} class="contact-glow" />
       <div class="container contact-inner">
         <div class="contact-intro">
           <p class="eyebrow" data-reveal>Contact</p>
-          <h1 id="contact-h" data-reveal>Let's see the whole picture.</h1>
-          <p class="lead" data-reveal>
-            Tell us what's going on. We'll tell you honestly whether we can help, and where we'd start.
-          </p>
+          <h1 id="contact-h" data-reveal>Let us help you see the whole picture.</h1>
 
           <address class="contact-details" data-reveal>
             {hasEmail ? (
@@ -76,12 +73,11 @@ const schema = [
                 </a>
               </p>
             ) : null}
-            <p class="contact-location">Based in the New York metro area. Working with clients nationally.</p>
+            <p class="contact-location">{site.location}</p>
           </address>
-          <!-- TODO: confirm with Roz. Direct email, LinkedIn URL and the exact location line. -->
         </div>
 
-        <div class="contact-form-wrap" data-reveal>
+        <div class="contact-form-wrap surface" data-reveal>
           <form
             class="contact-form"
             name="contact"
@@ -124,6 +120,25 @@ const schema = [
               </div>
             </div>
 
+            <div class="field">
+              <label for="source">How did you hear about us? <span class="optional">(optional)</span></label>
+              <select id="source" name="source" data-source>
+                <option value="">Choose one</option>
+                {sources.map((s) => <option value={s}>{s}</option>)}
+              </select>
+            </div>
+
+            <!-- Both follow-ups ship in the static HTML so Netlify Forms registers them. With
+                 JavaScript they stay hidden until Referral or Other is chosen. -->
+            <div class="field" data-source-follow="Referral">
+              <label for="referral_name">Who referred you? <span class="optional">(optional)</span></label>
+              <input id="referral_name" name="referral_name" type="text" autocomplete="off" />
+            </div>
+            <div class="field" data-source-follow="Other">
+              <label for="source_other">Tell us where</label>
+              <input id="source_other" name="source_other" type="text" autocomplete="off" />
+            </div>
+
             <fieldset class="choice-set">
               <legend>Which sounds most like you?</legend>
               {journeys.map((j) => (
@@ -157,17 +172,9 @@ const schema = [
 </Base>
 
 <style>
-  .contact-page { position: relative; overflow: hidden; }
-  .contact-field {
-    position: absolute;
-    inset: 4% -18% auto auto;
-    width: min(58%, 720px);
-    opacity: 0.8;
-    pointer-events: none;
-    mask-image: radial-gradient(ellipse at 62% 45%, #000 22%, transparent 68%);
-  }
-
-  .contact { padding-top: calc(var(--section-y) + 8.5rem); position: relative; z-index: 1; }
+  .contact { padding-top: calc(var(--section-y) + 8.5rem); }
+  /* Behind the form card rather than up in the header. */
+  @media (min-width: 768px) { .contact :global(.contact-glow) { top: 12rem; } }
   .contact-inner { display: grid; gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
   @media (min-width: 1024px) { .contact-inner { grid-template-columns: 5fr 7fr; } }
 
@@ -176,14 +183,21 @@ const schema = [
   .contact-intro h1 { font-size: var(--step-4); max-width: 12ch; }
 
   .contact-details { font-style: normal; display: grid; gap: 0.75rem; margin-top: 1.5rem; }
-  .contact-location { font-size: var(--step--1); max-width: 30ch; }
+  .contact-location { font-size: var(--step--1); max-width: 36ch; }
 
-  .contact-form-wrap {
-    background: #fff;
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
-    padding: clamp(var(--space-24), 3vw, var(--space-40));
+  /* Round 3 card look, no hover lift: it is a form. */
+  .contact-form-wrap { padding: clamp(var(--space-24), 3vw, var(--space-40)); }
+
+  /* The select matches the inputs, with a navy chevron. */
+  .field select {
+    appearance: none;
+    padding-right: 2.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3 6l5 5 5-5' stroke='%231E3A5F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    cursor: pointer;
   }
+  [data-source-follow][hidden] { display: none; }
   .contact-form { display: grid; gap: 1.5rem; }
   .field-row { display: grid; gap: 1.5rem; }
   @media (min-width: 560px) { .field-row { grid-template-columns: repeat(2, 1fr); } }
@@ -237,4 +251,18 @@ const schema = [
     note.hidden = !name;
   }
   document.addEventListener("astro:page-load", prefillService);
+
+  // Show the follow-up that matches the "How did you hear about us?" choice. Without
+  // JavaScript both stay visible and the form still submits.
+  function initSourceFollowUps() {
+    const select = document.querySelector<HTMLSelectElement>("[data-source]");
+    if (!select) return;
+    const follows = document.querySelectorAll<HTMLElement>("[data-source-follow]");
+    const update = () => {
+      follows.forEach((el) => { el.hidden = el.dataset.sourceFollow !== select.value; });
+    };
+    update();
+    select.addEventListener("change", update);
+  }
+  document.addEventListener("astro:page-load", initSourceFollowUps);
 </script>

@@ -15,9 +15,11 @@ interface Props {
   palette?: "light" | "dark";
   opacity?: number;
   seed?: number;
+  /** Page-level nudges, e.g. Contact drops it behind the form card. */
+  class?: string;
 }
 
-const { position = "bottom-right", size = "md", palette = "light", opacity, seed = 97 } = Astro.props;
+const { position = "bottom-right", size = "md", palette = "light", opacity, seed = 97, class: className } = Astro.props;
 
 // On navy the navy tiles would vanish, so the dark palette swaps navy for linen.
 const DARK = ["#7A9BB5", "#D4942A", "#8B1A3A", "#FAF0E0", "#7A9BB5"];
@@ -25,7 +27,7 @@ const fieldOpacity = opacity ?? (palette === "dark" ? 0.16 : 0.22);
 ---
 
 <div
-  class:list={["mosaic-glow", `glow-${position}`, `glow-${size}`]}
+  class:list={["mosaic-glow", `glow-${position}`, `glow-${size}`, className]}
   style={`--glow-opacity:${fieldOpacity}`}
   aria-hidden="true"
   data-drift="50"

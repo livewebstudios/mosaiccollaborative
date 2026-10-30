@@ -17,7 +17,9 @@ interface Props {
 const { variant = "compact", level = 3 } = Astro.props;
 const Name = level === 2 ? "h2" : "h3";
 const full = variant === "full";
-const size = full ? 560 : 480;
+// The headshots are 418px squares (round 3). Rendered at most 300px on About and 220px
+// on Home, so they stay at or above 1.4x and are never upscaled.
+const size = 418;
 const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).join("");
 ---
 
@@ -73,13 +75,11 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
             {member.bullets.map((b) => <li>{b}</li>)}
           </ul>
         )}
-        {full && member.credentials && <p class="credentials">{member.credentials}</p>}
       </div>
     </li>
   ))}
 </ul>
-<!-- TODO: confirm with Roz. LinkedIn URLs for all three founders, and the new headshots
-     (same filenames in public/media/img/team/; Amalia's current photo is the upscaled one). -->
+<!-- TODO: confirm with Roz. Full-size originals of Deb's and Amalia's headshots for retina. -->
 
 <style>
   .founders-list { list-style: none; margin: 0; padding: 0; display: grid; }
@@ -122,12 +122,6 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
     .full .founder:nth-child(even) .founder-photo { order: 2; }
   }
   .full .founder-photo { display: flex; justify-content: center; }
-  .full .team-photo { width: clamp(11rem, 26vw, 20rem); }
+  .full .team-photo { width: clamp(11rem, 26vw, 300px); }
   .full .founder-name { font-size: var(--step-3); }
-  .credentials {
-    font-size: var(--step--1);
-    padding-top: 1rem;
-    border-top: 1px solid var(--rule);
-    max-width: 52ch;
-  }
 </style>

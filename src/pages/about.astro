@@ -4,6 +4,8 @@ import Base from "../layouts/Base.astro";
 import { gen } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import Founders from "../components/Founders.astro";
+import MosaicField from "../components/MosaicField.astro";
+import MosaicGlow from "../components/MosaicGlow.astro";
 import { team } from "../data/team";
 import { site } from "../data/site";
 
@@ -58,17 +60,28 @@ const schema = [
     <div class="container">
       <h1 id="about-h" class="about-h" data-reveal>We know leadership because we've lived it</h1>
       <Founders variant="full" level={2} />
+      <!-- The one count-up on the site (Deb asked on the call). The final number is in the
+           markup, so JS off and reduced motion read 75; the animated copy is hidden from
+           screen readers. -->
+      <p class="experience" data-reveal>
+        Together we bring over <span class="sr-only">75</span><span aria-hidden="true" data-countup="75">75</span> years of experience to our clients.
+      </p>
     </div>
   </section>
 
   <!-- Section 2: beliefs. The change from linen to the gray ground is the divider. -->
-  <section class="section section-gray beliefs has-bg" aria-labelledby="beliefs-h">
+  <section class="section section-gray beliefs has-bg has-glow" aria-labelledby="beliefs-h">
     <div class="section-bg" aria-hidden="true">
       <Image src={gen("foundation")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
     </div>
+    <MosaicGlow position="bottom-left" seed={181} />
     <div class="container beliefs-inner">
       <div class="beliefs-sticky">
         <h2 id="beliefs-h" data-reveal>What we believe informs what we do</h2>
+        <!-- The pieces aligning, so the column is not a wall of text. Assembled without JS. -->
+        <div class="beliefs-art" aria-hidden="true" data-assemble>
+          <MosaicField cols={5} rows={4} cell={56} density={0.9} seed={191} />
+        </div>
       </div>
       <ol class="beliefs-list" data-beliefs>
         {beliefs.map((belief, i) => (
@@ -87,13 +100,34 @@ const schema = [
 <style>
   .founders { padding-top: calc(var(--section-y) + 8.5rem); }
   .about-h { max-width: 18ch; margin-bottom: clamp(4rem, 8vw, 7rem); }
+  .experience {
+    margin: clamp(5rem, 10vw, 8rem) auto 0;
+    max-width: 24ch;
+    text-align: center;
+    text-wrap: balance;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--step-3);
+    line-height: 1.15;
+    color: var(--color-navy);
+  }
+  .experience [data-countup] { font-variant-numeric: tabular-nums; }
 
   /* Beliefs */
   .beliefs-inner { display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
   @media (min-width: 1024px) { .beliefs-inner { grid-template-columns: 5fr 7fr; align-items: start; } }
   .beliefs-sticky { display: grid; gap: 1rem; align-content: start; }
   @media (min-width: 1024px) { .beliefs-sticky { position: sticky; top: 20vh; } }
+  .beliefs-art { width: min(100%, 280px); margin-top: var(--space-24); }
+  .beliefs-art :global(svg) { width: 100%; height: auto; }
+  @media (max-width: 1023px) { .beliefs-art { width: min(60%, 220px); } }
   .beliefs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); }
   .belief p { max-width: 60ch; }
-  .belief-lead { font-weight: 600; color: var(--color-navy); }
+  /* Round 3: the closing line of each belief in burgundy (Roz's "maroon"), bold, larger. */
+  .belief-lead { font-weight: 600; font-size: var(--step-1); color: var(--color-burgundy); }
+  /* More pronounced hover: the corner tile mark scales and turns. */
+  .belief::after { transform-origin: 100% 0; transition: width 0.4s var(--ease-out-expo), transform 300ms var(--ease-out-expo); }
+  @media (prefers-reduced-motion: no-preference) {
+    .belief:hover::after { transform: scale(1.25) rotate(8deg); }
+  }
 </style>

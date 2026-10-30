@@ -14,6 +14,10 @@ interface Props {
   class?: string;
   drift?: boolean;
   opacity?: number;
+  /** Grout color between tiles. White by default; linen for the CTA strip. */
+  stroke?: string;
+  /** Grout width in viewBox units. */
+  gap?: number;
 }
 
 const {
@@ -26,6 +30,8 @@ const {
   class: className = "",
   drift = false,
   opacity = 1,
+  stroke = "#FFFFFF",
+  gap = 2,
 } = Astro.props;
 
 const COLORS = ["#1E3A5F", "#7A9BB5", "#8B1A3A", "#D4942A"];
@@ -94,7 +100,7 @@ const h = rows * cell;
   focusable="false"
   preserveAspectRatio="xMidYMid slice"
 >
-  <g stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round">
+  <g stroke={stroke} stroke-width={gap} stroke-linejoin="round">
     {tiles.map((t) => (
       <polygon data-tile={t.i} style={`--i:${t.i}`} fill={t.fill} points={t.points} />
     ))}

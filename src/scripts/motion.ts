@@ -349,6 +349,54 @@ function initSubnav() {
   });
 }
 
+/* ---------------------------------------------------------------- drift */
+// [data-drift="seconds"] with optional data-drift-travel="percent": a very slow yoyo
+// drift for background layers (MosaicGlow, hero gradients, band tiles). Felt, not seen.
+// Reduced motion leaves every layer where it is.
+function initDrift() {
+  if (prefersReduced()) return;
+  document.querySelectorAll<HTMLElement>("[data-drift]").forEach((el, i) => {
+    const duration = Number(el.dataset.drift) || 50;
+    const travel = Number(el.dataset.driftTravel) || 2;
+    const dir = i % 2 === 0 ? 1 : -1;
+    const tween = gsap.to(el, {
+      xPercent: travel * dir,
+      yPercent: travel * 0.6 * -dir,
+      duration: duration / 2,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+    });
+    cleanups.push(() => tween.kill());
+  });
+}
+
+/* ---------------------------------------------------------------- count-up */
+// <span data-countup="75">75</span>: counts from 0 once, when it scrolls into view.
+// The markup already holds the final number, so JS off and reduced motion show 75.
+function initCountUp() {
+  if (prefersReduced()) return;
+  document.querySelectorAll<HTMLElement>("[data-countup]").forEach((el) => {
+    const target = Number(el.dataset.countup) || 0;
+    const counter = { n: 0 };
+    el.textContent = "0";
+    const tween = gsap.to(counter, {
+      n: target,
+      duration: 1.4,
+      ease: "power2.out",
+      paused: true,
+      onUpdate: () => { el.textContent = String(Math.round(counter.n)); },
+    });
+    const st = ScrollTrigger.create({
+      trigger: el,
+      start: "top 85%",
+      once: true,
+      onEnter: () => tween.play(),
+    });
+    cleanups.push(() => { st.kill(); tween.kill(); el.textContent = String(target); });
+  });
+}
+
 /* ---------------------------------------------------------------- boot */
 function boot() {
   initLenis();
@@ -362,6 +410,8 @@ function boot() {
   initStatement();
   initBeliefs();
   initSubnav();
+  initDrift();
+  initCountUp();
   ScrollTrigger.refresh();
 }
 

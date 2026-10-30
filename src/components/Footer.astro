@@ -17,19 +17,19 @@ const hasEmail = !site.email.startsWith("TODO");
         <Image src={logoReversed} alt={site.name} widths={[160, 320]} sizes="160px" loading="lazy" />
       </a>
       <p class="display footer-tagline">{site.tagline}</p>
-      <p class="eyebrow">{site.strapline}</p>
+      <p class="eyebrow-plain">{site.strapline}</p>
       <p class="footer-descriptor">{site.descriptor}</p>
     </div>
 
     <nav class="footer-col" aria-label="Footer">
-      <h2 class="eyebrow">EXPLORE</h2>
+      <h2 class="eyebrow-plain">EXPLORE</h2>
       <ul>
         {site.nav.map((item) => <li><a href={item.href}>{item.label.toUpperCase()}</a></li>)}
       </ul>
     </nav>
 
     <nav class="footer-col" aria-label="Custom offerings">
-      <h2 class="eyebrow">CUSTOM OFFERINGS</h2>
+      <h2 class="eyebrow-plain">CUSTOM OFFERINGS</h2>
       <ul>
         {journeys.map((j) => (
           <li><a href={`/how-we-work/${j.slug}/`}>{j.name.toUpperCase()}</a></li>
@@ -38,7 +38,7 @@ const hasEmail = !site.email.startsWith("TODO");
     </nav>
 
     <div class="footer-col">
-      <h2 class="eyebrow">CONTACT</h2>
+      <h2 class="eyebrow-plain">CONTACT</h2>
       <ul>
         {hasEmail ? (
           <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
@@ -101,7 +101,10 @@ const hasEmail = !site.email.startsWith("TODO");
   .footer-logo { display: inline-block; margin-bottom: var(--space-24); }
   .footer-logo img { width: 160px; height: auto; }
 
+  /* The footer stays Inter (round 3), so the tagline drops the serif. */
   .footer-tagline {
+    font-family: var(--font-sans);
+    font-weight: 460;
     font-size: var(--step-2);
     max-width: 16ch;
     letter-spacing: -0.022em;

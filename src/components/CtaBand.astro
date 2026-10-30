@@ -1,32 +1,26 @@
 ---
 import Icon from "./Icon.astro";
+import MosaicField from "./MosaicField.astro";
 
-// Round 2 (Oct 2026): one closing band on every page. One headline, one button, nothing else.
+// One closing band on every page: one headline, one button. Round 3 brings back a
+// per-page headline (Roz's wording) and adds the slanted tile strip from deck slide 2.
+// The strip lives here and nowhere else (Jon's call). The drifting triangles video went:
+// behind a full-opacity strip it read as two competing patterns.
+interface Props {
+  heading?: string;
+}
+
+const { heading = "Need a new perspective?" } = Astro.props;
 const headingId = "cta-h";
 ---
 
 <section class="section section-dark cta-band" aria-labelledby={headingId}>
-  {/* Procedural triangles, each drifting and rotating on its own (assets/tools/cta_triangles.py,
-      36s seamless loop). Reduced motion keeps the poster. */}
-  <div class="cta-media" aria-hidden="true">
-    <video
-      data-autoplay
-      muted
-      playsinline
-      loop
-      preload="metadata"
-      poster="/media/video/mosaic_cta_triangles_900p-poster.jpg"
-      width="1600"
-      height="904"
-    >
-      <source src="/media/video/mosaic_cta_triangles_900p.webm" type="video/webm" />
-      <source src="/media/video/mosaic_cta_triangles_900p.mp4" type="video/mp4" />
-    </video>
-    <div class="cta-scrim"></div>
+  <div class="cta-strip" aria-hidden="true">
+    <MosaicField cols={4} rows={14} cell={72} density={1} seed={202} stroke="#FAF0E0" gap={2} />
   </div>
 
   <div class="container cta-inner">
-    <h2 id={headingId} data-reveal>Which of these sounds like you?</h2>
+    <h2 id={headingId} data-reveal>{heading}</h2>
     <p class="cta-actions" data-reveal>
       <a class="btn btn-on-dark" href="/contact/">
         <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
@@ -39,15 +33,37 @@ const headingId = "cta-h";
 <style>
   .cta-band { position: relative; overflow: hidden; isolation: isolate; }
 
-  .cta-media { position: absolute; inset: 0; z-index: -1; }
-  .cta-media video { width: 100%; height: 100%; object-fit: cover; }
-  .cta-scrim {
+  /* A tall, narrow field rotated 20 degrees. The band clips its sides into a
+     parallelogram and the mask fades both ends. Mobile: behind the heading, faint. */
+  .cta-strip {
     position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 50%, rgba(20, 35, 58, 0.72) 25%, rgba(20, 35, 58, 0.4) 80%);
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    opacity: 0.35;
+    pointer-events: none;
+    transform: translate(-50%, -50%) rotate(20deg);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  }
+  .cta-strip :global(svg) { width: 100%; height: auto; }
+
+  @media (min-width: 1024px) {
+    .cta-strip {
+      left: auto;
+      right: 9%;
+      width: 260px;
+      opacity: 0.9;
+      pointer-events: auto;
+      transform: translateY(-50%) rotate(20deg);
+    }
   }
 
   .cta-inner { text-align: center; display: grid; justify-items: center; gap: var(--space-32); }
   .cta-inner h2 { font-size: var(--step-3); max-width: 18ch; }
   .cta-actions { margin: 0; }
+  @media (min-width: 1024px) {
+    /* Keep the heading clear of the strip in the right third. */
+    .cta-inner { padding-right: 22%; }
+  }
 </style>

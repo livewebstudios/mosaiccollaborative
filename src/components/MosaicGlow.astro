@@ -1,0 +1,63 @@
+---
+/**
+ * MosaicGlow: the radial-masked tile field Roz and Amalia call "the Mosaic gradient."
+ * Round 3 extracted it from the Services hero so it can sit in a corner of any section.
+ * The parent section needs the .has-glow class (position, clip and stacking).
+ * Decorative only: aria-hidden, no pointer events. It drifts very slowly when motion is
+ * allowed (initDrift in motion.ts) and sits still otherwise.
+ * Placement rule: never two on one screen at 1440.
+ */
+import MosaicField from "./MosaicField.astro";
+
+interface Props {
+  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  size?: "md" | "lg";
+  palette?: "light" | "dark";
+  opacity?: number;
+  seed?: number;
+}
+
+const { position = "bottom-right", size = "md", palette = "light", opacity, seed = 97 } = Astro.props;
+
+// On navy the navy tiles would vanish, so the dark palette swaps navy for linen.
+const DARK = ["#7A9BB5", "#D4942A", "#8B1A3A", "#FAF0E0", "#7A9BB5"];
+const fieldOpacity = opacity ?? (palette === "dark" ? 0.16 : 0.22);
+---
+
+<div
+  class:list={["mosaic-glow", `glow-${position}`, `glow-${size}`]}
+  style={`--glow-opacity:${fieldOpacity}`}
+  aria-hidden="true"
+  data-drift="50"
+  data-drift-travel="2.5"
+>
+  <MosaicField cols={5} rows={4} cell={92} density={0.55} seed={seed} palette={palette === "dark" ? DARK : undefined} />
+</div>
+
+<style>
+  .mosaic-glow {
+    position: absolute;
+    z-index: 0;
+    width: min(46vw, 260px);
+    opacity: var(--glow-opacity);
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at 50% 50%, #000 22%, transparent 70%);
+  }
+  .mosaic-glow :global(svg) { width: 100%; height: auto; }
+
+  /* At phone width the field sits mostly off-canvas in its corner, inside the section
+     padding, so it never lands on body text. */
+  .glow-top-left { top: -8%; left: -22%; }
+  .glow-top-right { top: -8%; right: -22%; }
+  .glow-bottom-left { bottom: -10%; left: -22%; }
+  .glow-bottom-right { bottom: -10%; right: -22%; }
+
+  @media (min-width: 768px) {
+    .glow-md { width: min(38vw, 440px); }
+    .glow-lg { width: min(57vw, 660px); }
+    .glow-top-left { top: -6%; left: -8%; }
+    .glow-top-right { top: -6%; right: -8%; }
+    .glow-bottom-left { bottom: -8%; left: -8%; }
+    .glow-bottom-right { bottom: -8%; right: -8%; }
+  }
+</style>

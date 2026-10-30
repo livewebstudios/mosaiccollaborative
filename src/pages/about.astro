@@ -72,7 +72,7 @@ const schema = [
       </div>
       <ol class="beliefs-list" data-beliefs>
         {beliefs.map((belief, i) => (
-          <li class="belief card" data-accent={["navy", "slate", "gold", "burgundy"][i]} data-reveal>
+          <li class="belief card" data-accent={["navy", "burgundy", "gold", "moss"][i]} data-reveal>
             {/* Deck order: the body first, the highlighted sentence last. */}
             <p>{belief.body} <strong class="belief-lead">{belief.lead}</strong></p>
           </li>
@@ -81,7 +81,7 @@ const schema = [
     </div>
   </section>
 
-  <CtaBand />
+  <CtaBand heading="Need a new perspective?" />
 </Base>
 
 <style>

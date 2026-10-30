@@ -12,7 +12,7 @@ export type Journey = {
   promise: string;          // one-line tagline used on Home, Services and the journey hero
   ceoQuestion: string;      // from the orientation table
   solutions: string;        // orientation table: solutions (source of solutionLine)
-  /** Services "Which journey is yours?" row, in Roz's pattern (round 2, Oct 2026). */
+  /** Services journey card line ("What's going on?"), in Roz's pattern (round 2, Oct 2026). */
   solutionLine: string;
   /** true until Roz signs off on a line we built from her pattern. */
   solutionLinePending?: boolean;

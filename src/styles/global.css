@@ -623,15 +623,19 @@ main :where(p, li, dd, td, address) a:not(.btn, .link-arrow):focus-visible { tex
    Motion. Everything below is progressive enhancement: content is
    visible and readable with JavaScript off and under reduced motion.
    ------------------------------------------------------------------ */
-[data-reveal] { opacity: 1; transform: none; }
+[data-reveal] { opacity: 1; translate: none; }
 
+/* The reveal moves with `translate`, not `transform`, so it never fights the hover lift
+   on cards that also reveal. The lift's own transitions are repeated here because this
+   rule outranks .card/.lift. */
 html.motion-ok [data-reveal] {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
-  transition-delay: var(--reveal-delay, 0ms);
+  translate: 0 32px;
+  transition: opacity 0.9s var(--ease-out-expo), translate 0.9s var(--ease-out-expo),
+    transform 220ms var(--ease-out-expo), box-shadow 220ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms), var(--reveal-delay, 0ms), 0ms, 0ms;
 }
-html.motion-ok [data-reveal].is-revealed { opacity: 1; transform: none; }
+html.motion-ok [data-reveal].is-revealed { opacity: 1; translate: none; }
 
 .scroll-cue-line {
   display: block;
@@ -709,7 +713,7 @@ html.motion-ok .tile-drift [data-tile] {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  [data-reveal] { opacity: 1 !important; translate: none !important; }
   .cursor-dot { display: none !important; }
 }
 

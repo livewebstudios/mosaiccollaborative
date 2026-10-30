@@ -68,6 +68,18 @@ const schemaList = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 
     <ClientRouter />
 
+    {path === "/" && (
+      <script is:inline>
+        // Netlify Identity invite, recovery and confirmation links land on the home page.
+        // Send them to the CMS with the token intact. No Identity widget on public pages.
+        (function () {
+          if (/(invite|recovery|confirmation)_token=/.test(location.hash)) {
+            location.replace("/admin/" + location.hash);
+          }
+        })();
+      </script>
+    )}
+
     <script is:inline>
       // Set before first paint so reveal elements never flash. Content stays visible
       // when JavaScript is off or motion is reduced.

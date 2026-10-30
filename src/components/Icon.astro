@@ -1,6 +1,6 @@
 ---
 /** The full in-repo icon set. No icon packs, per the design system. */
-interface Props { name: "arrow" | "plus" | "triangle" | "linkedin" | "close" | "menu"; class?: string; size?: number }
+interface Props { name: "arrow" | "plus" | "triangle" | "linkedin" | "close" | "menu" | "external"; class?: string; size?: number }
 const { name, class: className = "", size = 16 } = Astro.props;
 ---
 {name === "arrow" && (
@@ -16,6 +16,11 @@ const { name, class: className = "", size = 16 } = Astro.props;
 {name === "triangle" && (
   <svg class={className} width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
     <polygon points="2,2 14,8 2,14" fill="currentColor" />
+  </svg>
+)}
+{name === "external" && (
+  <svg class={className} width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M9 2h5v5M14 2 7.5 8.5M12 9.5V14H2V4h4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
   </svg>
 )}
 {name === "close" && (

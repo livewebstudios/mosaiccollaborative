@@ -9,7 +9,11 @@ import { glob } from "astro/loaders";
  *   date        YYYY-MM-DD, rendered in UTC so it never shifts a day
  *   category    one of the five below
  *   draft       true keeps it out of the build entirely
- *   heroAccent  navy, slate, gold or burgundy, tints the post header
+ *   heroAccent  navy, burgundy, gold or moss, tints the post header
+ *   author      one of the three founders, or the company
+ *   hero        optional photo, a path under /media/img/insights/
+ *   externalUrl / externalLabel  optional link out to where the piece lives
+ * Roz and the team edit these through Decap at /admin/ (public/admin/config.yml).
  */
 const insights = defineCollection({
   loader: glob({ base: "./src/content/insights", pattern: "**/*.md" }),
@@ -19,7 +23,16 @@ const insights = defineCollection({
     date: z.coerce.date(),
     category: z.enum(["Leadership", "Culture", "Change", "AI at work", "Podcasts & appearances"]),
     draft: z.boolean().default(true),
-    heroAccent: z.enum(["navy", "slate", "gold", "burgundy"]).default("navy"),
+    heroAccent: z.enum(["navy", "burgundy", "gold", "moss"]).default("navy"),
+    author: z
+      .enum(["Roz Cohen", "Debra DeFrancesco", "Amalia Egri Freedman", "The Mosaic Collaborative"])
+      .default("The Mosaic Collaborative"),
+    /** Path under /media/img/insights/ (Decap's media folder). */
+    hero: z.string().optional(),
+    /** Link to where the piece lives (LinkedIn, Substack, a podcast episode, an event page). */
+    externalUrl: z.string().url().optional(),
+    /** "Read on Substack", "Listen to the episode", "Event details". Defaults to "Read the original". */
+    externalLabel: z.string().optional(),
   }),
 });
 

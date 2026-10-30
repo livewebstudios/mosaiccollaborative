@@ -1,0 +1,31 @@
+# Decap CMS for the Insights section (round 3). Roz, Deb and Amalia log in at /admin/.
+# Needs Netlify Identity (invite only) and Git Gateway switched on in the Netlify UI.
+# Every save is a commit to main; Netlify rebuilds the site in about a minute.
+backend:
+  name: git-gateway
+  branch: main
+media_folder: "public/media/img/insights"
+public_folder: "/media/img/insights"
+site_url: https://mosaiccollaborative.com
+display_url: https://mosaiccollaborative.com
+logo_url: /admin/logo.svg
+collections:
+  - name: insights
+    label: Insights
+    label_singular: Insight
+    folder: src/content/insights
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "insights/{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Short description (shows on the card, under 155 characters), name: description, widget: text }
+      - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Category, name: category, widget: select, options: [Leadership, Culture, Change, AI at work, "Podcasts & appearances"] }
+      - { label: Author, name: author, widget: select, options: [Roz Cohen, Debra DeFrancesco, Amalia Egri Freedman, The Mosaic Collaborative], default: The Mosaic Collaborative }
+      - { label: Photo (optional), name: hero, widget: image, required: false }
+      - { label: Link to the original (LinkedIn, Substack, podcast, event), name: externalUrl, widget: string, required: false }
+      - { label: Link button text, name: externalLabel, widget: string, required: false, default: Read the original }
+      - { label: Header color, name: heroAccent, widget: select, options: [navy, burgundy, gold, moss], default: navy }
+      - { label: Draft (unchecked = live on the site), name: draft, widget: boolean, default: true }
+      - { label: Body, name: body, widget: markdown }

@@ -63,8 +63,11 @@ const schema = [
       <!-- The one count-up on the site (Deb asked on the call). The final number is in the
            markup, so JS off and reduced motion read 75; the animated copy is hidden from
            screen readers. -->
-      <p class="experience" data-reveal>
+      <p class="experience" data-reveal data-draw>
         Together we bring over <span class="sr-only">75</span><span aria-hidden="true" data-countup="75">75</span> years of experience to our clients.
+        <svg class="experience-line" viewBox="0 0 100 2" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <line class="draw draw-long" x1="0" y1="1" x2="100" y2="1" pathLength="100" />
+        </svg>
       </p>
     </div>
   </section>
@@ -83,9 +86,12 @@ const schema = [
           <MosaicField cols={5} rows={4} cell={56} density={0.9} seed={191} />
         </div>
       </div>
-      <ol class="beliefs-list" data-beliefs>
+      <ol class="beliefs-list" data-beliefs data-reveal-stagger>
         {beliefs.map((belief, i) => (
-          <li class="belief card" data-accent={["navy", "burgundy", "gold", "moss"][i]} data-reveal>
+          <li class="belief piece" data-accent={["navy", "burgundy", "gold", "moss"][i]} data-reveal>
+            <svg class="belief-mark reseat" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+              <polygon class="draw" points="1,1 39,1 39,39" pathLength="100" />
+            </svg>
             {/* Deck order: the body first, the highlighted sentence last. */}
             <p>{belief.body} <strong class="belief-lead">{belief.lead}</strong></p>
           </li>
@@ -125,9 +131,36 @@ const schema = [
   .belief p { max-width: 60ch; }
   /* Round 3: the closing line of each belief in burgundy (Roz's "maroon"), bold, larger. */
   .belief-lead { font-weight: 600; font-size: var(--step-1); color: var(--color-burgundy); }
-  /* More pronounced hover: the corner tile mark scales and turns. */
-  .belief::after { transform-origin: 100% 0; transition: width 0.4s var(--ease-out-expo), transform 300ms var(--ease-out-expo); }
-  @media (prefers-reduced-motion: no-preference) {
-    .belief:hover::after { transform: scale(1.25) rotate(8deg); }
+  /* Round 4: the belief card keeps the round 3 cut-tile shape, but its corner mark is a
+     drawn SVG triangle (grout-draw, three edges) and the hover is piece-lift: the card
+     lifts, the halo fades in and the mark breathes out from the corner and reseats.
+     The round 3 scale-and-turn hover is gone. */
+  .belief {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+    padding: clamp(var(--space-20), 2.4vw, var(--space-32));
+    padding-right: clamp(3.5rem, 6vw, 4.5rem);
   }
+  .belief-mark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    overflow: visible;
+  }
+  .belief-mark polygon {
+    --rx: 1;
+    --ry: -1;
+    fill: color-mix(in oklab, var(--accent) 18%, transparent);
+    stroke: var(--accent);
+    stroke-width: var(--stroke-grout);
+    stroke-linejoin: round;
+  }
+
+  /* The underline under the whole 75 line: the one long draw on this page, laid as the
+     count starts (motion.ts adds .is-drawn to this [data-draw] host). */
+  .experience-line { display: block; width: min(60%, 16rem); height: 2px; margin: 1.25rem auto 0; overflow: visible; }
+  .experience-line line { stroke: var(--color-burgundy); stroke-width: 2; }
 </style>

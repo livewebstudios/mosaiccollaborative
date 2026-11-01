@@ -31,6 +31,20 @@
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
+/* Round 4 motion tokens. Three patterns only: tile-settle (pieces arrive), grout-draw
+   (lines are laid), piece-lift (a piece lifts on hover and reseats). */
+:root {
+  --ease-seat: var(--ease-out-expo);
+  --dur-seat: 520ms;
+  --dur-draw: 900ms;
+  --dur-draw-long: 1600ms;
+  --stagger-seat: 40ms;
+  --stroke-grout: 1.5;
+  --lift-y: -4px;
+  --halo: 14%;
+  --halo-dark: 32%;
+}
+
 :root {
   /* Tints. Only these, per the design system. */
   --navy-90: color-mix(in oklab, var(--color-navy) 90%, black);
@@ -98,10 +112,6 @@
   /* Moss is 4.42:1 on linen-dark, so small text takes a darkened variant the same way. */
   --moss-text: color-mix(in srgb, var(--color-moss) 75%, black);
 
-  /* Card surface shared by every round 3 card: hairline, wash and hover lift. */
-  --card-rule: color-mix(in oklab, var(--color-navy) 15%, transparent);
-  --lift-shadow-rest: 0 1px 2px color-mix(in oklab, var(--color-navy) 12%, transparent);
-  --lift-shadow-hover: 0 18px 40px -20px color-mix(in oklab, var(--color-navy) 35%, transparent);
 }
 
 /* --accent drives shapes and fills. --accent-text drives type. --accent-on is the
@@ -405,68 +415,8 @@ main :where(p, li, dd, td, address) a:not(.btn, .link-arrow) {
 main :where(p, li, dd, td, address) a:not(.btn, .link-arrow):hover,
 main :where(p, li, dd, td, address) a:not(.btn, .link-arrow):focus-visible { text-decoration-thickness: 2px; }
 
-/* Asymmetric card, echoes a cut tile. Flat: depth comes from the white surface on
-   linen and a hairline edge, never from a drop shadow. */
-.card {
-  position: relative;
-  background: #fff;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
-  padding: clamp(var(--space-20), 2.4vw, var(--space-32));
-  overflow: hidden;
-}
-
-/* Hover lift (round 3). Every card gets it: .card, offering boxes, journey cards, Two
-   Ways boxes, insight cards. Focus-visible inside a card lifts it the same way. The
-   shadow always changes; the 4px rise only runs when motion is allowed. */
-.card,
-.lift {
-  box-shadow: var(--lift-shadow-rest);
-  transition: transform 220ms var(--ease-out-expo), box-shadow 220ms var(--ease-out-expo),
-    border-color 0.2s ease;
-}
-.card:hover,
-.card:has(:focus-visible),
-.lift:hover,
-.lift:focus-visible,
-.lift:has(:focus-visible) {
-  box-shadow: var(--lift-shadow-hover);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .card:hover,
-  .card:has(:focus-visible),
-  .lift:hover,
-  .lift:focus-visible,
-  .lift:has(:focus-visible) { transform: translateY(-4px); }
-}
-
-/* Round 3 card surface: white, navy hairline at 15%, a soft wash in the card's accent
-   from the top-left corner. --wash sets the strength per card type. */
-.surface {
-  position: relative;
-  background:
-    radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--accent) var(--wash, 8%), transparent), transparent 60%),
-    #fff;
-  border: 1px solid var(--card-rule);
-  border-radius: var(--radius-tile);
-}
-.card::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40px;
-  aspect-ratio: 1;
-  background: var(--accent);
-  clip-path: polygon(100% 0, 100% 100%, 0 0);
-  transition: width 0.4s var(--ease-out-expo);
-}
-.card:hover, .card:focus-within {
-  border-color: color-mix(in oklab, var(--color-navy) 45%, transparent);
-}
-.card:hover::after, .card:focus-within::after { width: 64px; }
-
-.section-gray .card { background: #fff; }
+/* Round 4 retired .card, .lift and .surface: every card is a RowCard
+   (src/components/RowCard.astro) or carries .piece, defined with the motion below. */
 
 /* Triangle bullet lists */
 .tri-list { list-style: none; padding: 0; }
@@ -623,19 +573,88 @@ main :where(p, li, dd, td, address) a:not(.btn, .link-arrow):focus-visible { tex
    Motion. Everything below is progressive enhancement: content is
    visible and readable with JavaScript off and under reduced motion.
    ------------------------------------------------------------------ */
-[data-reveal] { opacity: 1; translate: none; }
+[data-reveal] { opacity: 1; translate: none; rotate: none; }
 
-/* The reveal moves with `translate`, not `transform`, so it never fights the hover lift
-   on cards that also reveal. The lift's own transitions are repeated here because this
-   rule outranks .card/.lift. */
+/* tile-settle (round 4): a piece arrives by seating into place. It moves with the
+   individual `translate` and `rotate` properties, never `transform`, so it never fights
+   the hover lift on cards that also reveal. The lift's own transitions are repeated here
+   because this rule outranks .card/.lift/.piece. The first six items of a stagger group
+   seat from a 1.2deg tilt, alternating; from the seventh on they only fade and rise.
+   data-seat="tilt" gives a lone item the tilt; data-seat="still" takes it away (forms). */
 html.motion-ok [data-reveal] {
   opacity: 0;
-  translate: 0 32px;
-  transition: opacity 0.9s var(--ease-out-expo), translate 0.9s var(--ease-out-expo),
-    transform 220ms var(--ease-out-expo), box-shadow 220ms var(--ease-out-expo);
-  transition-delay: var(--reveal-delay, 0ms), var(--reveal-delay, 0ms), 0ms, 0ms;
+  translate: 0 14px;
+  rotate: var(--seat-rot, 0deg);
+  transition: opacity var(--dur-seat) var(--ease-seat), translate var(--dur-seat) var(--ease-seat),
+    rotate var(--dur-seat) var(--ease-seat), transform 220ms var(--ease-out-expo),
+    box-shadow 220ms var(--ease-out-expo);
+  --seat-delay: min(calc(var(--i, 0) * var(--stagger-seat)), 240ms);
+  transition-delay: var(--seat-delay), var(--seat-delay), var(--seat-delay), 0ms, 0ms;
 }
-html.motion-ok [data-reveal].is-revealed { opacity: 1; translate: none; }
+html.motion-ok [data-reveal-stagger] > [data-reveal]:nth-child(odd) { --seat-rot: 1.2deg; }
+html.motion-ok [data-reveal-stagger] > [data-reveal]:nth-child(even) { --seat-rot: -1.2deg; }
+html.motion-ok [data-reveal-stagger] > [data-reveal]:nth-child(n + 7) { --seat-rot: 0deg; }
+html.motion-ok [data-reveal][data-seat="tilt"] { --seat-rot: 1.2deg; }
+html.motion-ok [data-reveal][data-seat="still"] { --seat-rot: 0deg; }
+html.motion-ok [data-reveal].is-revealed { opacity: 1; translate: none; rotate: none; }
+
+/* grout-draw (round 4): lines are laid, not switched on. Every drawn line is inline SVG
+   with pathLength="100" and class "draw"; it lays itself when its nearest reveal
+   ancestor gets .is-revealed, or when a [data-draw] host gets .is-drawn (the 75 line).
+   Without motion-ok (JS off, reduced motion) no dash is set and the line is whole. */
+html.motion-ok :is([data-reveal], [data-draw]) .draw {
+  stroke-dasharray: 101;
+  stroke-dashoffset: 101;
+  transition: stroke-dashoffset var(--dur-draw) var(--ease-seat);
+  transition-delay: calc(var(--seat-delay, 0ms) + var(--draw-delay, 160ms));
+}
+html.motion-ok :is([data-reveal], [data-draw]) .draw-long { transition-duration: var(--dur-draw-long); }
+/* A [data-draw] host waits for its own trigger even after its reveal has fired. */
+html.motion-ok .is-revealed .draw:not([data-draw]:not(.is-drawn) .draw),
+html.motion-ok .is-drawn .draw { stroke-dashoffset: 0; }
+
+/* piece-lift (round 4): on hover or keyboard focus a piece lifts, a faint accent halo
+   fades in on its ::after, and any .reseat mark inside breathes apart and reseats once.
+   The card itself never animates box-shadow; only the halo's opacity moves. On dark
+   cards (.piece-dark) the glow is on at rest and hover only lifts. */
+.piece { position: relative; transition: transform 220ms var(--ease-out-expo); }
+.piece::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--accent) var(--halo), transparent),
+    0 12px 32px -16px color-mix(in oklab, var(--color-navy) 35%, transparent);
+  transition: opacity 220ms var(--ease-out-expo);
+}
+.piece-dark::after {
+  opacity: 1;
+  box-shadow: 0 0 24px color-mix(in oklab, var(--color-gold) var(--halo-dark), transparent);
+}
+:is(.piece:focus-visible, .piece:has(:focus-visible))::after { opacity: 1; }
+@media (hover: hover) { .piece:hover::after { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) {
+  :is(.piece:focus-visible, .piece:has(:focus-visible)) { transform: translateY(var(--lift-y)); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .piece:hover { transform: translateY(var(--lift-y)); }
+  html.motion-ok .piece:is(:hover, :focus-visible, :has(:focus-visible)) .reseat polygon {
+    animation: reseat 420ms var(--ease-seat) 1;
+  }
+}
+/* Each tile breathes 2px away from the mark's center, then seats again. */
+.reseat polygon { --rx: -1; --ry: -1; }
+.reseat polygon:nth-child(4n + 2) { --rx: 1; --ry: -1; }
+.reseat polygon:nth-child(4n + 3) { --rx: -1; --ry: 1; }
+.reseat polygon:nth-child(4n) { --rx: 1; --ry: 1; }
+@keyframes reseat {
+  0% { translate: 0 0; }
+  38% { translate: calc(var(--rx) * 2px) calc(var(--ry) * 2px); }
+  100% { translate: 0 0; }
+}
 
 .scroll-cue-line {
   display: block;
@@ -668,6 +687,7 @@ html.motion-ok .tile-drift [data-tile] {
   animation: drift 7s ease-in-out infinite alternate;
   animation-delay: calc(var(--i, 0) * -320ms);
 }
+html.motion-ok .is-seating .tile-drift [data-tile] { animation: none; }
 @keyframes drift {
   from { transform: translateY(-3px); }
   to { transform: translateY(3px); }
@@ -713,7 +733,8 @@ html.motion-ok .tile-drift [data-tile] {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  [data-reveal] { opacity: 1 !important; translate: none !important; }
+  [data-reveal] { opacity: 1 !important; translate: none !important; rotate: none !important; }
+  .draw { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
   .cursor-dot { display: none !important; }
 }
 

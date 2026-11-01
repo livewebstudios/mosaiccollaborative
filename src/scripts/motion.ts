@@ -62,12 +62,12 @@ function initReveals() {
   els.forEach((el) => io.observe(el));
   cleanups.push(() => io.disconnect());
 
-  // Stagger children of any [data-reveal-stagger] parent.
+  // Index the children of any [data-reveal-stagger] parent. CSS turns --i into the
+  // tile-settle delay (--stagger-seat per item, capped at six) and the rotation cap.
   document.querySelectorAll<HTMLElement>("[data-reveal-stagger]").forEach((parent) => {
-    const step = Number(parent.dataset.revealStagger || 80);
     Array.from(parent.children).forEach((child, i) => {
       if (child instanceof HTMLElement && child.hasAttribute("data-reveal")) {
-        child.style.setProperty("--reveal-delay", `${i * step}ms`);
+        child.style.setProperty("--i", String(i));
       }
     });
   });
@@ -425,14 +425,37 @@ function initCountUp() {
       paused: true,
       onUpdate: () => { el.textContent = String(Math.round(counter.n)); },
     });
+    // The underline under the whole line ([data-draw] host) lays itself as the count starts.
+    const host = el.closest<HTMLElement>("[data-draw]");
     const st = ScrollTrigger.create({
       trigger: el,
       start: "top 85%",
       once: true,
-      onEnter: () => tween.play(),
+      onEnter: () => { tween.play(); host?.classList.add("is-drawn"); },
     });
     cleanups.push(() => { st.kill(); tween.kill(); el.textContent = String(target); });
   });
+}
+
+/* ---------------------------------------------------------------- thank-you */
+// When the thank-you field reveals, its pieces seat once, then initDrift carries on.
+function initThankYou() {
+  const field = document.querySelector<HTMLElement>("[data-thanks-field]");
+  if (!field || prefersReduced()) return;
+  // The CSS drift animates transform too, so it holds off while the pieces seat.
+  field.classList.add("is-seating");
+  const tween = assembleFrom(field).pause(0);
+  const seat = gsap.to(tween, {
+    progress: 1, duration: 1.2, ease: "expo.out", paused: true,
+    onComplete: () => field.classList.remove("is-seating"),
+  });
+  const io = new IntersectionObserver(([entry]) => {
+    if (!entry?.isIntersecting) return;
+    seat.play();
+    io.disconnect();
+  });
+  io.observe(field);
+  cleanups.push(() => { io.disconnect(); seat.kill(); tween.kill(); });
 }
 
 /* ---------------------------------------------------------------- boot */
@@ -451,6 +474,7 @@ function boot() {
   initAssemble();
   initDrift();
   initCountUp();
+  initThankYou();
   ScrollTrigger.refresh();
 }
 

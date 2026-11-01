@@ -7,8 +7,12 @@
  * assembled, Core Services shows separate pieces drifting.
  * Round 3: the round 1 card look Deb and Amalia liked (white, hairline, accent wash,
  * accent heading), minus the dark images.
+ * Round 4: compact RowCards. The whole card is the link, the "See our ..." label stays
+ * beside a drawn arrow (copy is frozen), and the graphic's tiles reseat on hover in
+ * place of a mark tile.
  */
 import MosaicField from "./MosaicField.astro";
+import RowCard from "./RowCard.astro";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -22,7 +26,6 @@ interface Props {
 
 const { level = 2, base = "/services/", cta = false } = Astro.props;
 const Heading = level === 1 ? "h1" : "h2";
-const BoxHeading = level === 1 ? "h2" : "h3";
 const headingId = "two-ways-h";
 
 const ways = [
@@ -56,19 +59,24 @@ const ways = [
     </p>
   </div>
 
-  <ul class="ways" data-reveal-stagger="110">
+  <ul class="ways" data-reveal-stagger>
     {ways.map((way) => (
-      <li class="way surface lift" data-accent={way.accent} data-reveal>
-        <BoxHeading class="way-name">{way.name}</BoxHeading>
-        <div class="way-art" aria-hidden="true">
-          <MosaicField cols={4} rows={3} cell={55} opacity={0.7} {...way.field} />
-        </div>
-        <p class="way-text">{way.body}</p>
-        <p class="way-action">
-          <a class="btn btn-secondary" href={way.href}>
-            {way.link} <Icon name="arrow" size={15} />
-          </a>
-        </p>
+      <li data-reveal>
+        <RowCard
+          accent={way.accent as "navy" | "burgundy"}
+          layout="compact"
+          level={level === 1 ? 2 : 3}
+          title={way.name}
+          href={way.href}
+          actionLabel={way.link}
+          cardLink
+          class="way"
+        >
+          <span slot="art" class="way-art">
+            <MosaicField cols={4} rows={3} cell={55} opacity={0.7} class="reseat" {...way.field} />
+          </span>
+          <p class="way-text">{way.body}</p>
+        </RowCard>
       </li>
     ))}
   </ul>
@@ -97,33 +105,18 @@ const ways = [
   }
   @media (min-width: 1024px) { .ways { grid-template-columns: 1fr 1fr; } }
 
-  /* Heading and art share the top row; the art never crowds the words. */
-  .way {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "name art"
-      "text text"
-      "action action";
-    column-gap: var(--space-24);
-    row-gap: var(--space-16);
-    align-items: start;
-    align-content: start;
-    padding: clamp(var(--space-24), 3.5vw, var(--space-48));
-  }
-  .way-name {
-    grid-area: name;
-    align-self: center;
+  .ways > li { display: flex; border-radius: var(--radius-tile); }
+  .ways :global(.way) { flex: 1; padding: clamp(var(--space-24), 3.5vw, var(--space-48)); }
+  /* Colors are frozen: the two names keep their accent color and display size. */
+  .ways :global(.way .rc-heading) {
     font-size: var(--step-3);
     line-height: 1.08;
     letter-spacing: -0.01em;
     color: var(--accent-display);
   }
-  .way-art { grid-area: art; width: clamp(110px, 14vw, 200px); }
+  .way-art { display: block; width: clamp(110px, 14vw, 200px); }
   .way-art :global(svg) { width: 100%; height: auto; }
-  .way-text { grid-area: text; max-width: 52ch; margin: 0; }
-  .way-action { grid-area: action; margin: var(--space-8) 0 0; align-self: end; }
-  .way-action .btn { flex-wrap: nowrap; }
+  .way-text { max-width: 52ch; margin: 0; }
 
   .band-cta { margin-top: clamp(3rem, 6vw, 4.5rem); }
 </style>

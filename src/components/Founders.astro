@@ -23,7 +23,7 @@ const size = 418;
 const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).join("");
 ---
 
-<ul class:list={["founders-list", variant]} data-reveal-stagger={full ? undefined : "100"}>
+<ul class:list={["founders-list", variant]} data-reveal-stagger>
   {team.map((member) => (
     <li class="founder" data-accent={member.accent} data-reveal>
       <div class="founder-photo">
@@ -43,7 +43,7 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
             )}
           </div>
         ) : (
-          <a class="team-photo team-photo-link" href="/about/" aria-label={`About ${member.name}`}>
+          <a class="team-photo team-photo-link piece" href="/about/" aria-label={`About ${member.name}`}>
             {member.photo ? (
               <img
                 src={`/media/img/team/${member.photo}`}
@@ -101,18 +101,10 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
   .compact .founder { display: grid; gap: var(--space-24); align-content: start; }
   /* Photos never render past 220px on Home, so the 420px headshots stay above 1.9x. */
   .compact .team-photo { width: min(100%, 220px); }
-  .team-photo-link {
-    display: block;
-    transition: transform 220ms var(--ease-out-expo), box-shadow 220ms var(--ease-out-expo);
-  }
-  .team-photo-link:hover,
-  .team-photo-link:focus-visible {
-    box-shadow: 0 0 0 6px var(--accent), var(--lift-shadow-hover);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .team-photo-link:hover,
-    .team-photo-link:focus-visible { transform: translateY(-4px); }
-  }
+  /* Round 4: piece-lift on the photo only (global .piece): it lifts and the halo fades in. */
+  .team-photo-link { display: block; overflow: visible; }
+  /* The halo sits outside the circle, so the photo clips itself instead of the link. */
+  .team-photo-link > :global(*) { border-radius: 50%; overflow: hidden; }
 
   /* Full: alternating left and right on desktop, stacked on mobile. */
   .full { gap: clamp(4rem, 8vw, 7rem); }

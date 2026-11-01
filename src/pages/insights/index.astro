@@ -5,6 +5,7 @@ import Base from "../../layouts/Base.astro";
 import CtaBand from "../../components/CtaBand.astro";
 import MosaicGlow from "../../components/MosaicGlow.astro";
 import Icon from "../../components/Icon.astro";
+import RowCard from "../../components/RowCard.astro";
 import { site } from "../../data/site";
 import { linksOut, externalText, fmtDate } from "../../lib/insights";
 
@@ -61,35 +62,31 @@ const schema = [
               {categories.map((c) => <li class="category-chip">{c}</li>)}
             </ul>
           )}
-          <ul class="post-grid" data-reveal-stagger="80">
+          <ul class="post-grid" data-reveal-stagger>
             {posts.map((post) => {
               // Short pieces that live elsewhere (a podcast, a LinkedIn post) link straight out.
               const out = linksOut(post.data.externalUrl, post.body);
               const href = out ? post.data.externalUrl! : `/insights/${post.id}/`;
               return (
-                <li class="card post-card" data-accent={post.data.heroAccent} data-reveal>
-                  <article>
-                    {post.data.hero && (
-                      <Image class="post-hero" src={post.data.hero} alt="" width={1600} height={900} loading="lazy" />
-                    )}
-                    <p class="eyebrow eyebrow-sm">{post.data.category}</p>
-                    <h2>
-                      <a href={href} {...(out ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
-                        {post.data.title}
-                        {out && (
-                          <>
-                            {" "}<Icon name="external" size={16} class="post-ext" />
-                            <span class="sr-only"> ({externalText(post.data.externalLabel)}, opens in a new tab)</span>
-                          </>
-                        )}
-                      </a>
-                    </h2>
-                    <p class="post-desc">{post.data.description}</p>
-                    <p class="post-meta">
-                      <time datetime={post.data.date.toISOString()}>{fmtDate(post.data.date)}</time>
-                      <span aria-hidden="true"> · </span>
-                      <span>{post.data.author}</span>
-                    </p>
+                <li data-reveal>
+                  <article class="post-item">
+                    <RowCard
+                      accent={post.data.heroAccent}
+                      layout="compact"
+                      level={2}
+                      title={post.data.title}
+                      meta={`${post.data.category} · ${fmtDate(post.data.date)}`}
+                      line={post.data.description}
+                      href={href}
+                      external={out}
+                      srLabel={out ? `(${externalText(post.data.externalLabel)}, opens in a new tab)` : undefined}
+                      class="post-card"
+                    >
+                      {post.data.hero && (
+                        <Image slot="media" src={post.data.hero} alt="" width={1600} height={900} loading="lazy" />
+                      )}
+                      <p class="post-author">{post.data.author}</p>
+                    </RowCard>
                   </article>
                 </li>
               );
@@ -153,22 +150,12 @@ const schema = [
   }
   @media (min-width: 700px) { .post-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1200px) { .post-grid { grid-template-columns: repeat(3, 1fr); } }
-  .post-card h2 { font-size: var(--step-2); margin: 0.75rem 0 0.75rem; }
-  .post-card h2 a { text-decoration: none; }
-  /* The title link covers the whole card, so the card is one target. */
-  .post-card h2 a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
-  .post-card :global(.post-ext) { display: inline; vertical-align: baseline; color: var(--accent-text); }
-  .post-card :global(.post-hero) {
-    width: calc(100% + 2 * clamp(var(--space-20), 2.4vw, var(--space-32)));
-    max-width: none;
-    margin: calc(-1 * clamp(var(--space-20), 2.4vw, var(--space-32))) calc(-1 * clamp(var(--space-20), 2.4vw, var(--space-32))) var(--space-20);
-    aspect-ratio: 16 / 9;
-    height: auto;
-    object-fit: cover;
-  }
-  .post-card h2 a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .post-desc { font-size: var(--step--1); }
-  .post-meta { font-size: var(--step--1); opacity: 0.7; margin-top: 1rem; }
+  /* Round 4: compact RowCards. The whole card is the link; links out get the external
+     icon in place of the arrow. */
+  .post-grid > li { display: flex; border-radius: var(--radius-tile); }
+  .post-item { flex: 1; display: flex; }
+  .post-item :global(.post-card) { flex: 1; }
+  .post-author { margin: 0; font-size: var(--step--1); color: var(--color-ink); opacity: 0.8; }
 
   .empty-state { display: grid; gap: 1.25rem; max-width: 48rem; }
   .empty-state .text-large { max-width: 16em; }

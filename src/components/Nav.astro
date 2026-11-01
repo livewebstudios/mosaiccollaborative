@@ -99,6 +99,7 @@ const isCurrent = (item: (typeof site.nav)[number]) =>
     gap: var(--space-24);
     min-height: 64px;
     padding-block: var(--space-12);
+    transition: padding 450ms var(--ease-seat);
   }
   .site-header[data-stuck] .header-inner { padding-block: var(--space-8); }
 
@@ -106,12 +107,35 @@ const isCurrent = (item: (typeof site.nav)[number]) =>
   .brand-lockup { width: auto; height: 120px; display: none; }
   .brand-mark { width: auto; height: 44px; }
   @media (min-width: 1024px) {
-    .brand-lockup { display: block; }
     /* Round 2: at the top of the page the lockup sits larger and a little lower. */
     .site-header:not([data-stuck]) .header-inner { padding-top: calc(var(--space-12) + 16px); }
-    .brand-mark { display: none; }
-    .site-header[data-stuck] .brand-lockup { display: none; }
-    .site-header[data-stuck] .brand-mark { display: block; }
+
+    /* The shrink is animated, not swapped: the brand box eases from the lockup's size
+       (173 x 120) to the mark's (58 x 44) while the lockup shrinks toward the M's spot
+       and fades, and the mark fades in where the lockup's M was heading. The two Ms are
+       not the same shape (the lockup's is wider), so they are matched on height and
+       center, measured from the PNGs: lockup M scales by 0.76 to reach the mark's. */
+    .brand {
+      position: relative;
+      width: 173px;
+      height: 120px;
+      transition: width 450ms var(--ease-seat), height 450ms var(--ease-seat);
+    }
+    .brand-lockup,
+    .brand-mark {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      /* The brand box narrows under them; they keep their own size and only transform. */
+      max-width: none;
+      transform-origin: 0 0;
+      transition: transform 450ms var(--ease-seat), opacity 300ms ease;
+    }
+    .brand-mark { opacity: 0; transform: translate(48px, 1px) scale(1.316); }
+    .site-header[data-stuck] .brand { width: 58px; height: 44px; }
+    .site-header[data-stuck] .brand-lockup { opacity: 0; transform: translate(-37px, -1px) scale(0.76); }
+    .site-header[data-stuck] .brand-mark { opacity: 1; transform: none; }
   }
 
   .nav-desktop { display: none; }

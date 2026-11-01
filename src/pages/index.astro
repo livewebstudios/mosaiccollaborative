@@ -167,12 +167,12 @@ const schema = {
   </section>
 
   <!-- Band 3: two ways to work together. Same faded tile ground as About's beliefs band,
-       drifting very slowly. -->
+       drifting very slowly. No MosaicGlow here (Jon, Nov 1): its flat tiles sat at a
+       different angle over the tile photo and read as two images stacked. -->
   <section class="section section-gray has-bg has-glow ways-band" aria-labelledby="two-ways-h">
     <div class="section-bg section-bg-drift" aria-hidden="true" data-drift="90" data-drift-travel="2">
       <Image src={gen("foundation")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
     </div>
-    <MosaicGlow position="top-right" seed={157} />
     <div class="container">
       <TwoWays level={2} cta />
     </div>

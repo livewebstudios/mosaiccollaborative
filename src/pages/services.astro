@@ -16,6 +16,10 @@ import { site } from "../data/site";
 // Round 1 revisions (Sep 2026): Services now carries both offering types. Custom Offerings
 // are the four journeys (their pages keep the /how-we-work/ URLs). Core Services are the
 // packaged, a la carte services. How We Work was dropped from the nav and redirects here.
+// Family header photos (round 3, Nov 1 revision) are off for now (Jon, Nov 1: "this is
+// temporary, I might take that back"). Set to true to bring them back as they were.
+const showFamilyMedia = false;
+
 const title = "Leadership Consulting Services | Mosaic Collaborative";
 const description =
   "Custom journeys that combine the right mix of services, plus focused core services: diagnostics, workshops and embedded advisors for growing companies.";
@@ -197,7 +201,7 @@ const schema = [
             data-family={family.slug}
             aria-labelledby={`${family.slug}-h`}
           >
-            <div class="family-head">
+            <div class:list={["family-head", { "has-media": showFamilyMedia }]}>
               <div class="family-head-text">
                 <h3 id={`${family.slug}-h`} class="family-name" data-reveal>
                   {family.name}
@@ -212,16 +216,18 @@ const schema = [
                   <span class="deliverable-value">{family.deliverable}</span>
                 </p>
               </div>
-              <div class="family-media" aria-hidden="true" data-reveal data-seat="tilt">
-                <Picture
-                  src={gen(`family-${family.slug}`)}
-                  formats={["avif", "webp"]}
-                  alt=""
-                  widths={[480, 900]}
-                  sizes="(min-width: 1024px) 26vw, 92vw"
-                  loading="lazy"
-                />
-              </div>
+              {showFamilyMedia && (
+                <div class="family-media" aria-hidden="true" data-reveal data-seat="tilt">
+                  <Picture
+                    src={gen(`family-${family.slug}`)}
+                    formats={["avif", "webp"]}
+                    alt=""
+                    widths={[480, 900]}
+                    sizes="(min-width: 1024px) 26vw, 92vw"
+                    loading="lazy"
+                  />
+                </div>
+              )}
             </div>
 
             <ul class="offering-grid" data-count={family.offerings.length} data-accent={family.accent} data-reveal-stagger>
@@ -473,7 +479,7 @@ const schema = [
     align-items: center;
     margin-bottom: clamp(2rem, 3.5vw, 3rem);
   }
-  @media (min-width: 768px) { .family-head { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+  @media (min-width: 768px) { .family-head.has-media { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
   .family-head-text { max-width: 60ch; display: grid; gap: 0.75rem; }
   .family-media {
     position: relative;

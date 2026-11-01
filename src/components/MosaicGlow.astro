@@ -38,7 +38,7 @@ const xl = size === "xl";
 >
   <MosaicField
     cols={xl ? 10 : 5}
-    rows={xl ? 6 : 4}
+    rows={xl ? 9 : 4}
     cell={92}
     density={xl ? 0.6 : 0.55}
     seed={seed}
@@ -74,11 +74,12 @@ const xl = size === "xl";
   }
 
   /* xl: in its corner (40px past it, so the slow drift never opens a gap), most of the
-     section wide, fading out from the corner. */
+     section wide and the full height of the Home statement band at 1440, fading out
+     slowly from the corner so most of the band carries tiles. */
   .glow-xl { width: min(110vw, 900px); }
   @media (min-width: 768px) { .glow-xl { width: min(78vw, 1180px); } }
-  .glow-xl.glow-top-right { top: -40px; right: -40px; mask-image: radial-gradient(ellipse 85% 100% at 100% 0%, #000 30%, transparent 78%); }
-  .glow-xl.glow-top-left { top: -40px; left: -40px; mask-image: radial-gradient(ellipse 85% 100% at 0% 0%, #000 30%, transparent 78%); }
-  .glow-xl.glow-bottom-right { bottom: -40px; right: -40px; mask-image: radial-gradient(ellipse 85% 100% at 100% 100%, #000 30%, transparent 78%); }
-  .glow-xl.glow-bottom-left { bottom: -40px; left: -40px; mask-image: radial-gradient(ellipse 85% 100% at 0% 100%, #000 30%, transparent 78%); }
+  .glow-xl.glow-top-right { top: -40px; right: -40px; mask-image: radial-gradient(ellipse 100% 115% at 100% 0%, #000 38%, transparent 88%); }
+  .glow-xl.glow-top-left { top: -40px; left: -40px; mask-image: radial-gradient(ellipse 100% 115% at 0% 0%, #000 38%, transparent 88%); }
+  .glow-xl.glow-bottom-right { bottom: -40px; right: -40px; mask-image: radial-gradient(ellipse 100% 115% at 100% 100%, #000 38%, transparent 88%); }
+  .glow-xl.glow-bottom-left { bottom: -40px; left: -40px; mask-image: radial-gradient(ellipse 100% 115% at 0% 100%, #000 38%, transparent 88%); }
 </style>

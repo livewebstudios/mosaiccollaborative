@@ -1,11 +1,22 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import CtaBand from "../components/CtaBand.astro";
 import TwoWays from "../components/TwoWays.astro";
 import Founders from "../components/Founders.astro";
+import MosaicField from "../components/MosaicField.astro";
+import MosaicGlow from "../components/MosaicGlow.astro";
+import HeroMedia from "../components/HeroMedia.astro";
 import Icon from "../components/Icon.astro";
+import { gen } from "../lib/gen";
+import bookCover from "../assets/img/book/cover-front.jpg";
 import { site } from "../data/site";
 import { team } from "../data/team";
+
+// The H1 is the tagline from site.ts, with "thrives" set as the emphasis word (round 3).
+const [taglineHead, taglineTail] = site.tagline.split("thrives");
+// Statement band cluster: linen, gold and slate read on navy.
+const onNavy = ["#FAF0E0", "#D4942A", "#7A9BB5", "#FAF0E0", "#7A9BB5"];
 
 // Round 2 (Oct 2026): one scroll of five bands plus the closing band. Much less content,
 // much more white space.
@@ -34,31 +45,14 @@ const schema = {
 <Base title={title} description={description} path="/" schema={schema}>
   <!-- Band 1: first screen -->
   <section class="hero" aria-labelledby="hero-h" data-parallax-scope>
-    <div class="hero-media" aria-hidden="true">
-      <video
-        data-autoplay
-        data-hold="4"
-        data-rate="0.85"
-        data-parallax="0.12"
-        muted
-        playsinline
-        preload="metadata"
-        poster="/media/video/mosaic_hero_light_tiles_720p-poster.jpg"
-        width="1280"
-        height="720"
-      >
-        <source src="/media/video/mosaic_hero_light_tiles_720p.webm" type="video/webm" />
-        <source src="/media/video/mosaic_hero_light_tiles_720p.mp4" type="video/mp4" />
-      </video>
-      <div class="hero-scrim"></div>
-    </div>
+    <HeroMedia />
 
-    <div class="container hero-inner">
-      <h1 id="hero-h" data-reveal>We align the <em class="emphasis">pieces</em>, your business thrives.</h1>
-      <p class="lead" data-reveal style="--reveal-delay:140ms">
+    <div class="container hero-inner" data-reveal-stagger>
+      <h1 id="hero-h" data-reveal>{taglineHead}<em class="emphasis">thrives</em>{taglineTail}</h1>
+      <p class="lead" data-reveal>
         Strategy, leadership, and organizational consulting for companies at critical inflection points.
       </p>
-      <p class="hero-actions" data-reveal style="--reveal-delay:280ms">
+      <p class="hero-actions" data-reveal>
         <a class="btn btn-primary" href="/contact/">
           <span class="btn-tri" aria-hidden="true"><Icon name="triangle" size={9} /></span>
           Let's talk
@@ -74,15 +68,21 @@ const schema = {
 
   <!-- Band 2: the big statement. Plain navy without JS or under reduced motion;
        otherwise it blends in from linen as it scrolls up (initStatement in motion.ts). -->
-  <section class="section section-dark statement" aria-labelledby="statement-h" data-statement>
+  <section class="section section-dark statement has-glow" aria-labelledby="statement-h" data-statement>
+    <MosaicGlow position="top-right" size="xl" palette="dark" seed={131} />
     <div class="container statement-inner">
       <h2 id="statement-h" class="statement-h" data-reveal>
         Whether you're pursuing an opportunity or responding to a challenge, we help you prepare your
         organization for what's next.
       </h2>
+      <!-- The pieces aligning: tiles start scattered and settle into the block as the band
+           scrolls in (initStatement). Assembled and still without JS or under reduced motion. -->
+      <div class="statement-art" aria-hidden="true" data-assemble data-break>
+        <MosaicField cols={5} rows={4} cell={60} density={0.92} seed={149} palette={onNavy} stroke="#1E3A5F" />
+      </div>
       <div class="statement-body">
         <p data-reveal>
-          We work with small and mid-sized companies facing challenges that don't have obvious answers.
+          We work with companies facing challenges that don't have obvious answers.
           AI is reshaping the workforce. Growth has stalled, or is outpacing current systems. Leaders
           aren't aligned. Good people are leaving. Strategy isn't translating into action.
         </p>
@@ -101,35 +101,66 @@ const schema = {
     </div>
   </section>
 
-  <!-- Book banner: credibility, not a sale. No price, no store links, no button. -->
+  <!-- Book banner. Round 3: blurb and a buy button, at Roz's request. The cover's own
+       colors stay inside the cover; the section stays linen and navy. -->
   <section class="section book" aria-labelledby="book-h">
     <div class="container book-inner">
-      <div class="book-art" aria-hidden="true" data-reveal>
-        <!-- TODO: confirm with Roz. Book cover image (2:3) goes here. -->
-        <div class="book-placeholder book-cover"></div>
-        <!-- TODO: confirm with Roz. Photo of Roz with the book (4:5) goes here. -->
-        <div class="book-placeholder book-photo"></div>
+      <div class="book-art" data-reveal>
+        <Image
+          class="book-cover"
+          src={bookCover}
+          alt="The Engagement Dilemma by Dr. Roz Cohen, book cover"
+          widths={[220, 298]}
+          sizes="220px"
+        />
+        <!-- TODO: confirm with Roz. Swap for a photo of Roz with the book if she has one. -->
+        <img
+          class="book-photo"
+          src="/media/img/team/roz-cohen.jpg"
+          alt="Roz Cohen, PhD"
+          width="800"
+          height="800"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div class="book-copy">
-        <p class="eyebrow" data-reveal>From our founder</p>
-        <h2 id="book-h" data-reveal><cite>The Engagement Dilemma</cite></h2>
+        <p class="eyebrow" data-reveal>From our CEO</p>
+        <div class="book-title" data-reveal>
+          <h2 id="book-h"><cite>The Engagement Dilemma</cite></h2>
+          <p class="book-subtitle">How to Create a Culture of Belonging</p>
+        </div>
         <p class="book-byline" data-reveal>By Roz Cohen, PhD.</p>
-        <!-- TODO: confirm with Roz: one-line description of the book, and whether to link anywhere. -->
+        <div class="book-blurb" data-reveal>
+          <p>Ping-pong tables don’t create culture. Annual surveys aren’t listening. And “we’re like a family here” is not the same as care.</p>
+          <p>In The Engagement Dilemma, I share the research and real-world lessons behind what makes people want to stay: trust, clarity, and managers who know how to lead. You’ll find practical tools for hiring, onboarding, developing, and keeping your people, plus a tear sheet at the end of every chapter so you can put it to work tomorrow.</p>
+          <p>No trust fall required.</p>
+        </div>
+        <p class="book-action" data-reveal>
+          <a class="btn btn-secondary" href="https://www.amazon.com/dp/1969679085" target="_blank" rel="noopener">
+            Get the book <Icon name="arrow" size={15} /><span class="sr-only"> (opens Amazon in a new tab)</span>
+          </a>
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- Band 3: two ways to work together -->
-  <section class="section section-gray ways-band" aria-labelledby="two-ways-h">
+  <!-- Band 3: two ways to work together. Same faded tile ground as About's beliefs band,
+       drifting very slowly. No MosaicGlow here (Jon, Nov 1): its flat tiles sat at a
+       different angle over the tile photo and read as two images stacked. -->
+  <section class="section section-gray has-bg has-glow ways-band" aria-labelledby="two-ways-h">
+    <div class="section-bg section-bg-drift" aria-hidden="true" data-drift="90" data-drift-travel="2">
+      <Image src={gen("foundation")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
+    </div>
     <div class="container">
       <TwoWays level={2} cta />
     </div>
   </section>
 
-  <!-- Band 4: Us -->
+  <!-- Band 4: Co-Founders -->
   <section class="section us" aria-labelledby="us-h">
     <div class="container">
-      <h2 id="us-h" class="us-h" data-reveal>Us</h2>
+      <h2 id="us-h" class="us-h" data-reveal>Co-Founders</h2>
       <Founders variant="compact" level={3} />
       <p class="band-cta" data-reveal>
         <a class="btn btn-primary" href="/contact/">
@@ -140,35 +171,25 @@ const schema = {
     </div>
   </section>
 
-  <CtaBand />
+  <CtaBand heading="Do the pieces not quite fit?" />
 </Base>
 
 <style>
   /* Band 1 */
+  /* Round 3: shorter. Auto height with generous padding on mobile, 78svh from 1024. */
   .hero {
     position: relative;
-    min-height: 100svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-block: clamp(10rem, 18vh, 13rem) clamp(6rem, 12vh, 9rem);
+    padding-block: 9rem 5rem;
     overflow: hidden;
     isolation: isolate;
   }
-  .hero-media { position: absolute; inset: -8% 0; z-index: -1; }
-  .hero-media video { width: 100%; height: 100%; object-fit: cover; }
-  .hero-scrim { position: absolute; inset: 0; background: var(--scrim); }
-  /* Legibility wash behind the transparent header. */
-  .hero-scrim::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 240px;
-    background: linear-gradient(180deg, rgba(250, 240, 224, 0.82), rgba(250, 240, 224, 0));
+  @media (min-width: 1024px) {
+    .hero { min-height: 78svh; padding-block: clamp(9rem, 16vh, 11rem) clamp(5rem, 10vh, 7rem); }
   }
-
-  .hero-inner { position: relative; display: grid; gap: clamp(1.5rem, 3vw, 2.25rem); }
+  .hero-inner { position: relative; display: grid; gap: clamp(1rem, 2vw, 1.5rem); }
   .hero-inner > * { max-width: 50rem; margin: 0; }
   /* Linen glow so the type reads over the moving tiles. */
   .hero-inner::before {
@@ -189,8 +210,8 @@ const schema = {
       0 0 28px rgba(250, 240, 224, 0.9),
       0 0 56px rgba(250, 240, 224, 0.75);
   }
-  .hero-inner h1 { font-size: var(--step-5); line-height: 0.98; letter-spacing: -0.03em; max-width: 14ch; }
-  .hero-inner h1 em { font-style: normal; }
+  .hero-inner h1 { font-size: var(--step-3); line-height: 1.08; letter-spacing: -0.01em; max-width: 16ch; }
+  @media (min-width: 1024px) { .hero-inner h1 { font-size: var(--step-4); } }
   .hero-inner .lead { max-width: 44ch; }
   .hero-actions {
     display: flex;
@@ -211,34 +232,63 @@ const schema = {
   /* Band 2 */
   .statement h2,
   .statement p { color: inherit; }
-  .statement-inner { display: grid; gap: clamp(3rem, 6vw, 5rem); }
-  .statement-h { font-size: var(--step-4); line-height: 1.04; letter-spacing: -0.028em; max-width: 24ch; }
+  .statement-inner { display: grid; gap: clamp(2.5rem, 5vw, 4.5rem); }
+  /* One step down from the hero (Jon, Nov 1): step-3, with a wider measure so it still
+     reads as three lines at desktop. */
+  .statement-h { font-size: var(--step-3); line-height: 1.12; letter-spacing: -0.01em; max-width: 30ch; }
   .statement-body { font-size: var(--step-1); line-height: 1.55; max-width: 56ch; }
+  /* Mobile: the cluster sits above the text at half height. */
+  .statement-art { width: min(55%, 240px); }
+  .statement-art :global(svg) { width: 100%; height: auto; }
   @media (min-width: 1024px) {
-    .statement-inner { grid-template-columns: repeat(12, 1fr); }
+    .statement-inner { grid-template-columns: 5fr 7fr; align-items: center; column-gap: clamp(3rem, 6vw, 6rem); }
     .statement-h { grid-column: 1 / -1; }
-    .statement-body { grid-column: 6 / -1; }
+    .statement-art { width: 100%; max-width: 420px; }
   }
   .statement .band-cta { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
 
   /* Book banner */
-  .book-inner { display: grid; gap: clamp(3rem, 6vw, 6rem); align-items: center; }
-  @media (min-width: 768px) { .book-inner { grid-template-columns: 6fr 5fr; } }
-  .book-art { display: flex; align-items: flex-end; gap: var(--grid-gap); max-width: 30rem; }
-  .book-placeholder {
-    background: var(--color-linen-dark);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-sm);
+  /* Images left, copy right from 768. Stacked on mobile, cover first. */
+  .book-inner { display: grid; gap: clamp(2.5rem, 5vw, 5rem); align-items: center; }
+  @media (min-width: 768px) { .book-inner { grid-template-columns: 5fr 6fr; } }
+  .book-art { display: flex; align-items: flex-end; gap: var(--grid-gap); }
+  /* The cover is 298px wide: never wider than 220 so it stays at 1.35x. */
+  .book-cover {
+    flex: none;
+    width: min(46%, 220px);
+    height: auto;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(20, 35, 58, 0.12), 0 22px 44px -18px rgba(20, 35, 58, 0.45);
+    transform: rotate(-2deg);
+    transition: transform 0.4s var(--ease-out-expo);
   }
-  .book-cover { flex: 2; aspect-ratio: 2 / 3; }
-  .book-photo { flex: 2.4; aspect-ratio: 4 / 5; }
-  .book-copy { display: grid; gap: var(--space-16); }
+  .book-art:hover .book-cover { transform: rotate(0); }
+  .book-photo {
+    flex: none;
+    width: min(42%, 200px);
+    aspect-ratio: 4 / 5;
+    height: auto;
+    object-fit: cover;
+    object-position: 50% 30%;
+    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+  }
+  .book-copy { display: grid; gap: var(--space-20); }
   .book-copy p { margin: 0; }
-  .book-copy h2 { font-size: var(--step-4); line-height: 1; letter-spacing: -0.028em; }
+  .book-title { display: grid; gap: var(--space-8); }
+  .book-copy h2 { font-size: var(--step-4); line-height: 1.08; letter-spacing: -0.01em; }
   .book-copy cite { font-style: italic; }
-  .book-byline { font-size: var(--step-1); }
+  .book-subtitle { font-size: var(--step-1); font-weight: 500; color: var(--color-navy); }
+  .book-byline { font-size: var(--step-0); font-weight: 500; }
+  .book-blurb { font-size: var(--step-0); max-width: 52ch; }
+  .book-blurb p + p { margin-top: 1em; }
+  .book-action { margin-top: var(--space-8) !important; }
+
+  /* Band 3 */
+  .section-bg-drift { inset: -3%; }
 
   /* Band 4 */
+  /* Clip sideways only: the tile fields behind the photos run past the column. */
+  .us { overflow-x: clip; }
   .us-h { font-size: var(--step-4); line-height: 1; margin-bottom: clamp(3rem, 6vw, 5rem); }
 
   .band-cta { margin-top: clamp(3rem, 6vw, 4.5rem); }

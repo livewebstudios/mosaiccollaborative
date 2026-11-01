@@ -38,3 +38,11 @@
 
 # TODO: confirm with Jon. Add the misspelled and "the" alias domains Roz owns
 # as Netlify domain aliases, then add matching 301 blocks here.
+
+# Decap CMS (round 3). Its preview pane is an iframe, so the admin allows same-origin
+# framing, and the admin is kept out of search results.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Robots-Tag = "noindex"

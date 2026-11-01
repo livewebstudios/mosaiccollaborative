@@ -1,9 +1,13 @@
 ---
+import { Image, Picture } from "astro:assets";
 import Base from "../layouts/Base.astro";
-import { slugify } from "../lib/gen";
+import { gen, slugify } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
+import RowCard from "../components/RowCard.astro";
 import TwoWays from "../components/TwoWays.astro";
 import MosaicField from "../components/MosaicField.astro";
+import MosaicGlow from "../components/MosaicGlow.astro";
+import HeroMedia from "../components/HeroMedia.astro";
 import Icon from "../components/Icon.astro";
 import { services } from "../data/services";
 import { journeys } from "../data/journeys";
@@ -12,9 +16,27 @@ import { site } from "../data/site";
 // Round 1 revisions (Sep 2026): Services now carries both offering types. Custom Offerings
 // are the four journeys (their pages keep the /how-we-work/ URLs). Core Services are the
 // packaged, a la carte services. How We Work was dropped from the nav and redirects here.
+// Family header photos (round 3, Nov 1 revision) are off for now (Jon, Nov 1: "this is
+// temporary, I might take that back"). Set to true to bring them back as they were.
+const showFamilyMedia = false;
+
 const title = "Leadership Consulting Services | Mosaic Collaborative";
 const description =
   "Custom journeys that combine the right mix of services, plus focused core services: diagnostics, workshops and embedded advisors for growing companies.";
+
+// Eyebrow wording (round 3, Jon's call). Roz's doc says "Signature Offerings / Core
+// Offerings"; round 1 retired "signature", so the site keeps the names the nav anchors and
+// the Two Ways cards use. Swap these two lines if Roz insists.
+const CUSTOM_EYEBROW = "Custom Offerings";
+const CORE_EYEBROW = "Core Services";
+
+// Journey card tiles, one brand color each (round 3 mapping).
+const accentHex: Record<string, string> = {
+  navy: "#1E3A5F",
+  burgundy: "#8B1A3A",
+  gold: "#D4942A",
+  moss: "#4E7254",
+};
 
 const shortLabel: Record<string, string> = {
   diagnostic: "Diagnostic",
@@ -72,30 +94,61 @@ const schema = [
 ---
 
 <Base title={title} description={description} path="/services/" schema={schema}>
-  <section class="section page-hero" aria-labelledby="two-ways-h">
-    <div class="hero-field" aria-hidden="true">
-      <MosaicField cols={5} rows={3} cell={92} density={0.4} seed={97} drift />
-    </div>
+  <section class="section page-hero" aria-labelledby="two-ways-h" data-parallax-scope>
+    <HeroMedia />
     <div class="container page-hero-inner">
-      <!-- TODO: confirm with Roz. The Services H1 and its lead line are new; the docx only
-           supplied the two intros. -->
       <TwoWays level={1} base="" />
     </div>
   </section>
 
-  <!-- Custom Offerings -->
-  <section id="custom-offerings" class="section section-linen-dark custom" aria-labelledby="custom-h">
+  <!-- Round 3: Roz asked for this in a blue band, in sans-serif. A statement, not a
+       section title, so it has no heading of its own. -->
+  <section class="section section-dark friction-band" aria-label="Why friction costs">
     <div class="container">
-      <h2 id="custom-h" class="custom-h" data-reveal>Which journey is yours?</h2>
+      <p class="friction-text" data-reveal>
+        A shift in strategy can expose gaps in structure, people, processes, or systems. A leadership
+        change can affect culture and performance. And sometimes several things are happening at once,
+        making it hard to know where to start. And there are costs to this kind of friction: missed
+        goals, lack of alignment and engagement all hit the bottom line.
+      </p>
+    </div>
+  </section>
+
+  <!-- Custom Offerings -->
+  <section id="custom-offerings" class="section section-linen-dark custom has-glow" aria-labelledby="custom-h">
+    <MosaicGlow position="top-left" seed={113} />
+    <div class="container">
+      <div class="section-head">
+        <!-- TODO: confirm with Roz: "Custom Offerings / Core Services" vs her doc's "Signature Offerings / Core Offerings" -->
+        <p class="eyebrow" data-reveal>{CUSTOM_EYEBROW}</p>
+        <h2 id="custom-h" data-reveal>What's going on?</h2>
+      </div>
       <!-- TODO: confirm with Roz. The Activate and Reignite lines below are built from her
            pattern and need her sign-off (see solutionLinePending in src/data/journeys.ts). -->
-      <ul class="journey-rows" data-reveal-stagger="90">
+      <ul class="journey-cards" data-reveal-stagger>
         {journeys.map((j) => (
-          <li class="journey-row" data-accent={j.accent} data-reveal>
-            <h3 class="journey-name">
-              <a class="link-arrow" href={`/how-we-work/${j.slug}/`}>{j.name} <Icon name="arrow" size={18} /></a>
-            </h3>
-            <p>{j.solutionLine}</p>
+          <li class="piece" data-accent={j.accent} data-reveal>
+            <a class="journey-card" href={`/how-we-work/${j.slug}/`}>
+              <svg class="journey-rule" viewBox="0 0 100 4" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <line class="draw" x1="0" y1="2" x2="100" y2="2" pathLength="100" />
+              </svg>
+              <span class="journey-card-media" aria-hidden="true">
+                <Picture
+                  src={gen(`journey-${j.slug}`)}
+                  formats={["avif", "webp"]}
+                  alt=""
+                  widths={[420, 720]}
+                  sizes="(min-width: 1024px) 24vw, (min-width: 768px) 46vw, 92vw"
+                  loading="lazy"
+                />
+              </span>
+              <span class="journey-card-art" aria-hidden="true">
+                <MosaicField cols={3} rows={3} cell={48} density={0.7} seed={j.number.charCodeAt(1) * 7} palette={[accentHex[j.accent]!]} />
+              </span>
+              <h3 class="journey-name">{j.name}</h3>
+              <p class="journey-line">{j.solutionLine}</p>
+              <span class="journey-arrow" aria-hidden="true"><Icon name="arrow" size={20} /></span>
+            </a>
           </li>
         ))}
       </ul>
@@ -109,9 +162,11 @@ const schema = [
   </section>
 
   <!-- Core Services -->
-  <section id="core-services" class="section core" aria-labelledby="core-h">
+  <section id="core-services" class="section core has-glow" aria-labelledby="core-h">
+    <MosaicGlow position="bottom-right" size="lg" seed={97} />
     <div class="container">
       <div class="section-head">
+        <p class="eyebrow" data-reveal>{CORE_EYEBROW}</p>
         {/* TODO: confirm with Roz. Placeholder for the retired "Focused interventions" headline.
             Roz wrote "Focus services, lasting capability"; the existing wording stays for now. */}
         <h2 id="core-h" data-reveal>Focused services. Lasting capability.</h2>
@@ -124,7 +179,7 @@ const schema = [
 
     <div class="container services-layout">
       <nav class="subnav" aria-label="Core service families" data-subnav>
-        <p class="eyebrow subnav-title">Jump to</p>
+        <p class="eyebrow-plain subnav-title">Jump to</p>
         <ul>
           {services.map((family) => (
             <li>
@@ -146,30 +201,65 @@ const schema = [
             data-family={family.slug}
             aria-labelledby={`${family.slug}-h`}
           >
-            <div class="family-head">
-              <h3 id={`${family.slug}-h`} class="family-name" data-reveal>{family.name}</h3>
-              <p class="family-motto" data-reveal>{family.motto}</p>
-              <p class="lead" data-reveal>{family.intro}</p>
-              <p class="deliverable-line" data-reveal>
-                <span class="deliverable-label">Deliverable:</span>
-                <span class="deliverable-value">{family.deliverable}</span>
-              </p>
+            <div class:list={["family-head", { "has-media": showFamilyMedia }]}>
+              <div class="family-head-text">
+                <h3 id={`${family.slug}-h`} class="family-name" data-reveal>
+                  {family.name}
+                  <svg class="family-underline" viewBox="0 0 100 2" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <line class="draw" x1="0" y1="1" x2="100" y2="1" pathLength="100" />
+                  </svg>
+                </h3>
+                <p class="family-motto" data-reveal>{family.motto}</p>
+                <p class="lead" data-reveal>{family.intro}</p>
+                <p class="deliverable-line" data-reveal>
+                  <span class="deliverable-label">Deliverable:</span>
+                  <span class="deliverable-value">{family.deliverable}</span>
+                </p>
+              </div>
+              {showFamilyMedia && (
+                <div class="family-media" aria-hidden="true" data-reveal data-seat="tilt">
+                  <Picture
+                    src={gen(`family-${family.slug}`)}
+                    formats={["avif", "webp"]}
+                    alt=""
+                    widths={[480, 900]}
+                    sizes="(min-width: 1024px) 26vw, 92vw"
+                    loading="lazy"
+                  />
+                </div>
+              )}
             </div>
 
-            <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger="90">
+            <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger>
               {family.offerings.map((offering) => (
-                <li class="offering" data-reveal>
-                  <h4>{offering.name}</h4>
-                  {offering.duration && <p class="duration">{offering.duration}</p>}
-                  {offering.description && <p class="offering-desc">{offering.description}</p>}
-                  <ul class="tri-list offering-includes">
-                    {offering.includes.map((item) => <li>{item}</li>)}
-                  </ul>
-                  <p class="offering-cta">
-                    <a class="link-arrow" href={`/contact/?service=${slugify(offering.name)}`}>
-                      Let's talk<span class="sr-only"> about {offering.name}</span> <Icon name="arrow" size={15} />
-                    </a>
-                  </p>
+                <li data-reveal>
+                  <RowCard
+                    accent="navy"
+                    layout="row"
+                    level={4}
+                    seed={offering.name}
+                    title={offering.name}
+                    meta={offering.duration}
+                    line={offering.description}
+                    href={`/contact/?service=${slugify(offering.name)}`}
+                    actionLabel="Let's talk"
+                    srLabel={`about ${offering.name}`}
+                  >
+                    <Image
+                      slot="line"
+                      class="offering-photo"
+                      src={gen(`offer-${slugify(offering.name)}`)}
+                      alt=""
+                      widths={[480, 960]}
+                      sizes="(min-width: 1024px) 26vw, 90vw"
+                      format="jpg"
+                      quality={78}
+                      loading="lazy"
+                    />
+                    <ul slot="bullets">
+                      {offering.includes.map((item) => <li>{item}</li>)}
+                    </ul>
+                  </RowCard>
                 </li>
               ))}
             </ul>
@@ -179,48 +269,168 @@ const schema = [
     </div>
   </section>
 
-  <CtaBand />
+  <CtaBand heading="Ready to explore what's possible?" />
 </Base>
 
 <style>
-  .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
+  .page-hero { position: relative; overflow: hidden; isolation: isolate; padding-top: calc(var(--section-y) + 8.5rem); }
   .page-hero-inner { position: relative; z-index: 1; display: grid; gap: 1rem; }
-  .hero-field {
+  /* Same legibility treatment as the Home hero: a linen glow behind the heading and
+     lead, plus a soft linen halo on the type, so it reads over the moving tiles. */
+  .page-hero :global(.two-ways-head) { position: relative; }
+  .page-hero :global(.two-ways-head)::before {
+    content: "";
     position: absolute;
-    right: -8%;
-    top: 22%;
-    width: min(38%, 440px);
+    z-index: -1;
+    left: -6%;
+    top: -30%;
+    width: min(60rem, 100%);
+    height: 160%;
+    background: radial-gradient(ellipse at 35% 50%, rgba(250, 240, 224, 0.9) 20%, rgba(250, 240, 224, 0) 70%);
     pointer-events: none;
-    opacity: 0.85;
-    mask-image: radial-gradient(ellipse at 62% 48%, #000 28%, transparent 74%);
   }
+  .page-hero :global(.two-ways-head h1),
+  .page-hero :global(.two-ways-head .lead) {
+    text-shadow:
+      0 0 12px rgba(250, 240, 224, 0.95),
+      0 0 28px rgba(250, 240, 224, 0.9),
+      0 0 56px rgba(250, 240, 224, 0.75);
+  }
+
+  /* Friction band: Inter, one paragraph, centered block. */
+  .friction-text {
+    margin: 0 auto;
+    max-width: 62ch;
+    font-family: var(--font-sans);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--color-linen);
+  }
+  @media (min-width: 768px) { .friction-text { font-size: var(--step-2); line-height: 1.45; } }
 
   #custom-offerings, #core-services { scroll-margin-top: 6rem; }
   .section-head { max-width: 60ch; margin-bottom: clamp(2rem, 4vw, 3rem); display: grid; gap: 0.75rem; }
 
-  /* Custom offerings: four slim rows, one per journey */
-  .custom-h { margin-bottom: clamp(2.5rem, 5vw, 4rem); }
-  .journey-rows {
+  /* Custom offerings: four journey cards, one line at 1024+, two by two at 768. */
+  .journey-cards {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     gap: var(--grid-gap);
   }
-  @media (min-width: 1024px) { .journey-rows { grid-template-columns: repeat(2, 1fr); } }
-  .journey-row {
-    display: grid;
-    gap: var(--space-12);
-    align-content: start;
-    background: var(--color-linen);
-    border: 1px solid var(--color-navy);
-    border-left: 4px solid var(--accent);
-    border-radius: var(--radius-sm);
-    padding: clamp(var(--space-20), 2.5vw, var(--space-32));
+  @media (min-width: 768px) { .journey-cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .journey-cards { grid-template-columns: repeat(4, 1fr); } }
+  /* The li carries piece-lift, so the halo is not clipped by the card's overflow. */
+  .journey-cards > li { display: flex; border-radius: var(--radius-tile); }
+  /* Hover (Jon, Nov 1): the card grows a touch as it lifts, and its shadow deepens. */
+  .journey-cards > li.piece::after {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--accent) var(--halo), transparent),
+      0 22px 44px -18px color-mix(in oklab, var(--color-navy) 55%, transparent);
   }
-  .journey-row p { margin: 0; max-width: 56ch; }
-  .journey-name { font-size: var(--step-2); }
-  .journey-name .link-arrow { font-weight: 460; }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .journey-cards > li.piece:hover { transform: translateY(var(--lift-y)) scale(1.03); }
+  }
+
+  /* The whole card is the link. Color comes from the heading, the 4px top rule, the
+     round 1 image and its tint; never a full color fill (round 3, Nov 1 revision).
+     Layers, back to front: image, 10% accent tint, linen scrim, tile cluster, text.
+     The text sits at the foot of the card, on the 0.92 end of the scrim, so the
+     image reads clearly above it and body copy keeps AA.
+     Round 4: RowCard surface tokens (hairline, radius, piece-lift halo on ::after) but
+     not its row layout; the top rule is an SVG line that grout-draws. */
+  .journey-card {
+    --scrim-o: 1;
+    /* Containing block for the image, scrim, rule and tiles, so overflow and the
+       rounded corners clip them (this came from .surface before round 4). */
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    min-height: clamp(22rem, 34vw, 28rem);
+    overflow: hidden;
+    isolation: isolate;
+    padding: clamp(var(--space-24), 2.4vw, var(--space-32));
+    padding-bottom: clamp(3.5rem, 5vw, 4.5rem);
+    text-decoration: none;
+    color: var(--color-ink);
+    background: var(--color-linen);
+    border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+    border-radius: var(--radius-tile);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px color-mix(in oklab, var(--color-navy) 6%, transparent);
+  }
+  .journey-rule {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: 4px;
+    overflow: visible;
+  }
+  .journey-rule line { stroke: var(--accent); stroke-width: 4; }
+  .journey-card-media {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+  }
+  .journey-card-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--ease-out-expo);
+  }
+  /* Tint pulls each image toward its journey color (the reignite image is burgundy,
+     the card is moss), so nothing was regenerated. */
+  .journey-card-media::after,
+  .journey-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .journey-card-media::after { background: color-mix(in oklab, var(--accent) 10%, transparent); }
+  .journey-card::before {
+    z-index: -2;
+    background: linear-gradient(180deg, rgba(250, 240, 224, 0.55) 0%, rgba(250, 240, 224, 0.92) 70%);
+    opacity: var(--scrim-o);
+    transition: opacity 600ms var(--ease-out-expo);
+  }
+  .journey-card:hover,
+  .journey-card:focus-visible { --scrim-o: 0.95; }
+  @media (prefers-reduced-motion: no-preference) {
+    .journey-card:hover .journey-card-media :global(img),
+    .journey-card:focus-visible .journey-card-media :global(img) { transform: scale(1.03); }
+  }
+  .journey-card-art {
+    position: absolute;
+    z-index: -1;
+    right: -6px;
+    bottom: -6px;
+    width: 144px;
+    opacity: 0.35;
+    pointer-events: none;
+    mask-image: radial-gradient(circle at 100% 100%, #000 35%, transparent 72%);
+  }
+  .journey-card-art :global(svg) { width: 100%; height: auto; }
+  .journey-name { margin-top: auto; }
+  .journey-name {
+    font-size: var(--step-3);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: var(--accent-display);
+  }
+  .journey-line { margin: 0; font-size: var(--step-0); }
+  .journey-arrow {
+    position: absolute;
+    right: clamp(var(--space-20), 2.2vw, var(--space-32));
+    bottom: clamp(var(--space-20), 2.2vw, var(--space-24));
+    color: var(--accent-text);
+    transition: transform 0.25s var(--ease-out-expo);
+  }
+  .journey-card:hover .journey-arrow,
+  .journey-card:focus-visible .journey-arrow { transform: translateX(4px); }
   .band-cta { margin-top: clamp(3rem, 6vw, 4.5rem); }
 
   /* Core services */
@@ -261,56 +471,88 @@ const schema = [
 
   .families { display: grid; gap: clamp(4rem, 8vw, 7rem); }
   .family { scroll-margin-top: 10rem; }
-  .family-head { max-width: 60ch; margin-bottom: clamp(2rem, 3.5vw, 3rem); display: grid; gap: 0.75rem; }
-  .family-name { font-size: var(--step-3); line-height: 1.06; letter-spacing: -0.027em; }
+  /* Family header band (round 3, Nov 1 revision): text left, the round 1 image right,
+     fading into the text from its left edge. Stacked under 768, image after the text. */
+  .family-head {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+    margin-bottom: clamp(2rem, 3.5vw, 3rem);
+  }
+  @media (min-width: 768px) { .family-head.has-media { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+  .family-head-text { max-width: 60ch; display: grid; gap: 0.75rem; }
+  .family-media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: var(--radius-tile);
+  }
+  .family-media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .family-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(250, 240, 224, 0.7) 0%, rgba(250, 240, 224, 0) 45%);
+  }
+  .family-name { font-size: var(--step-3); line-height: 1.08; letter-spacing: -0.01em; }
+  /* Grout-drawn underline under the family name (round 4). */
+  .family-underline { display: block; width: 4.5rem; height: 2px; margin-top: 0.6rem; overflow: visible; }
+  .family-underline line { stroke: var(--color-burgundy); stroke-width: 2; }
   /* The motto is a subline, sized to stay on one line at laptop widths. */
   .family-motto { font-size: var(--step-1); font-weight: 500; color: var(--color-navy); margin: 0; }
   @media (min-width: 1024px) { .family-motto { white-space: nowrap; } }
 
-  /* Two across from 640px. An odd last box takes the full row rather than sitting alone. */
+  /* Round 4: one RowCard per offering, one per row. The family header carries the
+     weight; the rows stay quiet. (If Services reads as a wall, the fallback is two
+     columns of layout="compact" cards; not built unless Jon asks.) */
   .offering-grid {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     gap: var(--grid-gap);
-    grid-template-columns: 1fr;
   }
-  @media (min-width: 640px) {
-    .offering-grid { grid-template-columns: repeat(2, 1fr); }
-    .offering-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  /* Nov 1: a long, bill-shaped picture under each offering's title, one size for all
+     sixteen, inside the same padding as the text. Decorative, so alt is empty: the
+     title beside it already says what it shows. */
+  /* The photo starts at the mark tile's left edge (Jon, Nov 1): it reaches back across
+     the mark column and its gap, so its left inset matches the card padding. The mark is
+     64px from 1024, 56px below, 48px under 640 (RowCard). */
+  .offering-grid { --photo-pull: calc(56px + clamp(1rem, 2.5vw, 2.5rem)); }
+  @media (max-width: 639px) { .offering-grid { --photo-pull: calc(48px + clamp(1rem, 2.5vw, 2.5rem)); } }
+  @media (min-width: 1024px) { .offering-grid { --photo-pull: calc(64px + clamp(1rem, 2.5vw, 2.5rem)); } }
+  .offering-grid :global(.offering-photo) {
+    display: block;
+    width: calc(100% + var(--photo-pull));
+    max-width: none;
+    margin-left: calc(-1 * var(--photo-pull));
+    height: auto;
+    aspect-ratio: 7 / 3;
+    object-fit: cover;
+    margin-top: 0.6rem;
+    border-radius: var(--radius-sm);
   }
-
-  /* Uniform box: white ground, navy hairline, ink text. No gold text anywhere. */
-  .offering {
-    display: flex;
-    flex-direction: column;
-    background: #fff;
-    border: 1px solid var(--color-navy);
-    border-radius: var(--radius-tile);
-    padding: clamp(var(--space-24), 2.6vw, var(--space-32));
-    color: var(--color-ink);
+  .offering-grid > li { position: relative; isolation: isolate; border-radius: var(--radius-tile); }
+  /* A soft pool of brand red that spills out from under each card's left edge (Jon's
+     sketch, Nov 1; every family in burgundy, his later call). Not a drop shadow: no
+     offset copy of the card, just color. */
+  .offering-grid { --spill: var(--color-burgundy); }
+  .offering-grid > li::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: -28px;
+    top: 14%;
+    width: 45%;
+    height: 80%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 70% 55%, color-mix(in oklab, var(--spill) 62%, transparent) 0%, color-mix(in oklab, var(--spill) 20%, transparent) 45%, transparent 72%);
+    filter: blur(22px);
+    pointer-events: none;
   }
-  .offering p { margin: 0; }
-  .offering h4 {
-    font-family: var(--font-display);
-    font-weight: 460;
-    font-size: var(--step-2);
-    line-height: 1.14;
-    letter-spacing: -0.022em;
-    color: var(--color-navy);
+  @media (min-width: 1024px) {
+    .offering-grid > li::before { left: -200px; width: 400px; top: 8%; height: 92%; }
   }
-  .duration {
-    margin-top: var(--space-8) !important;
-    font-size: var(--step--1);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--color-navy);
-  }
-  .offering-desc { margin-top: var(--space-16) !important; }
-  .offering-includes { margin-top: var(--space-20); max-width: 52ch; }
-  .offering-includes > li + li { margin-top: 0.5em; }
-  .offering-cta { margin-top: auto !important; padding-top: var(--space-24); }
 
   /* Deliverable: one line under the category intro, set as a label rather than a heading. */
   .deliverable-line {
@@ -320,8 +562,6 @@ const schema = [
     column-gap: 0.6rem;
     row-gap: 0.2rem;
     margin-top: 0.25rem;
-    padding-left: 0.9rem;
-    border-left: 3px solid var(--accent);
     font-size: var(--step-0);
     line-height: 1.45;
   }

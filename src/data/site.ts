@@ -4,13 +4,12 @@ export const site = {
   name: "The Mosaic Collaborative",
   tagline: "We align the pieces. Your business thrives.",
   strapline: "Strategy. Insight. Impact.",
-  descriptor: "Consulting for meaningful progress.",
   url: "https://mosaiccollaborative.com",
   // TODO: confirm with Roz that the letstalk@ alias is live in Microsoft 365.
   // Never use the old "info" mailbox: it still receives mail for the previous Mosaic organization.
   // If this ever starts with "TODO" again, the site hides the address and routes people to the contact form.
   email: "letstalk@mosaiccollaborative.com",
-  location: "New York metro area, working nationally", // TODO confirm
+  location: "San Francisco Bay Area and New York Metro Area. Working with clients nationally.",
   linkedinCompany: "", // TODO
   nav: [
     { label: "About", href: "/about/" },

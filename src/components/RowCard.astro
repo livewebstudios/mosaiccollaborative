@@ -1,0 +1,380 @@
+---
+/**
+ * RowCard (round 4): the LWS services row card, rebuilt in Mosaic's materials.
+ * Anatomy (layout "row", 1024 and up): mark tile, title block, a vertical rule, a column
+ * of triangle bullets, an arrow. Under 1024 the rule turns horizontal and the bullets
+ * drop below. Layout "compact" stacks mark, title, bullets and puts the arrow bottom right.
+ *
+ * Motion is the three round 4 patterns and nothing else: the card tile-settles through
+ * the reveal it sits in, the rule and arrow grout-draw (class "draw"), and on hover or
+ * focus the card piece-lifts and its mark reseats (class "reseat").
+ *
+ * The mark is a two-by-two MosaicField seeded from `seed`, so every card gets its own
+ * mark with no hand work. No seed, no mark tile (Two Ways and the contact form).
+ *
+ * Linking: with `href` and no `actionLabel` the whole card is the link. With both, the
+ * card stays a container and the action renders as a labelled link ("Let's talk").
+ */
+import MosaicField from "./MosaicField.astro";
+
+interface Props {
+  accent?: "navy" | "burgundy" | "gold" | "moss";
+  tone?: "light" | "dark";
+  layout?: "row" | "compact";
+  href?: string;
+  /** Visible label beside the arrow. Without it, a set href makes the whole card the link. */
+  actionLabel?: string;
+  /** Keep the whole card as the link even with a visible label (Two Ways). */
+  cardLink?: boolean;
+  /** Screen reader only text appended to the link ("about Change Readiness Assessment"). */
+  srLabel?: string;
+  /** Links out: the arrow becomes the external link icon. */
+  external?: boolean;
+  seed?: string;
+  title?: string;
+  /** Heading level for the title. h4 on Services (under the family h3), h3 elsewhere. */
+  level?: 2 | 3 | 4;
+  meta?: string;
+  line?: string;
+  /** Draw the rule between the title block and the bullets (row layout only). */
+  rule?: boolean;
+  /** piece-lift on hover. Off for the contact form: a form does not lift. */
+  lift?: boolean;
+  class?: string;
+}
+
+const {
+  accent = "navy",
+  tone = "light",
+  layout = "row",
+  href,
+  actionLabel,
+  cardLink = false,
+  srLabel,
+  external = false,
+  seed,
+  title,
+  level = 3,
+  meta,
+  line,
+  rule = true,
+  lift = true,
+  class: className = "",
+} = Astro.props;
+
+const hex: Record<string, string> = { navy: "#1E3A5F", burgundy: "#8B1A3A", gold: "#D4942A", moss: "#4E7254" };
+// Dark cards are the LWS look in navy and gold: the accent is always gold there.
+const tint = tone === "dark" ? "gold" : accent;
+
+// FNV-1a: a stable number from the offering name, so marks never change between builds.
+const hash = (s: string) => {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193);
+  return h >>> 0;
+};
+
+const wholeLink = Boolean(href) && (cardLink || !actionLabel);
+const Tag = wholeLink ? "a" : "div";
+const Heading = `h${level}` as "h2" | "h3" | "h4";
+const hasBullets = Astro.slots.has("bullets");
+const hasArt = Astro.slots.has("art");
+const showRule = rule && layout === "row" && hasBullets;
+const showArrow = Boolean(href);
+const linkAttrs = external ? { target: "_blank", rel: "noopener" } : {};
+
+const classes = [
+  "rc",
+  `rc-${layout}`,
+  `rc-${tone}`,
+  lift ? "piece" : "",
+  lift && tone === "dark" ? "piece-dark" : "",
+  seed ? "has-mark" : "",
+  hasBullets ? "has-bullets" : "",
+  hasArt ? "has-art" : "",
+  showArrow ? "has-arrow" : "",
+  className,
+].filter(Boolean).join(" ");
+---
+
+<Tag
+  class={classes}
+  data-accent={tint}
+  href={wholeLink ? href : undefined}
+  {...(wholeLink ? linkAttrs : {})}
+>
+  {Astro.slots.has("media") && <div class="rc-media"><slot name="media" /></div>}
+  {seed && (
+    <span class="rc-mark" aria-hidden="true">
+      <MosaicField cols={2} rows={2} cell={16} density={0.85} seed={hash(seed)} palette={[hex[tint]!]} class="reseat" />
+    </span>
+  )}
+  {hasArt && <span class="rc-art" aria-hidden="true"><slot name="art" /></span>}
+
+  {(title || meta || line) && (
+    <div class="rc-title">
+      {title && <Heading class="rc-heading">{title}</Heading>}
+      {meta && <p class="rc-meta">{meta}</p>}
+      {line && <p class="rc-line">{line}</p>}
+      <slot name="line" />
+    </div>
+  )}
+
+  {showRule && (
+    <>
+      <svg class="rc-rule rc-rule-v" viewBox="0 0 2 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <line class="draw" x1="1" y1="0" x2="1" y2="100" pathLength="100" />
+      </svg>
+      <svg class="rc-rule rc-rule-h" viewBox="0 0 100 2" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <line class="draw" x1="0" y1="1" x2="100" y2="1" pathLength="100" />
+      </svg>
+    </>
+  )}
+
+  {hasBullets && <div class="rc-bullets"><slot name="bullets" /></div>}
+
+  <slot />
+
+  {showArrow && (
+    <p class="rc-action">
+      {actionLabel && wholeLink ? (
+        <span class="rc-action-link">
+          <span class="rc-action-label">{actionLabel}</span>
+          <svg class="rc-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path class="draw" d="M3 12h17" pathLength="100" />
+            <path class="draw rc-arrow-head" d="M14 6l6 6-6 6" pathLength="100" />
+          </svg>
+        </span>
+      ) : actionLabel ? (
+        <a class="rc-action-link" href={href} {...linkAttrs}>
+          <span class="rc-action-label">{actionLabel}</span>{srLabel && <span class="sr-only"> {srLabel}</span>}
+          <svg class="rc-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path class="draw" d="M3 12h17" pathLength="100" />
+            <path class="draw rc-arrow-head" d="M14 6l6 6-6 6" pathLength="100" />
+          </svg>
+        </a>
+      ) : (
+        <>
+          {srLabel && <span class="sr-only">{srLabel}</span>}
+          {external ? (
+            <svg class="rc-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+              <path class="draw" d="M14 3h7v7M21 3l-9 9" pathLength="100" />
+              <path class="draw rc-arrow-head" d="M18 13.5V21H3V6h7.5" pathLength="100" />
+            </svg>
+          ) : (
+            <svg class="rc-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+              <path class="draw" d="M3 12h17" pathLength="100" />
+              <path class="draw rc-arrow-head" d="M14 6l6 6-6 6" pathLength="100" />
+            </svg>
+          )}
+        </>
+      )}
+    </p>
+  )}
+</Tag>
+
+<style>
+  /* Surface (light): gradient to the section ground, hairline accent border, a 1px inner
+     top highlight and an honest shadow. No glow at rest; the halo is piece-lift's. */
+  .rc {
+    --card-ground: var(--color-linen);
+    --rc-pad: clamp(1.25rem, 2.4vw, 2rem);
+    display: block;
+    padding: var(--rc-pad);
+    color: var(--color-ink);
+    text-decoration: none;
+    background: linear-gradient(160deg, #fff 0%, var(--card-ground) 100%);
+    border: 1px solid color-mix(in oklab, var(--accent) 22%, transparent);
+    border-radius: var(--radius-tile);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px color-mix(in oklab, var(--color-navy) 6%, transparent);
+  }
+  :global(.section-gray) .rc { --card-ground: var(--color-gray); }
+  :global(.section-white) .rc { --card-ground: #fff; }
+
+  /* Surface (dark, on navy bands): the LWS look one to one, navy and gold, glow at rest. */
+  .rc-dark {
+    color: var(--color-linen);
+    background: linear-gradient(160deg, color-mix(in oklab, var(--color-navy) 82%, var(--color-slate)) 0%, var(--color-navy) 100%);
+    border-color: color-mix(in oklab, var(--color-gold) 28%, transparent);
+    box-shadow: none;
+  }
+  .rc-dark .rc-heading,
+  .rc-dark .rc-line,
+  .rc-dark .rc-bullets :global(li) { color: var(--color-linen); }
+  .rc-dark .rc-meta { color: var(--gold-on-dark); background: color-mix(in oklab, var(--color-gold) 16%, transparent); }
+
+  .rc-mark {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: color-mix(in oklab, var(--accent) 10%, var(--card-ground));
+    border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+  }
+  .rc-dark .rc-mark { background: color-mix(in oklab, var(--color-gold) 12%, var(--color-navy)); }
+  .rc-mark :global(svg) { width: 32px; height: 32px; }
+
+  .rc-title { display: grid; gap: 0.6rem; align-content: start; }
+  .rc-title > :global(*) { margin: 0; }
+  .rc-heading {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: 0;
+    color: var(--color-ink);
+  }
+  /* The duration pill. Wraps to two lines at 375 rather than truncating. */
+  .rc-meta {
+    justify-self: start;
+    padding: 0.3em 0.7em;
+    border-radius: 999px;
+    font-size: var(--step--1);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+    background: color-mix(in oklab, var(--accent) 10%, var(--card-ground));
+  }
+  .rc-line { max-width: 48ch; font-size: var(--step-0); line-height: 1.5; }
+
+  .rc-rule { display: block; overflow: visible; }
+  .rc-rule line {
+    stroke: color-mix(in oklab, var(--accent) 35%, transparent);
+    stroke-width: var(--stroke-grout);
+   
+  }
+  .rc-rule-v { display: none; }
+
+  /* Bullets: a drawn triangle check, ink text, three to five items, never truncated. */
+  .rc-bullets :global(ul) { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .rc-bullets :global(li) {
+    position: relative;
+    padding-left: 1.25rem;
+    font-size: var(--step-0);
+    line-height: 1.45;
+    color: var(--color-ink);
+  }
+  .rc-bullets :global(li)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .rc-action { margin: 0; display: flex; justify-content: flex-end; align-items: center; color: var(--accent-text); }
+  .rc-dark .rc-action { color: var(--gold-on-dark); }
+  .rc-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+  }
+  .rc-action-label {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .rc-dark .rc-action-label { color: var(--color-linen); }
+  .rc-action-link:hover .rc-action-label,
+  .rc-action-link:focus-visible .rc-action-label,
+  a.rc:is(:hover, :focus-visible) .rc-action-label { text-decoration-thickness: 2px; }
+  .rc-arrow {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    stroke: currentColor;
+    stroke-width: var(--stroke-grout);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: translate 220ms var(--ease-out-expo);
+  }
+  /* Shaft first, then the head. */
+  .rc-arrow-head { --draw-delay: 520ms; }
+  @media (prefers-reduced-motion: no-preference) {
+    .rc:is(:hover, :focus-visible, :has(:focus-visible)) .rc-arrow { translate: 4px 0; }
+  }
+
+  /* ---------------------------------------------------------- row, under 1024 */
+  .rc-row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    grid-template-areas:
+      "mark title"
+      "rule rule"
+      "bullets bullets"
+      "action action";
+    column-gap: clamp(1rem, 2.5vw, 2.5rem);
+    row-gap: 1.25rem;
+    align-items: start;
+  }
+  .rc-row:not(.has-mark) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "rule" "bullets" "action"; }
+  .rc-row .rc-mark { grid-area: mark; width: 56px; height: 56px; }
+  .rc-row .rc-title { grid-area: title; }
+  .rc-row .rc-rule-h { grid-area: rule; width: 100%; height: 2px; }
+  .rc-row .rc-bullets { grid-area: bullets; }
+  .rc-row .rc-action { grid-area: action; }
+  @media (max-width: 639px) {
+    .rc-row { grid-template-columns: 48px minmax(0, 1fr); }
+    .rc-row .rc-mark { width: 48px; height: 48px; }
+    .rc-row .rc-heading { font-size: var(--step-1); }
+  }
+
+  /* ---------------------------------------------------------- row, 1024 and up */
+  @media (min-width: 1024px) {
+    .rc-row.has-mark.has-bullets {
+      grid-template-columns: 64px minmax(0, 1.2fr) 1px minmax(0, 1fr) 28px;
+      grid-template-areas: "mark title rule bullets action";
+    }
+    .rc-row.has-mark.has-bullets .rc-mark { width: 64px; height: 64px; }
+    .rc-row.has-mark.has-bullets .rc-rule-h { display: none; }
+    .rc-row.has-mark.has-bullets .rc-rule-v { display: block; grid-area: rule; width: 2px; height: 100%; justify-self: center; }
+    .rc-row.has-mark.has-bullets .rc-action { align-self: center; justify-content: center; }
+    /* A labelled action does not fit the 28px column; it sits under the bullets instead. */
+    .rc-row.has-mark.has-bullets:has(.rc-action-link) {
+      grid-template-columns: 64px minmax(0, 1.2fr) 1px minmax(0, 1fr);
+      grid-template-areas:
+        "mark title rule bullets"
+        "mark title rule action";
+      grid-template-rows: 1fr auto;
+    }
+    .rc-row.has-mark.has-bullets:has(.rc-action-link) .rc-action { justify-content: flex-start; align-self: end; }
+  }
+
+  /* ---------------------------------------------------------- compact */
+  .rc-compact {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .rc-compact .rc-bullets { margin-top: 0.25rem; }
+  /* Optional photo across the top of a compact card (insight posts). */
+  .rc-media {
+    margin: calc(-1 * var(--rc-pad)) calc(-1 * var(--rc-pad)) 0;
+    border-radius: var(--radius-tile) var(--radius-tile) 0 0;
+    overflow: hidden;
+  }
+  .rc-media :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+  .rc-compact .rc-action { margin-top: auto; padding-top: 0.5rem; }
+  /* With art (Two Ways), the art shares the top row with the title and everything
+     else spans the card below it. */
+  .rc-compact.has-art {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr auto;
+    column-gap: 1.5rem;
+  }
+  .rc-compact.has-art > :global(:not(.rc-title, .rc-art)) { grid-column: 1 / -1; }
+  .rc-compact.has-art .rc-title { align-self: center; }
+  .rc-compact.has-art .rc-action { justify-content: flex-start; align-self: end; }
+  .rc-art { grid-row: 1; grid-column: 2; }
+</style>

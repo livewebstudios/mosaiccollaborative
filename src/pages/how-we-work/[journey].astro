@@ -46,6 +46,7 @@ const schema = [
   path={path}
   schema={schema}
   bodyClass="journey-page"
+  noindex
 >
   <div data-accent={journey.accent}>
     <!-- Hero -->
@@ -79,8 +80,15 @@ const schema = [
           <p class="eyebrow" data-reveal>Sound familiar?</p>
           <h2 id="symptoms-h" data-reveal>You might be hearing this</h2>
         </div>
-        <ul class="tri-list symptom-list" data-reveal-stagger="90">
-          {journey.symptoms.map((symptom) => <li data-reveal>{symptom}</li>)}
+        <ul class="tri-list symptom-list" data-reveal-stagger>
+          {journey.symptoms.map((symptom) => (
+            <li data-reveal>
+              <svg class="symptom-tri" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                <polygon class="draw" points="1,1 9,5 1,9" pathLength="100" />
+              </svg>
+              {symptom}
+            </li>
+          ))}
         </ul>
       </div>
     </section>
@@ -146,7 +154,7 @@ const schema = [
       </div>
     </section>
 
-    <CtaBand />
+    <CtaBand heading="Ready to explore what's possible?" />
   </div>
 </Base>
 
@@ -187,11 +195,11 @@ const schema = [
 
   .journey-number {
     font-family: var(--font-display);
-    color: var(--accent-text);
+    color: var(--accent-display);
     opacity: 0.28;
     margin: 0 0 -0.15em;
   }
-  .journey-hero h1 { color: var(--accent-text); }
+  .journey-hero h1 { color: var(--accent-display); }
   .journey-promise { font-size: var(--step-1); font-weight: 500; margin-top: 0.75rem; }
   .journey-quote { margin-top: 2rem; max-width: 26ch; border-left: 3px solid var(--accent); padding-left: 1.25rem; }
 
@@ -202,7 +210,22 @@ const schema = [
   @media (min-width: 1024px) { .symptoms-head { position: sticky; top: 8rem; } }
   .symptom-list { font-size: var(--step-1); line-height: 1.4; max-width: 46ch; }
   .symptom-list > li + li { margin-top: 1rem; }
-  .symptom-list > li::before { top: 0.55em; }
+  /* Round 4: each triangle bullet is drawn SVG and lays its edges as the item seats. */
+  .symptom-list > li::before { content: none; }
+  .symptom-tri {
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 10px;
+    height: 10px;
+    overflow: visible;
+  }
+  .symptom-tri polygon {
+    fill: color-mix(in oklab, var(--accent) 25%, transparent);
+    stroke: var(--accent);
+    stroke-width: var(--stroke-grout);
+    stroke-linejoin: round;
+  }
 
   /* Solution */
   .solution-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }
@@ -213,7 +236,7 @@ const schema = [
     font-family: var(--font-display);
     font-size: var(--step-2);
     line-height: 1.3;
-    letter-spacing: -0.014em;
+    letter-spacing: 0;
     color: var(--color-navy);
   }
   /* Deliverable: one line, set as a label rather than another section heading. */

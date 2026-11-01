@@ -1,10 +1,12 @@
 ---
 /**
- * Founders: photo, name, title, the three bullets and a LinkedIn link for each founder.
- * "compact" is the Home version (three across). "full" is the About version: larger
- * photos, alternating sides, plus Roz's credentials line. Same data from team.ts.
+ * Founders: photo, name, title and a LinkedIn link for each founder, plus the three
+ * bullets on About. "compact" is the Home version (three across, no bullets, each photo
+ * links to /about/). "full" is the About version: larger photos, alternating sides.
+ * Same data from team.ts.
  */
 import Icon from "./Icon.astro";
+import MosaicField from "./MosaicField.astro";
 import { team } from "../data/team";
 
 interface Props {
@@ -16,28 +18,53 @@ interface Props {
 const { variant = "compact", level = 3 } = Astro.props;
 const Name = level === 2 ? "h2" : "h3";
 const full = variant === "full";
-const size = full ? 560 : 480;
+// The headshots are 418px squares (round 3). Rendered at most 300px on About and 220px
+// on Home, so they stay at or above 1.4x and are never upscaled.
+const size = 418;
 const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).join("");
 ---
 
-<ul class:list={["founders-list", variant]} data-reveal-stagger={full ? undefined : "100"}>
-  {team.map((member) => (
+<ul class:list={["founders-list", variant]} data-reveal-stagger>
+  {team.map((member, i) => (
     <li class="founder" data-accent={member.accent} data-reveal>
       <div class="founder-photo">
-        <div class="team-photo">
-          {member.photo ? (
-            <img
-              src={`/media/img/team/${member.photo}`}
-              alt={`${member.name}, ${member.title}`}
-              width={size}
-              height={size}
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <p class="team-initials" aria-hidden="true">{initials(member.name)}</p>
-          )}
-        </div>
+        {/* The tiles drift on About only; Home keeps them still (Jon, Nov 1). */}
+        {(
+          <div class="founder-backdrop" aria-hidden="true" data-drift={full ? "70" : undefined} data-drift-travel={full ? "1.5" : undefined}>
+            <MosaicField cols={7} rows={6} cell={80} density={0.7} seed={41 + i * 23} />
+          </div>
+        )}
+        {full ? (
+          <div class="team-photo">
+            {member.photo ? (
+              <img
+                src={`/media/img/team/${member.photo}`}
+                alt={`${member.name}, ${member.title}`}
+                width={size}
+                height={size}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <p class="team-initials" aria-hidden="true">{initials(member.name)}</p>
+            )}
+          </div>
+        ) : (
+          <a class="team-photo team-photo-link piece" href="/about/" aria-label={`About ${member.name}`}>
+            {member.photo ? (
+              <img
+                src={`/media/img/team/${member.photo}`}
+                alt=""
+                width={size}
+                height={size}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span class="team-initials" aria-hidden="true">{initials(member.name)}</span>
+            )}
+          </a>
+        )}
       </div>
 
       <div class="founder-body">
@@ -50,29 +77,28 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
             </a>
           </p>
         )}
-        <ul class="tri-list founder-bullets">
-          {member.bullets.map((b) => <li>{b}</li>)}
-        </ul>
-        {full && member.credentials && <p class="credentials">{member.credentials}</p>}
+        {full && (
+          <ul class="tri-list founder-bullets">
+            {member.bullets.map((b) => <li>{b}</li>)}
+          </ul>
+        )}
       </div>
     </li>
   ))}
 </ul>
-<!-- TODO: confirm with Roz. LinkedIn URLs for all three founders, and the new headshots
-     (same filenames in public/media/img/team/; Amalia's current photo is the upscaled one). -->
+<!-- TODO: confirm with Roz. Full-size originals of Deb's and Amalia's headshots for retina. -->
 
 <style>
   .founders-list { list-style: none; margin: 0; padding: 0; display: grid; }
   .founder p { margin: 0; }
   .founder-body { display: grid; gap: var(--space-12); align-content: start; }
   .founder-name { font-size: var(--step-2); color: var(--color-navy); }
+  /* Round 3: titles about two-thirds the name size, as in the deck. */
   .founder-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-burgundy);
-    line-height: 1.3;
+    font-size: var(--step-1);
+    font-weight: 500;
+    color: var(--color-navy);
+    line-height: 1.35;
   }
   .founder-bullets { margin-top: var(--space-8); max-width: 52ch; }
 
@@ -80,7 +106,12 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
   .compact { gap: clamp(3rem, 5vw, 4rem); }
   @media (min-width: 768px) { .compact { grid-template-columns: repeat(3, 1fr); } }
   .compact .founder { display: grid; gap: var(--space-24); align-content: start; }
-  .compact .founder-bullets { font-size: var(--step--1); }
+  /* Photos never render past 220px on Home, so the 420px headshots stay above 1.9x. */
+  .compact .team-photo { width: min(100%, 220px); }
+  /* Round 4: piece-lift on the photo only (global .piece): it lifts and the halo fades in. */
+  .team-photo-link { display: block; overflow: visible; }
+  /* The halo sits outside the circle, so the photo clips itself instead of the link. */
+  .team-photo-link > :global(*) { border-radius: 50%; overflow: hidden; }
 
   /* Full: alternating left and right on desktop, stacked on mobile. */
   .full { gap: clamp(4rem, 8vw, 7rem); }
@@ -89,13 +120,25 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
     .full .founder { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
     .full .founder:nth-child(even) .founder-photo { order: 2; }
   }
-  .full .founder-photo { display: flex; justify-content: center; }
-  .full .team-photo { width: clamp(11rem, 26vw, 20rem); }
-  .full .founder-name { font-size: var(--step-3); }
-  .credentials {
-    font-size: var(--step--1);
-    padding-top: 1rem;
-    border-top: 1px solid var(--rule);
-    max-width: 52ch;
+  .founder-photo { position: relative; }
+  .full .founder-photo { display: flex; justify-content: center; align-items: center; }
+  .team-photo { position: relative; z-index: 1; }
+  /* A tile field behind each photo that fades out before the text (About, then Home on
+     Jon's ask, Nov 1), so the words keep a plain linen ground. */
+  .founder-backdrop {
+    position: absolute;
+    z-index: 0;
+    left: 50%;
+    top: 50%;
+    width: min(135%, 560px);
+    translate: -50% -50%;
+    opacity: 0.3;
+    pointer-events: none;
+    mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
   }
+  .founder-backdrop :global(svg) { display: block; width: 100%; height: auto; }
+  /* Home: centered on the 220px photo, which sits at the left of its column. */
+  .compact .founder-backdrop { left: min(50%, 110px); width: 400px; }
+  .full .team-photo { width: clamp(11rem, 26vw, 300px); }
+  .full .founder-name { font-size: var(--step-3); }
 </style>

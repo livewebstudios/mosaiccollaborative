@@ -1,0 +1,58 @@
+---
+/**
+ * HeroMedia: the light tiles video, scrim and slow blue wash behind a page's first
+ * band. Home started it; Services shares it (Jon, Nov 1). The parent section needs
+ * position: relative, overflow: hidden, isolation: isolate and data-parallax-scope.
+ */
+---
+
+<div class="hero-media" aria-hidden="true">
+  <video
+    data-autoplay
+    data-hold="4"
+    data-rate="0.85"
+    data-parallax="0.12"
+    muted
+    playsinline
+    preload="metadata"
+    poster="/media/video/mosaic_hero_light_tiles_720p-poster.jpg"
+    width="1280"
+    height="720"
+  >
+    <source src="/media/video/mosaic_hero_light_tiles_720p.webm" type="video/webm" />
+    <source src="/media/video/mosaic_hero_light_tiles_720p.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-scrim"></div>
+  <!-- A darker blue layer that moves very slowly (round 3). Felt, not seen. -->
+  <div class="hero-wash">
+    <span class="hero-wash-navy" data-drift="60" data-drift-travel="4"></span>
+    <span class="hero-wash-slate" data-drift="75" data-drift-travel="4"></span>
+  </div>
+</div>
+
+<style>
+  .hero-media { position: absolute; inset: -8% 0; z-index: -1; }
+  .hero-media video { width: 100%; height: 100%; object-fit: cover; }
+  .hero-scrim { position: absolute; inset: 0; background: var(--scrim); }
+  .hero-wash { position: absolute; inset: 0; overflow: hidden; }
+  .hero-wash span { position: absolute; width: 90%; aspect-ratio: 1.4; border-radius: 50%; }
+  .hero-wash-navy {
+    left: -20%;
+    top: -10%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--color-navy) 8%, transparent), transparent);
+  }
+  .hero-wash-slate {
+    right: -25%;
+    bottom: -20%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--color-slate) 10%, transparent), transparent);
+  }
+  /* Legibility wash behind the transparent header. */
+  .hero-scrim::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 240px;
+    background: linear-gradient(180deg, rgba(250, 240, 224, 0.82), rgba(250, 240, 224, 0));
+  }
+</style>

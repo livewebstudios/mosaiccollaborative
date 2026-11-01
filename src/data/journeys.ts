@@ -7,11 +7,12 @@ export type Journey = {
   slug: "clarify" | "build" | "activate" | "reignite";
   number: string;
   name: string;
-  accent: "navy" | "slate" | "gold" | "burgundy";
+  /** Round 3 (Roz): Clarify blue, Build burgundy, Activate mustard, Reignite green. */
+  accent: "navy" | "burgundy" | "gold" | "moss";
   promise: string;          // one-line tagline used on Home, Services and the journey hero
   ceoQuestion: string;      // from the orientation table
   solutions: string;        // orientation table: solutions (source of solutionLine)
-  /** Services "Which journey is yours?" row, in Roz's pattern (round 2, Oct 2026). */
+  /** Services journey card line ("What's going on?"), in Roz's pattern (round 2, Oct 2026). */
   solutionLine: string;
   /** true until Roz signs off on a line we built from her pattern. */
   solutionLinePending?: boolean;
@@ -55,7 +56,7 @@ export const journeys: Journey[] = [
     slug: "build",
     number: "02",
     name: "Build",
-    accent: "slate",
+    accent: "burgundy",
     promise: "Develop the capacity to execute.",
     ceoQuestion: "Do we have the right organization for where we're headed?",
     solutions: "Design a coherent system. Create the conditions for success.",
@@ -110,7 +111,7 @@ export const journeys: Journey[] = [
     slug: "reignite",
     number: "04",
     name: "Reignite",
-    accent: "burgundy",
+    accent: "moss",
     promise: "Restore trust, engagement, and commitment.",
     ceoQuestion: "How do we strengthen our organization?",
     solutions: "Restore the human side of the organization. Renew trust and connection.",

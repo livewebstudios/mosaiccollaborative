@@ -2,6 +2,10 @@
 import { ClientRouter } from "astro:transitions";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/inter/wght-italic.css";
+import "@fontsource-variable/lora";
+import "@fontsource-variable/lora/wght-italic.css";
+// Preload the roman Lora file only: it sets every heading. Italic loads on demand.
+import loraRoman from "@fontsource-variable/lora/files/lora-latin-wght-normal.woff2?url";
 import "../styles/global.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
@@ -15,9 +19,11 @@ interface Props {
   ogImage?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
   bodyClass?: string;
+  /** Keep the page live and linked but out of search results (the journey pages, round 3). */
+  noindex?: boolean;
 }
 
-const { title, description, path, ogImage = "/og.jpg", schema, bodyClass = "" } = Astro.props;
+const { title, description, path, ogImage = "/og.jpg", schema, bodyClass = "", noindex = false } = Astro.props;
 
 const canonical = new URL(path, site.url).href;
 const ogUrl = new URL(ogImage, site.url).href;
@@ -32,6 +38,9 @@ const schemaList = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <link rel="preload" href={loraRoman} as="font" type="font/woff2" crossorigin />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -59,6 +68,18 @@ const schemaList = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 
     <ClientRouter />
 
+    {path === "/" && (
+      <script is:inline>
+        // Netlify Identity invite, recovery and confirmation links land on the home page.
+        // Send them to the CMS with the token intact. No Identity widget on public pages.
+        (function () {
+          if (/(invite|recovery|confirmation)_token=/.test(location.hash)) {
+            location.replace("/admin/" + location.hash);
+          }
+        })();
+      </script>
+    )}
+
     <script is:inline>
       // Set before first paint so reveal elements never flash. Content stays visible
       // when JavaScript is off or motion is reduced.
@@ -79,7 +100,6 @@ const schemaList = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
       <slot />
     </main>
     <Footer />
-    <div class="cursor-dot" data-cursor aria-hidden="true"></div>
     <script src="../scripts/motion.ts"></script>
   </body>
 </html>

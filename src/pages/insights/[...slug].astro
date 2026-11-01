@@ -1,10 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
 import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import CtaBand from "../../components/CtaBand.astro";
 import Icon from "../../components/Icon.astro";
 import { site } from "../../data/site";
+import { wordCount, externalText, fmtDate } from "../../lib/insights";
 
 export const getStaticPaths = (async () => {
   const posts = await getCollection("insights", ({ data }) => !data.draft);
@@ -15,8 +17,13 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const path = `/insights/${post.id}/`;
 
-const fmt = (d: Date) =>
-  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+const { author, externalUrl, externalLabel, hero } = post.data;
+// The link-out button closes the body; a long post also gets it under the title.
+const longBody = wordCount(post.body) > 300;
+const authorSchema =
+  author === site.name
+    ? { "@type": "Organization", name: site.name, url: site.url }
+    : { "@type": "Person", name: author, worksFor: { "@type": "Organization", name: site.name, url: site.url } };
 
 const schema = [
   {
@@ -25,7 +32,8 @@ const schema = [
     headline: post.data.title,
     description: post.data.description,
     datePublished: post.data.date.toISOString(),
-    author: { "@type": "Organization", name: site.name, url: site.url },
+    author: authorSchema,
+    ...(hero ? { image: new URL(hero, site.url).href } : {}),
     publisher: { "@type": "Organization", name: site.name, url: site.url },
     mainEntityOfPage: site.url + path,
   },
@@ -54,16 +62,35 @@ const schema = [
         <h1 data-reveal>{post.data.title}</h1>
         <p class="lead" data-reveal>{post.data.description}</p>
         <p class="post-meta">
-          <time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+          <span>{author}</span>
+          <span aria-hidden="true"> · </span>
+          <time datetime={post.data.date.toISOString()}>{fmtDate(post.data.date)}</time>
         </p>
+        {externalUrl && longBody && (
+          <p class="post-ext">
+            <a class="btn btn-secondary" href={externalUrl} target="_blank" rel="noopener noreferrer">
+              {externalText(externalLabel)} <Icon name="external" size={15} /><span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </p>
+        )}
       </div>
     </header>
 
     <div class="section post-body-section">
       <div class="container">
+        {hero && (
+          <Image class="post-hero" src={hero} alt="" width={1600} height={900} />
+        )}
         <div class="post-body">
           <Content />
         </div>
+        {externalUrl && (
+          <p class="post-ext">
+            <a class="btn btn-secondary" href={externalUrl} target="_blank" rel="noopener noreferrer">
+              {externalText(externalLabel)} <Icon name="external" size={15} /><span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </p>
+        )}
         <p class="post-back">
           <a class="link-arrow" href="/insights/">All insights <Icon name="arrow" size={15} /></a>
         </p>
@@ -115,4 +142,14 @@ const schema = [
   .post-body :global(a) { text-decoration: underline; text-underline-offset: 4px; }
   .post-body :global(img) { border-radius: var(--radius-tile) 0 var(--radius-tile) 0; margin: 2rem 0; }
   .post-back { margin-top: clamp(2.5rem, 5vw, 4rem); }
+  .post-ext { margin-top: 2rem; }
+  .post-body-section :global(.post-hero) {
+    width: 100%;
+    max-width: 62rem;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+  }
 </style>

@@ -9,7 +9,6 @@ export type Member = {
   /** null when no usable headshot exists yet. The UI renders an initials tile instead. */
   photo: string | null;
   bullets: string[];
-  credentials?: string;
   linkedin: string;
 };
 
@@ -25,8 +24,7 @@ export const team: Member[] = [
       "Applies cross-industry experience to distinguish standard practice from genuine organizational risk.",
       "Connects culture strategy to measurable business outcomes."
     ],
-    credentials: "25+ year corporate HR executive. PhD, Leadership & Change. Author of The Engagement Dilemma.",
-    linkedin: "" // TODO: confirm with Roz
+    linkedin: "https://www.linkedin.com/in/rosalindfcohen/"
   },
   {
     slug: "debra-defrancesco",
@@ -39,22 +37,20 @@ export const team: Member[] = [
       "Identifies where roles, processes, and management practices are limiting organizational performance.",
       "Works alongside leaders and teams to build practical solutions they can sustain."
     ],
-    linkedin: "" // TODO: confirm with Roz
+    linkedin: "https://www.linkedin.com/in/debra-defrancesco/"
   },
   {
     slug: "amalia-egri-freedman",
     name: "Amalia Egri Freedman",
     title: "Founder, Chief Strategy Officer",
     accent: "gold",
-    // TODO: ask Roz for a full resolution original. This one is extracted from the
-    // pitch deck PDF at 289px and upscaled, because the file the handoff named
-    // amalia_egri_freedman.png was actually a second photograph of Debra.
+    // Round 3: Amalia's own headshot (420px, slate ground) replaces the upscaled deck crop.
     photo: "amalia-egri-freedman.jpg",
     bullets: [
       "Brings a systems perspective to connect people, processes, and priorities for greater organizational impact.",
       "Builds leadership capacity to navigate change with clarity, trust, and shared ownership.",
       "Turns strategy into action by creating clear priorities, strong structures, and accountability."
     ],
-    linkedin: "" // TODO: confirm with Roz
+    linkedin: "https://www.linkedin.com/in/amalia-egri-freedman/"
   }
 ];

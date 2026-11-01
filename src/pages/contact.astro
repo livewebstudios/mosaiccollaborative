@@ -7,12 +7,23 @@ import { journeys } from "../data/journeys";
 import { services } from "../data/services";
 import { slugify } from "../lib/gen";
 import { site } from "../data/site";
+import { team } from "../data/team";
 
 const title = "Contact The Mosaic Collaborative";
 const description =
   "Tell us what's going on. We'll tell you honestly whether we can help and where we'd start.";
 
 const hasEmail = !site.email.startsWith("TODO");
+
+// "What happens next" (contact handoff, Nov 1). DRAFT copy, not yet approved by Roz.
+const steps = [
+  { title: "You tell us what's going on.", line: "A few sentences is plenty." },
+  { title: "We talk it through.", line: "A conversation about where things stand today." },
+  { title: "You get an honest answer.", line: "Whether we can help, and where we'd start." },
+];
+// The founder row under the steps states a fact about the client. Off until Roz says so.
+const showReaders = false;
+const readers = team.filter((m) => m.photo);
 
 // "How did you hear about us?" (round 3). Referral and Other each reveal a follow-up field.
 const sources = ["Referral", "LinkedIn", "Conference", "Podcast", "Other"];
@@ -55,10 +66,11 @@ const schema = [
 ---
 
 <Base title={title} description={description} path="/contact/" schema={schema}>
-  <div class="contact-page">
+  <div class="contact-page" data-accent="navy" data-contact-page>
     <section class="section contact has-glow" aria-labelledby="contact-h">
       <MosaicGlow position="top-right" seed={211} class="contact-glow" />
       <div class="container contact-inner">
+        <div class="contact-side">
         <div class="contact-intro">
           <p class="eyebrow" data-reveal>Contact</p>
           <h1 id="contact-h" data-reveal>Let us help you see the whole picture.</h1>
@@ -78,8 +90,57 @@ const schema = [
           </address>
         </div>
 
+        <!-- TODO: confirm with Roz: "What happens next" copy -->
+        <section class="next" aria-labelledby="next-h" data-reveal data-seat="still">
+          <h2 id="next-h" class="next-h">What happens next</h2>
+          <ol class="next-steps" data-reveal-stagger>
+            {steps.map((step, i) => (
+              <li class="next-step" data-reveal data-seat="still">
+                <span class="next-num" aria-hidden="true">{i + 1}</span>
+                <span class="next-text">
+                  <span class="next-title">{step.title}</span>
+                  <span class="next-line">{step.line}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          {showReaders && (
+            <>
+              <!-- TODO: confirm with Roz: "Every message is read by one of our three founders." -->
+              <p class="readers">
+                <span class="readers-faces">
+                  {readers.map((m) => (
+                    <img src={`/media/img/team/${m.photo}`} alt={m.name} width="44" height="44" loading="lazy" decoding="async" />
+                  ))}
+                </span>
+                <span>Every message is read by one of our three founders.</span>
+              </p>
+            </>
+          )}
+        </section>
+
+        <!-- The journey picked in the form, summed up beside it. Five panels share one grid
+             cell so the box keeps the tallest panel's height and nothing shifts. JS off:
+             the "Not sure yet" panel shows. -->
+        <div class="journey-panels" aria-live="polite" data-reveal data-seat="still" data-journey-panels>
+          {journeys.map((j) => (
+            <div class="journey-panel" data-accent={j.accent} data-panel={j.slug}>
+              <p class="panel-label">{`${j.number} ${j.name}`}</p>
+              <p class="panel-promise">{j.promise}</p>
+              <p class="panel-blurb">{j.homeBlurb}</p>
+              <p><a class="link-arrow" href={`/how-we-work/${j.slug}/`}>{`How ${j.name} works`}</a></p>
+            </div>
+          ))}
+          <!-- TODO: confirm with Roz: "Not sure yet" panel copy -->
+          <div class="journey-panel is-current" data-accent="navy" data-panel="unsure">
+            <p class="panel-label">Not sure yet</p>
+            <p class="panel-promise">That's normal. Sorting it out is what the first conversation is for.</p>
+          </div>
+        </div>
+        </div>
+
         <div class="contact-form-wrap" data-reveal data-seat="still">
-          <RowCard layout="row" lift={false}>
+          <RowCard layout="row" lift={false} class="contact-card">
           <form
             class="contact-form"
             name="contact"
@@ -191,8 +252,21 @@ const schema = [
   .contact-inner { display: grid; gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
   @media (min-width: 1024px) { .contact-inner { grid-template-columns: 5fr 7fr; } }
 
+  /* Left column (contact handoff, Nov 1). From 1024 it stretches the full row so the
+     journey panel has room to stay sticky. Below 1024 it dissolves, and the order is
+     intro, form, then the steps; the journey panel is desktop only. */
+  .contact-side { display: contents; }
+  @media (max-width: 1023px) {
+    .contact-intro { order: 1; }
+    .contact-form-wrap { order: 2; }
+    .next { order: 3; }
+  }
+  .journey-panels { display: none; }
+  @media (min-width: 1024px) {
+    .contact-side { display: flex; flex-direction: column; align-self: stretch; }
+    .journey-panels { display: grid; position: sticky; top: 9rem; margin-top: var(--space-40); }
+  }
   .contact-intro { display: grid; gap: 1rem; align-content: start; }
-  @media (min-width: 1024px) { .contact-intro { position: sticky; top: 11rem; } }
   .contact-intro h1 { font-size: var(--step-4); max-width: 12ch; }
 
   .contact-details { font-style: normal; display: grid; gap: 0.75rem; margin-top: 1.5rem; }
@@ -200,6 +274,86 @@ const schema = [
 
   /* Round 4: RowCard chrome only (no mark, rule, arrow or lift: it is a form). */
   .contact-form-wrap :global(.rc) { padding: clamp(var(--space-24), 3vw, var(--space-40)); }
+
+  /* Journey-reactive color: the picked journey's accent lands on .contact-page and on
+     the card root (the script sets both). Gold takes ink rather than navy on fills, so
+     the button text clears AA (navy on gold is 4.4:1, ink is 6:1). */
+  .contact-page[data-accent="gold"],
+  .contact-page :global(.contact-card[data-accent="gold"]) { --accent-on: var(--color-ink); }
+  .contact-form-wrap :global(.contact-card) {
+    background: linear-gradient(160deg, #fff 0%, color-mix(in oklab, var(--accent) 8%, var(--color-linen)) 100%);
+    transition: border-color 260ms var(--ease-seat);
+  }
+  .contact-form .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-on);
+    transition: background-color 260ms var(--ease-seat), border-color 260ms var(--ease-seat), color 260ms var(--ease-seat);
+  }
+  .contact-form .btn-primary:hover { background: color-mix(in oklab, var(--accent) 86%, #000); }
+
+  /* What happens next */
+  .next { margin-top: var(--space-40); display: grid; gap: 1.25rem; }
+  .next-h { font-size: var(--step-1); font-weight: 500; }
+  .next-steps { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+  /* The static grout line that joins the number tiles. */
+  .next-steps::before {
+    content: "";
+    position: absolute;
+    left: 1.25rem;
+    top: 1.25rem;
+    bottom: 1.25rem;
+    width: 1px;
+    background: color-mix(in oklab, var(--color-navy) 20%, transparent);
+  }
+  .next-step { position: relative; display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem; align-items: start; }
+  .next-num {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-tile) 0 var(--radius-tile) 0;
+    background: var(--accent);
+    color: var(--accent-on);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--step-0);
+    transition: background-color 260ms var(--ease-seat), color 260ms var(--ease-seat);
+  }
+  .next-text { display: grid; gap: 0.15rem; padding-top: 0.2rem; }
+  .next-title { font-family: var(--font-display); font-weight: 500; font-size: var(--step-0); color: var(--color-ink); }
+  .next-line { font-size: var(--step--1); color: color-mix(in oklab, var(--color-ink) 80%, transparent); }
+
+  .readers { display: flex; align-items: center; gap: 0.75rem; margin: 0.5rem 0 0; font-size: var(--step--1); }
+  .readers-faces { display: flex; flex: none; }
+  .readers-faces img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--color-linen); object-fit: cover; }
+  .readers-faces img + img { margin-left: -8px; }
+
+  /* Journey panel */
+  .journey-panels { grid-template-areas: "stack"; }
+  .journey-panel {
+    grid-area: stack;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding: var(--space-16) var(--space-24);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background: var(--accent-tint);
+    visibility: hidden;
+    opacity: 0;
+  }
+  .journey-panel.is-current { visibility: visible; opacity: 1; transition: opacity 200ms linear; }
+  .journey-panel p { margin: 0; }
+  .panel-label {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+  .panel-promise { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); line-height: 1.25; color: var(--color-ink); }
+  .panel-blurb { font-size: var(--step--1); }
 
   /* The select matches the inputs, with a navy chevron. */
   .field select {
@@ -251,7 +405,7 @@ const schema = [
   }
   .choice:hover { background: var(--color-gray); }
   .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-tint); }
-  .choice input { width: 1.15rem; height: 1.15rem; margin: 0.15rem 0 0; accent-color: var(--color-navy); flex: none; }
+  .choice input { width: 1.15rem; height: 1.15rem; margin: 0.15rem 0 0; accent-color: var(--accent); flex: none; }
   .choice-text { font-size: var(--step--1); line-height: 1.45; }
   .choice-set .choice-text { font-family: var(--font-display); font-style: italic; font-size: var(--step-0); }
 
@@ -309,4 +463,27 @@ const schema = [
     select.addEventListener("change", update);
   }
   document.addEventListener("astro:page-load", initSourceFollowUps);
+
+  // Journey-reactive color (contact handoff, Nov 1). The picked journey's accent goes on
+  // the page and on the form card (RowCard sets its own data-accent, so it needs its
+  // own), and the matching panel shows beside the form. "Not sure yet" is navy. Without
+  // JavaScript everything stays navy with the "Not sure yet" panel.
+  function initJourneyAccent() {
+    const page = document.querySelector<HTMLElement>("[data-contact-page]");
+    if (!page) return;
+    const card = page.querySelector<HTMLElement>(".contact-card");
+    const panels = page.querySelectorAll<HTMLElement>("[data-panel]");
+    const radios = page.querySelectorAll<HTMLInputElement>('input[name="journey"]');
+    const apply = () => {
+      const picked = Array.from(radios).find((r) => r.checked);
+      const accent = picked?.closest<HTMLElement>(".choice")?.dataset.accent || "navy";
+      page.dataset.accent = accent;
+      if (card) card.dataset.accent = accent;
+      panels.forEach((p) => p.classList.toggle("is-current", p.dataset.panel === (picked?.value || "unsure")));
+    };
+    // The browser can restore a checked radio on back navigation, so sync on load too.
+    apply();
+    radios.forEach((r) => r.addEventListener("change", apply));
+  }
+  document.addEventListener("astro:page-load", initJourneyAccent);
 </script>

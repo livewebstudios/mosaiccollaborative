@@ -1,5 +1,5 @@
 ---
-import { Picture } from "astro:assets";
+import { Image, Picture } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import { gen, slugify } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
@@ -239,6 +239,17 @@ const schema = [
                     actionLabel="Let's talk"
                     srLabel={`about ${offering.name}`}
                   >
+                    <Image
+                      slot="line"
+                      class="offering-photo"
+                      src={gen(`offer-${slugify(offering.name)}`)}
+                      alt=""
+                      widths={[480, 960]}
+                      sizes="(min-width: 1024px) 26vw, 90vw"
+                      format="jpg"
+                      quality={78}
+                      loading="lazy"
+                    />
                     <ul slot="bullets">
                       {offering.includes.map((item) => <li>{item}</li>)}
                     </ul>
@@ -494,6 +505,18 @@ const schema = [
     padding: 0;
     display: grid;
     gap: var(--grid-gap);
+  }
+  /* Nov 1: a long, bill-shaped picture under each offering's title, one size for all
+     sixteen, inside the same padding as the text. Decorative, so alt is empty: the
+     title beside it already says what it shows. */
+  .offering-grid :global(.offering-photo) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 7 / 3;
+    object-fit: cover;
+    margin-top: 0.6rem;
+    border-radius: var(--radius-sm);
   }
   .offering-grid > li { position: relative; isolation: isolate; border-radius: var(--radius-tile); }
   /* A soft pool of the family color that spills out from under each card's left edge

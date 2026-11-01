@@ -16,18 +16,26 @@ const description =
 const beliefs = [
   {
     lead: "We strengthen organizations while solving problems.",
+    image: "belief-strengthen",
+    alt: "A small arch built from navy, slate, burgundy and gold triangle tiles standing on linen.",
     body: "Every engagement should leave an organization more capable than when we arrived. We build leadership, systems, and organizational capacity that support long-term success. We equip leaders with practical tools, shared approaches, and repeatable practices that become the way the organization works. Our work is measured by the strength we leave behind.",
   },
   {
     lead: "We uncover the right answers together.",
+    image: "belief-together",
+    alt: "A magnifying glass over four triangle tiles fitted into one shape, loose tiles of each color around it.",
     body: "Every organization is unique. We combine deep inquiry, diverse perspectives, and practical experience to develop solutions tailored to your people, culture, and goals.",
   },
   {
     lead: "We connect strategy to execution.",
+    image: "belief-execution",
+    alt: "A pencil sketch of a triangle pattern beside the same pattern built in colored tiles.",
     body: "Strategies that can't be implemented are just notes on a whiteboard. We help organizations translate vision into action by aligning priorities, decision-making, and accountability.",
   },
   {
     lead: "We design solutions that consider the whole organization.",
+    image: "belief-whole",
+    alt: "A complete square mosaic of triangle tiles with one gold tile lifted to show how it fits.",
     body: "Leadership, culture, operations, and organizational structure are interconnected. Lasting change requires understanding how the pieces work together. We design solutions that strengthen the whole organization, not just individual units or functions.",
   },
 ];
@@ -94,6 +102,16 @@ const schema = [
             </svg>
             {/* Deck order: the body first, the highlighted sentence last. */}
             <p>{belief.body} <strong class="belief-lead">{belief.lead}</strong></p>
+            <Image
+              class="belief-photo"
+              src={gen(belief.image)}
+              alt={belief.alt}
+              widths={[560, 1120]}
+              sizes="(min-width: 1024px) 40vw, 90vw"
+              format="jpg"
+              quality={78}
+              loading="lazy"
+            />
           </li>
         ))}
       </ol>
@@ -130,6 +148,16 @@ const schema = [
   @media (max-width: 1023px) { .beliefs-art { width: min(60%, 220px); } }
   .beliefs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); }
   .belief p { max-width: 60ch; }
+  /* Nov 1: a photo under each belief, inside the same padding as the text. */
+  .belief-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    margin-top: clamp(var(--space-20), 2.4vw, var(--space-32));
+    border-radius: var(--radius-sm);
+  }
   /* Round 3: the closing line of each belief in burgundy (Roz's "maroon"), bold, larger. */
   .belief-lead { font-weight: 600; font-size: var(--step-1); color: var(--color-burgundy); }
   /* Round 4: the belief card keeps the round 3 cut-tile shape, but its corner mark is a

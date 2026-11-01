@@ -4,7 +4,6 @@ import Base from "../layouts/Base.astro";
 import { gen } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import Founders from "../components/Founders.astro";
-import MosaicField from "../components/MosaicField.astro";
 import MosaicGlow from "../components/MosaicGlow.astro";
 import { team } from "../data/team";
 import { site } from "../data/site";
@@ -90,9 +89,18 @@ const schema = [
       <div class="beliefs-sticky">
         <h2 id="beliefs-h" data-reveal>What we believe informs what we do</h2>
         <!-- The pieces aligning, so the column is not a wall of text. Assembled without JS. -->
-        <div class="beliefs-art" aria-hidden="true" data-assemble>
-          <MosaicField cols={5} rows={4} cell={56} density={0.9} seed={191} />
-        </div>
+        <!-- Nov 1: Jon's tile plate photo replaces the assembling tile cluster here. -->
+        <Image
+          class="beliefs-photo"
+          src={gen("belief-plate")}
+          alt="A round plate laid with navy, slate, burgundy and gold triangle tiles on linen."
+          widths={[360, 720]}
+          sizes="(min-width: 1024px) 360px, 60vw"
+          format="jpg"
+          quality={80}
+          loading="lazy"
+          data-reveal
+        />
       </div>
       <ol class="beliefs-list" data-beliefs data-reveal-stagger>
         {beliefs.map((belief, i) => (
@@ -143,9 +151,14 @@ const schema = [
   @media (min-width: 1024px) { .beliefs-inner { grid-template-columns: 5fr 7fr; align-items: start; } }
   .beliefs-sticky { display: grid; gap: 1rem; align-content: start; }
   @media (min-width: 1024px) { .beliefs-sticky { position: sticky; top: 20vh; } }
-  .beliefs-art { width: min(100%, 280px); margin-top: var(--space-24); }
-  .beliefs-art :global(svg) { width: 100%; height: auto; }
-  @media (max-width: 1023px) { .beliefs-art { width: min(60%, 220px); } }
+  .beliefs-photo {
+    display: block;
+    width: min(100%, 360px);
+    height: auto;
+    margin-top: var(--space-24);
+    border-radius: var(--radius-sm);
+  }
+  @media (max-width: 1023px) { .beliefs-photo { width: min(60%, 260px); } }
   .beliefs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); }
   .belief p { max-width: 60ch; }
   /* Nov 1: a photo under each belief, inside the same padding as the text. */

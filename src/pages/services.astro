@@ -230,7 +230,7 @@ const schema = [
               )}
             </div>
 
-            <ul class="offering-grid" data-count={family.offerings.length} data-accent={family.accent} data-reveal-stagger>
+            <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger>
               {family.offerings.map((offering) => (
                 <li data-reveal>
                   <RowCard
@@ -525,12 +525,10 @@ const schema = [
     border-radius: var(--radius-sm);
   }
   .offering-grid > li { position: relative; isolation: isolate; border-radius: var(--radius-tile); }
-  /* A soft pool of the family color that spills out from under each card's left edge
-     (Jon's sketch, Nov 1). Not a drop shadow: no offset copy of the card, just color. */
-  .offering-grid[data-accent="navy"] { --spill: var(--color-navy); }
-  .offering-grid[data-accent="slate"] { --spill: var(--color-slate); }
-  .offering-grid[data-accent="gold"] { --spill: var(--color-gold); }
-  .offering-grid[data-accent="burgundy"] { --spill: var(--color-burgundy); }
+  /* A soft pool of brand red that spills out from under each card's left edge (Jon's
+     sketch, Nov 1; every family in burgundy, his later call). Not a drop shadow: no
+     offset copy of the card, just color. */
+  .offering-grid { --spill: var(--color-burgundy); }
   .offering-grid > li::before {
     content: "";
     position: absolute;

@@ -111,7 +111,7 @@ const schema = [
             {/* Deck order: the body first, the highlighted sentence last. */}
             <p>{belief.body} <strong class="belief-lead">{belief.lead}</strong></p>
             <Image
-              class="belief-photo"
+              class:list={["belief-photo", belief.image]}
               src={gen(belief.image)}
               alt={belief.alt}
               widths={[560, 1120]}
@@ -161,16 +161,19 @@ const schema = [
   @media (max-width: 1023px) { .beliefs-photo { width: min(60%, 260px); } }
   .beliefs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); }
   .belief p { max-width: 60ch; }
-  /* Nov 1: a photo under each belief, inside the same padding as the text. */
+  /* Nov 1: a photo under each belief, inside the same padding as the text. Cropped
+     to 21:9 (Jon: shorter, same width); the 16:9 source is centered in the crop. */
   .belief-photo {
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 21 / 9;
     object-fit: cover;
     margin-top: clamp(var(--space-20), 2.4vw, var(--space-32));
     border-radius: var(--radius-sm);
   }
+  /* The arch sits high in its frame, so its crop starts higher to keep the top tile. */
+  .belief-photo.belief-strengthen { object-position: 50% 25%; }
   /* Round 3: the closing line of each belief in burgundy (Roz's "maroon"), bold, larger. */
   .belief-lead { font-weight: 600; font-size: var(--step-1); color: var(--color-burgundy); }
   /* Round 4: the belief card keeps the round 3 cut-tile shape, but its corner mark is a

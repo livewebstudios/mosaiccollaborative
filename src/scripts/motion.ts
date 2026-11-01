@@ -129,44 +129,6 @@ function initMobileMenu() {
   });
 }
 
-/* ---------------------------------------------------------------- cursor */
-function initCursor() {
-  const dot = document.querySelector<HTMLElement>("[data-cursor]");
-  if (!dot || prefersReduced() || isTouch()) return;
-
-  let x = window.innerWidth / 2;
-  let y = window.innerHeight / 2;
-  let tx = x;
-  let ty = y;
-
-  on(window, "mousemove", (e) => {
-    tx = (e as MouseEvent).clientX;
-    ty = (e as MouseEvent).clientY;
-  }, { passive: true });
-
-  const tick = () => {
-    x += (tx - x) * 0.2;
-    y += (ty - y) * 0.2;
-    dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-  };
-  gsap.ticker.add(tick);
-  cleanups.push(() => gsap.ticker.remove(tick));
-
-  on(document, "mouseover", (e) => {
-    const el = (e.target as HTMLElement)?.closest<HTMLElement>("a, button, [data-cursor-label]");
-    dot.classList.remove("is-link", "is-label");
-    dot.textContent = "";
-    if (!el) return;
-    const label = el.dataset.cursorLabel;
-    if (label) {
-      dot.classList.add("is-label");
-      dot.textContent = label;
-    } else {
-      dot.classList.add("is-link");
-    }
-  });
-}
-
 /* ---------------------------------------------------------------- video */
 function initVideos() {
   const videos = document.querySelectorAll<HTMLVideoElement>("video[data-autoplay]");
@@ -409,6 +371,106 @@ function initDrift() {
   });
 }
 
+/* ---------------------------------------------------------------- tile break */
+// [data-break] (the CTA strip and the Home statement cluster): tiles near the pointer
+// knock loose (pushed away and turned) and slide back into place once it moves on or
+// leaves. Desktop pointers only. data-break-angle is the field's own rotation, so the
+// push runs in screen direction. The transition goes on inline only while a tile is
+// loose, so it never smooths the scroll-scrubbed assembly of the statement cluster.
+const BREAK_RADIUS = 120;
+const BREAK_PUSH = 34;
+
+function initTileBreak() {
+  if (prefersReduced() || isTouch()) return;
+  document.querySelectorAll<HTMLElement>("[data-break]").forEach((field) => {
+    const band = field.closest<HTMLElement>("section") ?? field;
+    const tiles = Array.from(field.querySelectorAll<SVGPolygonElement>("[data-tile]"));
+    const angle = (-(Number(field.dataset.breakAngle) || 0) * Math.PI) / 180;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const loose = new Set<SVGPolygonElement>();
+    let px = 0;
+    let py = 0;
+    let frame = 0;
+    // Resting centers relative to the strip, measured while every tile is seated, so a
+    // pushed tile never chases its own offset. Re-measured on resize.
+    let rest: Array<{ x: number; y: number }> | null = null;
+    const measure = () => {
+      const box = field.getBoundingClientRect();
+      rest = tiles.map((tile) => {
+        const r = tile.getBoundingClientRect();
+        return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top };
+      });
+    };
+    on(window, "resize", () => { rest = null; }, { passive: true });
+
+    const svg = field.querySelector("svg");
+    if (svg) svg.style.overflow = "visible";
+    tiles.forEach((tile) => {
+      tile.style.transformBox = "fill-box";
+      tile.style.transformOrigin = "center";
+    });
+    const timers = new Map<SVGPolygonElement, number>();
+
+    const settle = (tile: SVGPolygonElement) => {
+      tile.style.transform = "";
+      loose.delete(tile);
+      timers.set(tile, window.setTimeout(() => {
+        if (!loose.has(tile)) tile.style.transition = "";
+      }, 1000));
+    };
+    const knock = (tile: SVGPolygonElement, transform: string) => {
+      clearTimeout(timers.get(tile));
+      tile.style.transition = "transform 0.9s var(--ease-out-expo)";
+      tile.style.transform = transform;
+      loose.add(tile);
+    };
+
+    const update = () => {
+      frame = 0;
+      // The strip only takes pointer events from 1024px, where it sits beside the text.
+      if (getComputedStyle(field).pointerEvents === "none") return;
+      if (!rest && !loose.size) measure();
+      if (!rest) return;
+      const box = field.getBoundingClientRect();
+      tiles.forEach((tile, i) => {
+        const dx = box.left + rest![i]!.x - px;
+        const dy = box.top + rest![i]!.y - py;
+        const dist = Math.hypot(dx, dy);
+        if (dist >= BREAK_RADIUS) {
+          if (loose.has(tile)) settle(tile);
+          return;
+        }
+        const force = Math.pow(1 - dist / BREAK_RADIUS, 1.5);
+        const ux = dist ? dx / dist : 0;
+        const uy = dist ? dy / dist : 0;
+        // Screen direction into the strip's rotated space.
+        const lx = (ux * cos - uy * sin) * BREAK_PUSH * force;
+        const ly = (ux * sin + uy * cos) * BREAK_PUSH * force;
+        const turn = (i % 2 ? 1 : -1) * 28 * force;
+        knock(tile, `translate(${lx.toFixed(1)}px, ${ly.toFixed(1)}px) rotate(${turn.toFixed(1)}deg)`);
+      });
+    };
+
+    // Layout can shift between visits (the statement cluster assembles on scroll).
+    on(band, "pointerenter", () => { if (!loose.size) rest = null; });
+    on(band, "pointermove", (e) => {
+      px = (e as PointerEvent).clientX;
+      py = (e as PointerEvent).clientY;
+      if (!frame) frame = requestAnimationFrame(update);
+    }, { passive: true });
+    on(band, "pointerleave", () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      loose.forEach(settle);
+    });
+    cleanups.push(() => {
+      cancelAnimationFrame(frame);
+      timers.forEach((t) => clearTimeout(t));
+    });
+  });
+}
+
 /* ---------------------------------------------------------------- count-up */
 // <span data-countup="75">75</span>: counts from 0 once, when it scrolls into view.
 // The markup already holds the final number, so JS off and reduced motion show 75.
@@ -464,7 +526,6 @@ function boot() {
   initHeader();
   initMobileMenu();
   initReveals();
-  initCursor();
   initVideos();
   initAccordions();
   initParallax();
@@ -473,6 +534,7 @@ function boot() {
   initSubnav();
   initAssemble();
   initDrift();
+  initTileBreak();
   initCountUp();
   initThankYou();
   ScrollTrigger.refresh();

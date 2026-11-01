@@ -42,7 +42,7 @@ const schema = [
 
 <Base title={title} description={description} path="/insights/" schema={schema}>
   <section class="section page-hero has-glow" aria-labelledby="insights-h">
-    <MosaicGlow position="top-right" seed={173} />
+    <MosaicGlow position="top-right" size="xl" seed={173} opacity={0.3} />
     <div class="container page-hero-inner">
       <p class="eyebrow" data-reveal>Insights</p>
       <h1 id="insights-h" data-reveal>Thinking out loud</h1>
@@ -118,6 +118,18 @@ const schema = [
 <style>
   .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
   .page-hero-inner { position: relative; z-index: 1; display: grid; gap: 1rem; }
+  /* The tile field runs up under the transparent header, so a linen fade keeps the
+     nav crisp (Jon, Nov 1). Painted after the field, under the content. */
+  .page-hero::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset-inline: 0;
+    top: 0;
+    height: 220px;
+    background: linear-gradient(180deg, rgba(250, 240, 224, 0.92) 35%, rgba(250, 240, 224, 0));
+    pointer-events: none;
+  }
   /* Centered in the 1200 track like the header; only the text measure is capped. */
   .page-hero-inner > * { max-width: 58rem; }
 

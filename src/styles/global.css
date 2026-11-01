@@ -693,38 +693,6 @@ html.motion-ok .is-seating .tile-drift [data-tile] { animation: none; }
   to { transform: translateY(3px); }
 }
 
-/* Custom cursor, desktop pointer devices only */
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 300;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--color-navy);
-  pointer-events: none;
-  display: none;
-  place-items: center;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: transparent;
-  transition: width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo),
-    background-color 0.3s var(--ease-out-expo), color 0.2s linear;
-}
-@media (hover: hover) and (pointer: fine) {
-  html.motion-ok .cursor-dot { display: grid; }
-}
-.cursor-dot.is-link { width: 40px; height: 40px; background: color-mix(in oklab, var(--color-navy) 25%, transparent); }
-.cursor-dot.is-label {
-  width: 72px;
-  height: 72px;
-  background: var(--color-navy);
-  color: var(--color-linen);
-}
-
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
@@ -735,7 +703,6 @@ html.motion-ok .is-seating .tile-drift [data-tile] { animation: none; }
   }
   [data-reveal] { opacity: 1 !important; translate: none !important; rotate: none !important; }
   .draw { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
-  .cursor-dot { display: none !important; }
 }
 
 /* Beliefs: the card nearest viewport center reads as active */

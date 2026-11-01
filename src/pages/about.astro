@@ -104,7 +104,8 @@ const schema = [
 </Base>
 
 <style>
-  .founders { padding-top: calc(var(--section-y) + 8.5rem); }
+  /* Clip sideways only: the tile fields behind the photos run past the column. */
+  .founders { padding-top: calc(var(--section-y) + 8.5rem); overflow-x: clip; }
   .about-h { max-width: 18ch; margin-bottom: clamp(4rem, 8vw, 7rem); }
   .experience {
     margin: clamp(5rem, 10vw, 8rem) auto 0;
@@ -149,6 +150,8 @@ const schema = [
     width: 40px;
     height: 40px;
     overflow: visible;
+    transform-origin: 100% 0;
+    transition: transform 420ms var(--ease-out-expo);
   }
   .belief-mark polygon {
     --rx: 1;
@@ -157,6 +160,14 @@ const schema = [
     stroke: var(--accent);
     stroke-width: var(--stroke-grout);
     stroke-linejoin: round;
+    transition: stroke-width 420ms var(--ease-out-expo);
+  }
+  /* Hover (Jon, Nov 1): the corner tile slides down over the card along its own
+     diagonal to twice its size, and backs out when the pointer leaves. The stroke
+     halves so the edge stays the same weight at 2x. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .belief:hover .belief-mark { transform: scale(2); }
+    .belief:hover .belief-mark polygon { stroke-width: calc(var(--stroke-grout) / 2); }
   }
 
   /* The underline under the whole 75 line: the one long draw on this page, laid as the

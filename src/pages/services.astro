@@ -7,6 +7,7 @@ import RowCard from "../components/RowCard.astro";
 import TwoWays from "../components/TwoWays.astro";
 import MosaicField from "../components/MosaicField.astro";
 import MosaicGlow from "../components/MosaicGlow.astro";
+import HeroMedia from "../components/HeroMedia.astro";
 import Icon from "../components/Icon.astro";
 import { services } from "../data/services";
 import { journeys } from "../data/journeys";
@@ -89,7 +90,8 @@ const schema = [
 ---
 
 <Base title={title} description={description} path="/services/" schema={schema}>
-  <section class="section page-hero" aria-labelledby="two-ways-h">
+  <section class="section page-hero" aria-labelledby="two-ways-h" data-parallax-scope>
+    <HeroMedia />
     <div class="container page-hero-inner">
       <TwoWays level={1} base="" />
     </div>
@@ -222,7 +224,7 @@ const schema = [
               </div>
             </div>
 
-            <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger>
+            <ul class="offering-grid" data-count={family.offerings.length} data-accent={family.accent} data-reveal-stagger>
               {family.offerings.map((offering) => (
                 <li data-reveal>
                   <RowCard
@@ -254,8 +256,29 @@ const schema = [
 </Base>
 
 <style>
-  .page-hero { position: relative; overflow: hidden; padding-top: calc(var(--section-y) + 8.5rem); }
+  .page-hero { position: relative; overflow: hidden; isolation: isolate; padding-top: calc(var(--section-y) + 8.5rem); }
   .page-hero-inner { position: relative; z-index: 1; display: grid; gap: 1rem; }
+  /* Same legibility treatment as the Home hero: a linen glow behind the heading and
+     lead, plus a soft linen halo on the type, so it reads over the moving tiles. */
+  .page-hero :global(.two-ways-head) { position: relative; }
+  .page-hero :global(.two-ways-head)::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: -6%;
+    top: -30%;
+    width: min(60rem, 100%);
+    height: 160%;
+    background: radial-gradient(ellipse at 35% 50%, rgba(250, 240, 224, 0.9) 20%, rgba(250, 240, 224, 0) 70%);
+    pointer-events: none;
+  }
+  .page-hero :global(.two-ways-head h1),
+  .page-hero :global(.two-ways-head .lead) {
+    text-shadow:
+      0 0 12px rgba(250, 240, 224, 0.95),
+      0 0 28px rgba(250, 240, 224, 0.9),
+      0 0 56px rgba(250, 240, 224, 0.75);
+  }
 
   /* Friction band: Inter, one paragraph, centered block. */
   .friction-text {
@@ -283,6 +306,15 @@ const schema = [
   @media (min-width: 1024px) { .journey-cards { grid-template-columns: repeat(4, 1fr); } }
   /* The li carries piece-lift, so the halo is not clipped by the card's overflow. */
   .journey-cards > li { display: flex; border-radius: var(--radius-tile); }
+  /* Hover (Jon, Nov 1): the card grows a touch as it lifts, and its shadow deepens. */
+  .journey-cards > li.piece::after {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--accent) var(--halo), transparent),
+      0 22px 44px -18px color-mix(in oklab, var(--color-navy) 55%, transparent);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .journey-cards > li.piece:hover { transform: translateY(var(--lift-y)) scale(1.03); }
+  }
 
   /* The whole card is the link. Color comes from the heading, the 4px top rule, the
      round 1 image and its tint; never a full color fill (round 3, Nov 1 revision).
@@ -463,7 +495,29 @@ const schema = [
     display: grid;
     gap: var(--grid-gap);
   }
-  .offering-grid > li { border-radius: var(--radius-tile); }
+  .offering-grid > li { position: relative; isolation: isolate; border-radius: var(--radius-tile); }
+  /* A soft pool of the family color that spills out from under each card's left edge
+     (Jon's sketch, Nov 1). Not a drop shadow: no offset copy of the card, just color. */
+  .offering-grid[data-accent="navy"] { --spill: var(--color-navy); }
+  .offering-grid[data-accent="slate"] { --spill: var(--color-slate); }
+  .offering-grid[data-accent="gold"] { --spill: var(--color-gold); }
+  .offering-grid[data-accent="burgundy"] { --spill: var(--color-burgundy); }
+  .offering-grid > li::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: -28px;
+    top: 14%;
+    width: 45%;
+    height: 80%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 70% 55%, color-mix(in oklab, var(--spill) 62%, transparent) 0%, color-mix(in oklab, var(--spill) 20%, transparent) 45%, transparent 72%);
+    filter: blur(22px);
+    pointer-events: none;
+  }
+  @media (min-width: 1024px) {
+    .offering-grid > li::before { left: -200px; width: 400px; top: 8%; height: 92%; }
+  }
 
   /* Deliverable: one line under the category intro, set as a label rather than a heading. */
   .deliverable-line {

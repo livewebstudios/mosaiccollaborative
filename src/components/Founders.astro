@@ -6,6 +6,7 @@
  * Same data from team.ts.
  */
 import Icon from "./Icon.astro";
+import MosaicField from "./MosaicField.astro";
 import { team } from "../data/team";
 
 interface Props {
@@ -24,9 +25,15 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
 ---
 
 <ul class:list={["founders-list", variant]} data-reveal-stagger>
-  {team.map((member) => (
+  {team.map((member, i) => (
     <li class="founder" data-accent={member.accent} data-reveal>
       <div class="founder-photo">
+        {/* The tiles drift on About only; Home keeps them still (Jon, Nov 1). */}
+        {(
+          <div class="founder-backdrop" aria-hidden="true" data-drift={full ? "70" : undefined} data-drift-travel={full ? "1.5" : undefined}>
+            <MosaicField cols={7} rows={6} cell={80} density={0.7} seed={41 + i * 23} />
+          </div>
+        )}
         {full ? (
           <div class="team-photo">
             {member.photo ? (
@@ -113,7 +120,25 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
     .full .founder { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
     .full .founder:nth-child(even) .founder-photo { order: 2; }
   }
-  .full .founder-photo { display: flex; justify-content: center; }
+  .founder-photo { position: relative; }
+  .full .founder-photo { display: flex; justify-content: center; align-items: center; }
+  .team-photo { position: relative; z-index: 1; }
+  /* A tile field behind each photo that fades out before the text (About, then Home on
+     Jon's ask, Nov 1), so the words keep a plain linen ground. */
+  .founder-backdrop {
+    position: absolute;
+    z-index: 0;
+    left: 50%;
+    top: 50%;
+    width: min(135%, 560px);
+    translate: -50% -50%;
+    opacity: 0.3;
+    pointer-events: none;
+    mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
+  }
+  .founder-backdrop :global(svg) { display: block; width: 100%; height: auto; }
+  /* Home: centered on the 220px photo, which sits at the left of its column. */
+  .compact .founder-backdrop { left: min(50%, 110px); width: 400px; }
   .full .team-photo { width: clamp(11rem, 26vw, 300px); }
   .full .founder-name { font-size: var(--step-3); }
 </style>

@@ -2,12 +2,29 @@
 import { Image } from "astro:assets";
 import { site } from "../data/site";
 import logoReversed from "../assets/logo/mosaic_logo_lockup_reversed.png";
-import MosaicField from "./MosaicField.astro";
 import Icon from "./Icon.astro";
 
 const year = new Date().getFullYear();
 const [taglineHead, taglineTail] = site.tagline.split("thrives");
 const hasEmail = !site.email.startsWith("TODO");
+
+// Loose tiles that float over the navy, like the Home hero's but darker (Jon, Nov 1).
+// Hand placed so the larger pieces sit in the gaps between columns and along the
+// edges, and kept faint so the text always wins. Navy is left out: it would vanish.
+const SHARDS = [
+  { x: 3, y: 12, s: 64, r: 12, c: "slate", o: 0.16 },
+  { x: 14, y: 78, s: 38, r: -24, c: "burgundy", o: 0.32 },
+  { x: 27, y: 6, s: 26, r: 40, c: "gold", o: 0.2 },
+  { x: 36, y: 58, s: 54, r: 190, c: "slate", o: 0.12 },
+  { x: 47, y: 18, s: 32, r: -8, c: "burgundy", o: 0.3 },
+  { x: 56, y: 86, s: 70, r: 28, c: "slate", o: 0.1 },
+  { x: 63, y: 40, s: 22, r: 160, c: "gold", o: 0.22 },
+  { x: 74, y: 8, s: 46, r: -36, c: "linen", o: 0.07 },
+  { x: 83, y: 64, s: 36, r: 64, c: "burgundy", o: 0.3 },
+  { x: 92, y: 26, s: 58, r: 200, c: "slate", o: 0.14 },
+  { x: 96, y: 88, s: 28, r: -50, c: "gold", o: 0.2 },
+  { x: 8, y: 46, s: 24, r: 96, c: "linen", o: 0.08 },
+];
 ---
 
 <footer class="site-footer section-dark">
@@ -69,8 +86,16 @@ const hasEmail = !site.email.startsWith("TODO");
     </div>
   </div>
 
-  <div class="footer-field" aria-hidden="true">
-    <MosaicField cols={6} rows={4} cell={80} density={0.5} seed={19} opacity={0.18} />
+  <div class="footer-shards" aria-hidden="true">
+    {SHARDS.map((t, i) => (
+      <svg
+        class="shard"
+        viewBox="0 0 20 18"
+        style={`--x:${t.x}%;--y:${t.y}%;--s:${t.s}px;--r:${t.r}deg;--o:${t.o};--dur:${18 + (i % 5) * 4}s;--delay:${-i * 2.9}s;--dx:${(i % 2 ? 1 : -1) * (50 + (i % 4) * 14)}px;--dy:${(i % 3 ? -1 : 1) * (36 + (i % 3) * 12)}px;--dr:${(i % 2 ? 1 : -1) * (24 + (i % 3) * 10)}deg`}
+      >
+        <polygon points="10,1.2 0.8,17.2 19.2,17.2" fill={`var(--color-${t.c})`} stroke={`var(--color-${t.c})`} stroke-width="1.6" stroke-linejoin="round" />
+      </svg>
+    ))}
   </div>
 </footer>
 
@@ -165,12 +190,26 @@ const hasEmail = !site.email.startsWith("TODO");
     height: 37px;
   }
 
-  .footer-field {
+  .site-footer > .container { position: relative; z-index: 1; }
+  .footer-shards { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .shard {
     position: absolute;
-    right: -6%;
-    bottom: -20%;
-    width: min(46%, 520px);
-    pointer-events: none;
-    mask-image: radial-gradient(ellipse at 60% 40%, #000 30%, transparent 72%);
+    left: var(--x);
+    top: var(--y);
+    width: var(--s);
+    height: auto;
+    opacity: var(--o);
+    translate: -50% -50%;
+    rotate: var(--r);
+  }
+  :global(html.motion-ok) .shard {
+    animation: shard-float var(--dur) ease-in-out var(--delay) infinite alternate;
+    will-change: transform;
+  }
+  /* A slow wander, roughly 6 to 10px a second: three turns, then back the same way. */
+  @keyframes shard-float {
+    33% { transform: translate(var(--dx), calc(var(--dy) * -0.5)) rotate(calc(var(--dr) * 0.5)); }
+    66% { transform: translate(calc(var(--dx) * -0.4), var(--dy)) rotate(var(--dr)); }
+    100% { transform: translate(calc(var(--dx) * 0.6), calc(var(--dy) * 0.4)) rotate(calc(var(--dr) * -0.6)); }
   }
 </style>

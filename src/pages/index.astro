@@ -6,6 +6,7 @@ import TwoWays from "../components/TwoWays.astro";
 import Founders from "../components/Founders.astro";
 import MosaicField from "../components/MosaicField.astro";
 import MosaicGlow from "../components/MosaicGlow.astro";
+import HeroMedia from "../components/HeroMedia.astro";
 import Icon from "../components/Icon.astro";
 import { gen } from "../lib/gen";
 import bookCover from "../assets/img/book/cover-front.jpg";
@@ -44,29 +45,7 @@ const schema = {
 <Base title={title} description={description} path="/" schema={schema}>
   <!-- Band 1: first screen -->
   <section class="hero" aria-labelledby="hero-h" data-parallax-scope>
-    <div class="hero-media" aria-hidden="true">
-      <video
-        data-autoplay
-        data-hold="4"
-        data-rate="0.85"
-        data-parallax="0.12"
-        muted
-        playsinline
-        preload="metadata"
-        poster="/media/video/mosaic_hero_light_tiles_720p-poster.jpg"
-        width="1280"
-        height="720"
-      >
-        <source src="/media/video/mosaic_hero_light_tiles_720p.webm" type="video/webm" />
-        <source src="/media/video/mosaic_hero_light_tiles_720p.mp4" type="video/mp4" />
-      </video>
-      <div class="hero-scrim"></div>
-      <!-- A darker blue layer that moves very slowly (round 3). Felt, not seen. -->
-      <div class="hero-wash" aria-hidden="true">
-        <span class="hero-wash-navy" data-drift="60" data-drift-travel="4"></span>
-        <span class="hero-wash-slate" data-drift="75" data-drift-travel="4"></span>
-      </div>
-    </div>
+    <HeroMedia />
 
     <div class="container hero-inner" data-reveal-stagger>
       <h1 id="hero-h" data-reveal>{taglineHead}<em class="emphasis">thrives</em>{taglineTail}</h1>
@@ -98,7 +77,7 @@ const schema = {
       </h2>
       <!-- The pieces aligning: tiles start scattered and settle into the block as the band
            scrolls in (initStatement). Assembled and still without JS or under reduced motion. -->
-      <div class="statement-art" aria-hidden="true" data-assemble>
+      <div class="statement-art" aria-hidden="true" data-assemble data-break>
         <MosaicField cols={5} rows={4} cell={60} density={0.92} seed={149} palette={onNavy} stroke="#1E3A5F" />
       </div>
       <div class="statement-body">
@@ -210,31 +189,6 @@ const schema = {
   @media (min-width: 1024px) {
     .hero { min-height: 78svh; padding-block: clamp(9rem, 16vh, 11rem) clamp(5rem, 10vh, 7rem); }
   }
-  .hero-media { position: absolute; inset: -8% 0; z-index: -1; }
-  .hero-media video { width: 100%; height: 100%; object-fit: cover; }
-  .hero-scrim { position: absolute; inset: 0; background: var(--scrim); }
-  .hero-wash { position: absolute; inset: 0; overflow: hidden; }
-  .hero-wash span { position: absolute; width: 90%; aspect-ratio: 1.4; border-radius: 50%; }
-  .hero-wash-navy {
-    left: -20%;
-    top: -10%;
-    background: radial-gradient(closest-side, color-mix(in oklab, var(--color-navy) 8%, transparent), transparent);
-  }
-  .hero-wash-slate {
-    right: -25%;
-    bottom: -20%;
-    background: radial-gradient(closest-side, color-mix(in oklab, var(--color-slate) 10%, transparent), transparent);
-  }
-  /* Legibility wash behind the transparent header. */
-  .hero-scrim::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 240px;
-    background: linear-gradient(180deg, rgba(250, 240, 224, 0.82), rgba(250, 240, 224, 0));
-  }
-
   .hero-inner { position: relative; display: grid; gap: clamp(1rem, 2vw, 1.5rem); }
   .hero-inner > * { max-width: 50rem; margin: 0; }
   /* Linen glow so the type reads over the moving tiles. */
@@ -333,6 +287,8 @@ const schema = {
   .section-bg-drift { inset: -3%; }
 
   /* Band 4 */
+  /* Clip sideways only: the tile fields behind the photos run past the column. */
+  .us { overflow-x: clip; }
   .us-h { font-size: var(--step-4); line-height: 1; margin-bottom: clamp(3rem, 6vw, 5rem); }
 
   .band-cta { margin-top: clamp(3rem, 6vw, 4.5rem); }

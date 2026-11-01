@@ -6,12 +6,14 @@
  * Decorative only: aria-hidden, no pointer events. It drifts very slowly when motion is
  * allowed (initDrift in motion.ts) and sits still otherwise.
  * Placement rule: never two on one screen at 1440.
+ * Size "xl" (Nov 1, Home statement band): a wider field anchored flush in its corner
+ * that fades out across the section from that corner, so it reads as coming in from it.
  */
 import MosaicField from "./MosaicField.astro";
 
 interface Props {
   position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
-  size?: "md" | "lg";
+  size?: "md" | "lg" | "xl";
   palette?: "light" | "dark";
   opacity?: number;
   seed?: number;
@@ -24,6 +26,7 @@ const { position = "bottom-right", size = "md", palette = "light", opacity, seed
 // On navy the navy tiles would vanish, so the dark palette swaps navy for linen.
 const DARK = ["#7A9BB5", "#D4942A", "#8B1A3A", "#FAF0E0", "#7A9BB5"];
 const fieldOpacity = opacity ?? (palette === "dark" ? 0.16 : 0.22);
+const xl = size === "xl";
 ---
 
 <div
@@ -33,7 +36,14 @@ const fieldOpacity = opacity ?? (palette === "dark" ? 0.16 : 0.22);
   data-drift="50"
   data-drift-travel="2.5"
 >
-  <MosaicField cols={5} rows={4} cell={92} density={0.55} seed={seed} palette={palette === "dark" ? DARK : undefined} />
+  <MosaicField
+    cols={xl ? 10 : 5}
+    rows={xl ? 6 : 4}
+    cell={92}
+    density={xl ? 0.6 : 0.55}
+    seed={seed}
+    palette={palette === "dark" ? DARK : undefined}
+  />
 </div>
 
 <style>
@@ -62,4 +72,13 @@ const fieldOpacity = opacity ?? (palette === "dark" ? 0.16 : 0.22);
     .glow-bottom-left { bottom: -8%; left: -8%; }
     .glow-bottom-right { bottom: -8%; right: -8%; }
   }
+
+  /* xl: in its corner (40px past it, so the slow drift never opens a gap), most of the
+     section wide, fading out from the corner. */
+  .glow-xl { width: min(110vw, 900px); }
+  @media (min-width: 768px) { .glow-xl { width: min(78vw, 1180px); } }
+  .glow-xl.glow-top-right { top: -40px; right: -40px; mask-image: radial-gradient(ellipse 85% 100% at 100% 0%, #000 30%, transparent 78%); }
+  .glow-xl.glow-top-left { top: -40px; left: -40px; mask-image: radial-gradient(ellipse 85% 100% at 0% 0%, #000 30%, transparent 78%); }
+  .glow-xl.glow-bottom-right { bottom: -40px; right: -40px; mask-image: radial-gradient(ellipse 85% 100% at 100% 100%, #000 30%, transparent 78%); }
+  .glow-xl.glow-bottom-left { bottom: -40px; left: -40px; mask-image: radial-gradient(ellipse 85% 100% at 0% 100%, #000 30%, transparent 78%); }
 </style>

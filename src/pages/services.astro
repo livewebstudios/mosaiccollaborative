@@ -1,6 +1,7 @@
 ---
+import { Picture } from "astro:assets";
 import Base from "../layouts/Base.astro";
-import { slugify } from "../lib/gen";
+import { gen, slugify } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import TwoWays from "../components/TwoWays.astro";
 import MosaicField from "../components/MosaicField.astro";
@@ -121,8 +122,18 @@ const schema = [
         {journeys.map((j) => (
           <li data-accent={j.accent} data-reveal>
             <a class="journey-card surface lift" href={`/how-we-work/${j.slug}/`}>
+              <span class="journey-card-media" aria-hidden="true">
+                <Picture
+                  src={gen(`journey-${j.slug}`)}
+                  formats={["avif", "webp"]}
+                  alt=""
+                  widths={[420, 720]}
+                  sizes="(min-width: 1024px) 24vw, (min-width: 768px) 46vw, 92vw"
+                  loading="lazy"
+                />
+              </span>
               <span class="journey-card-art" aria-hidden="true">
-                <MosaicField cols={5} rows={6} cell={56} density={0.7} seed={j.number.charCodeAt(1) * 7} palette={[accentHex[j.accent]!]} />
+                <MosaicField cols={3} rows={3} cell={48} density={0.7} seed={j.number.charCodeAt(1) * 7} palette={[accentHex[j.accent]!]} />
               </span>
               <h3 class="journey-name">{j.name}</h3>
               <p class="journey-line">{j.solutionLine}</p>
@@ -181,13 +192,25 @@ const schema = [
             aria-labelledby={`${family.slug}-h`}
           >
             <div class="family-head">
-              <h3 id={`${family.slug}-h`} class="family-name" data-reveal>{family.name}</h3>
-              <p class="family-motto" data-reveal>{family.motto}</p>
-              <p class="lead" data-reveal>{family.intro}</p>
-              <p class="deliverable-line" data-reveal>
-                <span class="deliverable-label">Deliverable:</span>
-                <span class="deliverable-value">{family.deliverable}</span>
-              </p>
+              <div class="family-head-text">
+                <h3 id={`${family.slug}-h`} class="family-name" data-reveal>{family.name}</h3>
+                <p class="family-motto" data-reveal>{family.motto}</p>
+                <p class="lead" data-reveal>{family.intro}</p>
+                <p class="deliverable-line" data-reveal>
+                  <span class="deliverable-label">Deliverable:</span>
+                  <span class="deliverable-value">{family.deliverable}</span>
+                </p>
+              </div>
+              <div class="family-media" aria-hidden="true" data-reveal>
+                <Picture
+                  src={gen(`family-${family.slug}`)}
+                  formats={["avif", "webp"]}
+                  alt=""
+                  widths={[480, 900]}
+                  sizes="(min-width: 1024px) 26vw, 92vw"
+                  loading="lazy"
+                />
+              </div>
             </div>
 
             <ul class="offering-grid" data-count={family.offerings.length} data-reveal-stagger="90">
@@ -246,42 +269,78 @@ const schema = [
   @media (min-width: 1024px) { .journey-cards { grid-template-columns: repeat(4, 1fr); } }
   .journey-cards > li { display: flex; }
 
-  /* The whole card is the link. Color comes from the heading, the 4px top rule and the
-     tile wash; never a full color fill. */
+  /* The whole card is the link. Color comes from the heading, the 4px top rule, the
+     round 1 image and its tint; never a full color fill (round 3, Nov 1 revision).
+     Layers, back to front: image, 10% accent tint, linen scrim, tile cluster, text.
+     The text sits at the foot of the card, on the 0.92 end of the scrim, so the
+     image reads clearly above it and body copy keeps AA. */
   .journey-card {
     --wash: 0%;
+    --scrim: 1;
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: var(--space-12);
+    min-height: clamp(22rem, 34vw, 28rem);
     overflow: hidden;
     isolation: isolate;
     padding: clamp(var(--space-24), 2.4vw, var(--space-32));
     padding-bottom: clamp(3.5rem, 5vw, 4.5rem);
     text-decoration: none;
     color: var(--color-ink);
-    background: linear-gradient(0deg, color-mix(in oklab, var(--accent) 10%, #fff), #fff 70%);
+    background: var(--color-linen);
     border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
     border-top: 4px solid var(--accent);
+  }
+  .journey-card-media {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+  }
+  .journey-card-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--ease-out-expo);
+  }
+  /* Tint pulls each image toward its journey color (the reignite image is burgundy,
+     the card is moss), so nothing was regenerated. */
+  .journey-card::before,
+  .journey-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .journey-card::before {
+    z-index: -2;
+    background: color-mix(in oklab, var(--accent) 10%, transparent);
+  }
+  .journey-card::after {
+    z-index: -2;
+    background: linear-gradient(180deg, rgba(250, 240, 224, 0.55) 0%, rgba(250, 240, 224, 0.92) 70%);
+    opacity: var(--scrim);
+    transition: opacity 600ms var(--ease-out-expo);
+  }
+  .journey-card:hover,
+  .journey-card:focus-visible { --scrim: 0.95; }
+  @media (prefers-reduced-motion: no-preference) {
+    .journey-card:hover .journey-card-media :global(img),
+    .journey-card:focus-visible .journey-card-media :global(img) { transform: scale(1.03); }
   }
   .journey-card-art {
     position: absolute;
     z-index: -1;
-    right: -12%;
-    bottom: -10%;
-    width: 110%;
-    opacity: 0.12;
+    right: -6px;
+    bottom: -6px;
+    width: 144px;
+    opacity: 0.35;
     pointer-events: none;
-    mask-image: radial-gradient(ellipse at 100% 100%, #000 30%, transparent 75%);
-    transition: opacity 0.4s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+    mask-image: radial-gradient(circle at 100% 100%, #000 35%, transparent 72%);
   }
   .journey-card-art :global(svg) { width: 100%; height: auto; }
-  .journey-card:hover .journey-card-art,
-  .journey-card:focus-visible .journey-card-art { opacity: 0.2; }
-  @media (prefers-reduced-motion: no-preference) {
-    .journey-card:hover .journey-card-art,
-    .journey-card:focus-visible .journey-card-art { transform: translate(-6px, -6px); }
-  }
+  .journey-name { margin-top: auto; }
   .journey-name {
     font-size: var(--step-3);
     line-height: 1.08;
@@ -338,7 +397,29 @@ const schema = [
 
   .families { display: grid; gap: clamp(4rem, 8vw, 7rem); }
   .family { scroll-margin-top: 10rem; }
-  .family-head { max-width: 60ch; margin-bottom: clamp(2rem, 3.5vw, 3rem); display: grid; gap: 0.75rem; }
+  /* Family header band (round 3, Nov 1 revision): text left, the round 1 image right,
+     fading into the text from its left edge. Stacked under 768, image after the text. */
+  .family-head {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+    margin-bottom: clamp(2rem, 3.5vw, 3rem);
+  }
+  @media (min-width: 768px) { .family-head { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+  .family-head-text { max-width: 60ch; display: grid; gap: 0.75rem; }
+  .family-media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: var(--radius-tile);
+  }
+  .family-media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .family-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(250, 240, 224, 0.7) 0%, rgba(250, 240, 224, 0) 45%);
+  }
   .family-name { font-size: var(--step-3); line-height: 1.08; letter-spacing: -0.01em; }
   /* The motto is a subline, sized to stay on one line at laptop widths. */
   .family-motto { font-size: var(--step-1); font-weight: 500; color: var(--color-navy); margin: 0; }

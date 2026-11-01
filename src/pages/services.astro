@@ -293,6 +293,9 @@ const schema = [
      not its row layout; the top rule is an SVG line that grout-draws. */
   .journey-card {
     --scrim-o: 1;
+    /* Containing block for the image, scrim, rule and tiles, so overflow and the
+       rounded corners clip them (this came from .surface before round 4). */
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;

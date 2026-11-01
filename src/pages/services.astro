@@ -515,9 +515,17 @@ const schema = [
   /* Nov 1: a long, bill-shaped picture under each offering's title, one size for all
      sixteen, inside the same padding as the text. Decorative, so alt is empty: the
      title beside it already says what it shows. */
+  /* The photo starts at the mark tile's left edge (Jon, Nov 1): it reaches back across
+     the mark column and its gap, so its left inset matches the card padding. The mark is
+     64px from 1024, 56px below, 48px under 640 (RowCard). */
+  .offering-grid { --photo-pull: calc(56px + clamp(1rem, 2.5vw, 2.5rem)); }
+  @media (max-width: 639px) { .offering-grid { --photo-pull: calc(48px + clamp(1rem, 2.5vw, 2.5rem)); } }
+  @media (min-width: 1024px) { .offering-grid { --photo-pull: calc(64px + clamp(1rem, 2.5vw, 2.5rem)); } }
   .offering-grid :global(.offering-photo) {
     display: block;
-    width: 100%;
+    width: calc(100% + var(--photo-pull));
+    max-width: none;
+    margin-left: calc(-1 * var(--photo-pull));
     height: auto;
     aspect-ratio: 7 / 3;
     object-fit: cover;

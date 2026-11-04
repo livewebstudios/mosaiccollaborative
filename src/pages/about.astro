@@ -5,7 +5,7 @@ import { gen } from "../lib/gen";
 import CtaBand from "../components/CtaBand.astro";
 import Founders from "../components/Founders.astro";
 import MosaicGlow from "../components/MosaicGlow.astro";
-import { team } from "../data/team";
+import { team, personName } from "../data/team";
 import { site } from "../data/site";
 
 const title = "About the Founders | The Mosaic Collaborative";
@@ -43,7 +43,7 @@ const schema = [
   ...team.map((m) => ({
     "@context": "https://schema.org",
     "@type": "Person",
-    name: m.name,
+    ...personName(m.name),
     jobTitle: m.title,
     worksFor: { "@type": "Organization", name: site.name, url: site.url },
     ...(m.photo ? { image: new URL(`/media/img/team/${m.photo}`, site.url).href } : {}),

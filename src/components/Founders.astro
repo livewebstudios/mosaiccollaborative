@@ -106,6 +106,16 @@ const initials = (name: string) => name.split(" ").slice(0, 2).map((w) => w[0]).
   .compact { gap: clamp(3rem, 5vw, 4rem); }
   @media (min-width: 768px) { .compact { grid-template-columns: repeat(3, 1fr); } }
   .compact .founder { display: grid; gap: var(--space-24); align-content: start; }
+  /* Roz's credentials (Nov 3) can wrap her name to two lines. From 768 the three cards
+     subgrid photo, name, title and link rows, so the titles stay level; a one-line name
+     sits at the foot of its row, right above its title. */
+  @media (min-width: 768px) {
+    /* A subgrid carries the parent's row gaps, so the stacking gap goes to 0 here. */
+    .compact { grid-template-rows: repeat(4, auto); row-gap: 0; }
+    .compact .founder { grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; }
+    .compact .founder-body { grid-row: span 3; grid-template-rows: subgrid; margin-top: var(--space-24); }
+    .compact .founder-name { align-self: end; }
+  }
   /* Photos never render past 220px on Home, so the 420px headshots stay above 1.9x. */
   .compact .team-photo { width: min(100%, 220px); }
   /* Round 4: piece-lift on the photo only (global .piece): it lifts and the halo fades in. */

@@ -15,7 +15,7 @@ export type Member = {
 export const team: Member[] = [
   {
     slug: "roz-cohen",
-    name: "Roz Cohen, PhD",
+    name: "Roz Cohen, PhD, SPHR, SHRM-SCP",
     title: "Founder, Chief Executive Officer",
     accent: "burgundy",
     photo: "roz-cohen.jpg",
@@ -54,3 +54,9 @@ export const team: Member[] = [
     linkedin: "https://www.linkedin.com/in/amalia-egri-freedman/"
   }
 ];
+
+/** Schema.org Person name: credentials go in honorificSuffix, not the name (Roz, Nov 3). */
+export const personName = (name: string) => {
+  const [given, ...credentials] = name.split(", ");
+  return credentials.length ? { name: given, honorificSuffix: credentials.join(", ") } : { name };
+};

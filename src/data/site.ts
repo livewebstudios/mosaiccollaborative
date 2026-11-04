@@ -3,6 +3,7 @@
 export const site = {
   name: "The Mosaic Collaborative",
   tagline: "We align the pieces. Your business thrives.",
+  // Not used on the website (Roz, Nov 3). Kept for the deck and business cards.
   strapline: "Strategy. Insight. Impact.",
   url: "https://mosaiccollaborative.com",
   // TODO: confirm with Roz that the letstalk@ alias is live in Microsoft 365.

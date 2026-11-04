@@ -11,7 +11,7 @@ import Icon from "../components/Icon.astro";
 import { gen } from "../lib/gen";
 import bookCover from "../assets/img/book/cover-front.jpg";
 import { site } from "../data/site";
-import { team } from "../data/team";
+import { team, personName } from "../data/team";
 
 // The H1 is the tagline from site.ts, with "thrives" set as the emphasis word (round 3).
 const [taglineHead, taglineTail] = site.tagline.split("thrives");
@@ -36,7 +36,7 @@ const schema = {
   areaServed: { "@type": "Country", name: "United States" },
   founder: team.map((m) => ({
     "@type": "Person",
-    name: m.name,
+    ...personName(m.name),
     jobTitle: m.title,
   })),
 };
@@ -171,7 +171,7 @@ const schema = {
     </div>
   </section>
 
-  <CtaBand heading="Do the pieces not quite fit?" />
+  <CtaBand heading="Are the pieces not coming together?" />
 </Base>
 
 <style>

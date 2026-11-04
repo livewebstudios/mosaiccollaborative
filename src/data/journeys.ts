@@ -5,6 +5,7 @@
 
 export type Journey = {
   slug: "clarify" | "build" | "activate" | "reignite";
+  // Not displayed anywhere (Roz, Nov 3: numbers imply ranking). Used for tile seeds only.
   number: string;
   name: string;
   /** Round 3 (Roz): Clarify blue, Build burgundy, Activate mustard, Reignite green. */

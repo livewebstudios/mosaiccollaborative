@@ -125,7 +125,7 @@ const schema = [
         <div class="journey-panels" aria-live="polite" data-reveal data-seat="still" data-journey-panels>
           {journeys.map((j) => (
             <div class="journey-panel" data-accent={j.accent} data-panel={j.slug}>
-              <p class="panel-label">{`${j.number} ${j.name}`}</p>
+              <p class="panel-label">{j.name}</p>
               <p class="panel-promise">{j.promise}</p>
               <p class="panel-blurb">{j.homeBlurb}</p>
               <p><a class="link-arrow" href={`/how-we-work/${j.slug}/`}>{`How ${j.name} works`}</a></p>

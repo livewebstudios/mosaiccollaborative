@@ -210,9 +210,11 @@ const schema = [
                   </svg>
                 </h3>
                 <p class="family-motto" data-reveal>{family.motto}</p>
+                <!-- TODO: confirm with Roz. If "the sentence under the blue band for each service"
+                     also means these intros, add is-italic to this class list. -->
                 <p class="lead" data-reveal>{family.intro}</p>
                 <p class="deliverable-line" data-reveal>
-                  <span class="deliverable-label">Deliverable:</span>
+                  <span class="deliverable-label">Deliverable:</span>{" "}
                   <span class="deliverable-value">{family.deliverable}</span>
                 </p>
               </div>
@@ -297,11 +299,12 @@ const schema = [
       0 0 56px rgba(250, 240, 224, 0.75);
   }
 
-  /* Friction band: Inter, one paragraph, centered block. */
+  /* Friction band: Inter italic (Roz, Nov 3), one paragraph, centered block. */
   .friction-text {
     margin: 0 auto;
     max-width: 62ch;
     font-family: var(--font-sans);
+    font-style: italic;
     font-size: var(--step-1);
     line-height: 1.5;
     color: var(--color-linen);
@@ -342,6 +345,9 @@ const schema = [
      not its row layout; the top rule is an SVG line that grout-draws. */
   .journey-card {
     --scrim-o: 1;
+    --card-min: clamp(22rem, 34vw, 28rem);
+    --card-pad: clamp(var(--space-24), 2.4vw, var(--space-32));
+    --card-pad-end: clamp(3.5rem, 5vw, 4.5rem);
     /* Containing block for the image, scrim, rule and tiles, so overflow and the
        rounded corners clip them (this came from .surface before round 4). */
     position: relative;
@@ -349,11 +355,11 @@ const schema = [
     display: flex;
     flex-direction: column;
     gap: var(--space-12);
-    min-height: clamp(22rem, 34vw, 28rem);
+    min-height: var(--card-min);
     overflow: hidden;
     isolation: isolate;
-    padding: clamp(var(--space-24), 2.4vw, var(--space-32));
-    padding-bottom: clamp(3.5rem, 5vw, 4.5rem);
+    padding: var(--card-pad);
+    padding-bottom: var(--card-pad-end);
     text-decoration: none;
     color: var(--color-ink);
     background: var(--color-linen);
@@ -414,14 +420,34 @@ const schema = [
     mask-image: radial-gradient(circle at 100% 100%, #000 35%, transparent 72%);
   }
   .journey-card-art :global(svg) { width: 100%; height: auto; }
-  .journey-name { margin-top: auto; }
   .journey-name {
+    margin-top: auto;
     font-size: var(--step-3);
     line-height: 1.08;
     letter-spacing: -0.01em;
     color: var(--accent-display);
   }
   .journey-line { margin: 0; font-size: var(--step-0); }
+  /* Two or more across (Roz, Nov 3): each card spans three rows (open top, heading,
+     line) and the li and the card subgrid them, so the headings share a line across each
+     row of cards and the line text starts together beneath, whichever card has the
+     longest text. One column has nothing to align, so it keeps the flex stack. */
+  @media (min-width: 768px) {
+    .journey-cards { grid-auto-rows: 1fr auto auto; }
+    .journey-cards > li { display: grid; grid-row: span 3; grid-template-rows: subgrid; grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+    .journey-card { grid-row: span 3; display: grid; grid-template-rows: subgrid; grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+    /* A subgrid's own min-height does not size the shared rows, so this in-flow spacer
+       carries it: it spans all three rows and the open top row takes up the slack. */
+    .journey-card::after {
+      content: "";
+      grid-row: 1 / span 3;
+      grid-column: 1;
+      min-height: calc(var(--card-min) - var(--card-pad) - var(--card-pad-end) - 2px); /* less the 1px border, top and bottom */
+      pointer-events: none;
+    }
+    .journey-name { grid-area: 2 / 1; align-self: end; margin-top: 0; }
+    .journey-line { grid-area: 3 / 1; align-self: start; margin-top: var(--space-12); }
+  }
   .journey-arrow {
     position: absolute;
     right: clamp(var(--space-20), 2.2vw, var(--space-32));
@@ -501,6 +527,8 @@ const schema = [
   /* The motto is a subline, sized to stay on one line at laptop widths. */
   .family-motto { font-size: var(--step-1); font-weight: 500; color: var(--color-navy); margin: 0; }
   @media (min-width: 1024px) { .family-motto { white-space: nowrap; } }
+  /* Off by default; see the TODO on the family intro markup. */
+  .family-head .lead.is-italic { font-style: italic; }
 
   /* Round 4: one RowCard per offering, one per row. The family header carries the
      weight; the rows stay quiet. (If Services reads as a wall, the fallback is two
@@ -554,23 +582,20 @@ const schema = [
     .offering-grid > li::before { left: -200px; width: 400px; top: 8%; height: 92%; }
   }
 
-  /* Deliverable: one line under the category intro, set as a label rather than a heading. */
+  /* Deliverable: one line under the category intro, set as a label rather than a heading.
+     Inline flow, not flex: label and value share a baseline, and on a phone the value
+     starts beside the label and wraps under it instead of dropping to its own line. */
   .deliverable-line {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    column-gap: 0.6rem;
-    row-gap: 0.2rem;
     margin-top: 0.25rem;
     font-size: var(--step-0);
     line-height: 1.45;
   }
+  /* Roz, Nov 3: the label matches the motto size and stays upright; the value is italic. */
   .deliverable-label {
-    font-size: 0.75rem;
+    font-size: var(--step-1);
     font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
     color: var(--color-burgundy);
+    margin-right: 0.2rem;
   }
-  .deliverable-value { font-weight: 500; color: var(--color-navy); }
+  .deliverable-value { font-weight: 500; font-style: italic; color: var(--color-navy); }
 </style>

@@ -1,9 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import CtaBand from "../../components/CtaBand.astro";
 import MosaicField from "../../components/MosaicField.astro";
+import MosaicGlow from "../../components/MosaicGlow.astro";
 import Icon from "../../components/Icon.astro";
+import { gen } from "../../lib/gen";
 import { journeys } from "../../data/journeys";
 import { site } from "../../data/site";
 
@@ -72,8 +75,10 @@ const schema = [
       </div>
     </section>
 
-    <!-- Problem -->
-    <section class="section section-linen-dark symptoms" aria-labelledby="symptoms-h">
+    <!-- Problem. Nov 4: grounds borrowed from the other pages, fixed seeds so all four
+         journeys match. Linen-dark with a corner glow, as on Services Custom Offerings. -->
+    <section class="section section-linen-dark symptoms has-glow" aria-labelledby="symptoms-h">
+      <MosaicGlow position="top-left" seed={113} />
       <div class="container symptoms-inner">
         <div class="symptoms-head">
           <p class="eyebrow" data-reveal>Sound familiar?</p>
@@ -92,8 +97,10 @@ const schema = [
       </div>
     </section>
 
-    <!-- Solution framework and deliverable -->
-    <section class="section solution" aria-labelledby="solution-h">
+    <!-- Solution framework and deliverable. Linen with a corner glow, as on Services Core
+         Services, at the medium size so it clears the paragraph. -->
+    <section class="section solution has-glow" aria-labelledby="solution-h">
+      <MosaicGlow position="bottom-right" seed={97} />
       <div class="container solution-inner">
         <div class="solution-head">
           <p class="eyebrow" data-reveal>How we help</p>
@@ -109,8 +116,12 @@ const schema = [
       </div>
     </section>
 
-    <!-- Other journeys -->
-    <section class="section section-gray others" aria-labelledby="others-h">
+    <!-- Other journeys. The faded tile ground from Home's Two Ways band, drifting slowly.
+         No glow over the photo (Jon, Nov 1). -->
+    <section class="section section-gray has-bg others" aria-labelledby="others-h">
+      <div class="section-bg section-bg-drift" aria-hidden="true" data-drift="90" data-drift-travel="2">
+        <Image src={gen("foundation")} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
+      </div>
       <div class="container others-inner">
         <div class="others-head">
           <p class="eyebrow" data-reveal>Other journeys</p>
@@ -253,11 +264,29 @@ const schema = [
   .deliverable-value { font-weight: 500; font-style: italic; color: var(--accent-text); }
 
   /* Other journeys */
+  /* Oversized so the slow drift never shows an edge (same as Home's Two Ways band). */
+  .section-bg-drift { inset: -3%; }
+  /* The accordion copy runs across the middle of the band, so the wash holds up further
+     right than the global one. */
+  .others .section-bg::after {
+    background: linear-gradient(90deg, rgba(240, 242, 245, 0.92) 0%, rgba(240, 242, 245, 0.84) 55%, rgba(240, 242, 245, 0.6) 100%);
+  }
+  @media (max-width: 1023px) {
+    .others .section-bg::after { background: rgba(240, 242, 245, 0.86); }
+  }
   .others-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }
   @media (min-width: 1024px) { .others-inner { grid-template-columns: 4fr 8fr; align-items: start; } }
   .others-head { display: grid; gap: 0.75rem; align-content: start; }
   @media (min-width: 1024px) { .others-head { position: sticky; top: 8rem; } }
   .others-list h3 { margin: 0; font-size: inherit; }
+  /* Nov 4: the accordion copy sits on a solid linen panel over the tile photo, the way the
+     cards do on Home and About, so the photo frames the text instead of running behind it. */
+  .others-list {
+    background: var(--color-linen);
+    border-radius: var(--radius-tile);
+    padding: clamp(0.5rem, 2vw, 1rem) clamp(1.25rem, 3vw, 2.5rem);
+    box-shadow: 0 1px 2px rgba(30, 58, 95, 0.06), 0 12px 32px rgba(30, 58, 95, 0.08);
+  }
   .accordion-label { display: flex; align-items: baseline; gap: 1rem; }
   .accordion-content {
     display: grid;

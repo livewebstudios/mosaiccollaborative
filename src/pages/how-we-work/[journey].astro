@@ -101,8 +101,6 @@ const schema = [
         </div>
         <div class="solution-body">
           <p class="solution-text" data-reveal>{journey.framework}</p>
-          <!-- TODO: confirm with Jon. Services Deliverable lines were restyled (Roz, Nov 3: label at
-               step-1 upright, value italic). Match them here only if Jon says so. -->
           <p class="deliverable-line" data-reveal>
             <span class="deliverable-label">Deliverable:</span>
             <span class="deliverable-value">{journey.deliverable}</span>
@@ -245,14 +243,14 @@ const schema = [
     font-size: var(--step-1);
     line-height: 1.4;
   }
+  /* Roz, Nov 4: matches Core Offerings on Services. Label at step-1, upright, no caps; value italic. */
   .deliverable-label {
-    font-size: 0.75rem;
+    font-size: var(--step-1);
     font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-style: normal;
     color: var(--color-burgundy);
   }
-  .deliverable-value { font-weight: 500; color: var(--accent-text); }
+  .deliverable-value { font-weight: 500; font-style: italic; color: var(--accent-text); }
 
   /* Other journeys */
   .others-inner { display: grid; gap: clamp(2rem, 5vw, 4rem); }

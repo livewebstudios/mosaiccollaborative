@@ -24,8 +24,8 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 [[redirects]]
-  from = "https://www.mosaiccollaborative.com/*"
-  to = "https://mosaiccollaborative.com/:splat"
+  from = "https://www.themosaiccollaborative.com/*"
+  to = "https://themosaiccollaborative.com/:splat"
   status = 301
   force = true
 

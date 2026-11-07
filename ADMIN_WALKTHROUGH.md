@@ -1,12 +1,12 @@
 # Posting to Insights: a quick guide for Roz, Deb and Amalia
 
-The Insights page on mosaiccollaborative.com has its own admin. You can add articles, podcast
+The Insights page on themosaiccollaborative.com has its own admin. You can add articles, podcast
 appearances, LinkedIn and Substack pieces, and conference talks yourself. No code, no waiting on us.
 
 ## Logging in
 
 1. You'll get an email invitation from Netlify. Click the link, choose a password, and you land in the admin.
-2. After that, go to **mosaiccollaborative.com/admin/** any time and click **Login with Netlify Identity**.
+2. After that, go to **themosaiccollaborative.com/admin/** any time and click **Login with Netlify Identity**.
 3. Forgot your password? Use the "Forgot password?" link on the login box.
 
 ## Adding a post

@@ -6,8 +6,8 @@ backend:
   branch: main
 media_folder: "public/media/img/insights"
 public_folder: "/media/img/insights"
-site_url: https://mosaiccollaborative.com
-display_url: https://mosaiccollaborative.com
+site_url: https://themosaiccollaborative.com
+display_url: https://themosaiccollaborative.com
 logo_url: /admin/logo.svg
 collections:
   - name: insights

@@ -7,7 +7,7 @@ import MosaicGlow from "../../components/MosaicGlow.astro";
 import Icon from "../../components/Icon.astro";
 import RowCard from "../../components/RowCard.astro";
 import { site } from "../../data/site";
-import { linksOut, externalText, fmtDate } from "../../lib/insights";
+import { linksOut, externalText, fmtDate, orderCategories } from "../../lib/insights";
 
 const title = "Insights from The Mosaic Collaborative";
 const description =
@@ -17,7 +17,7 @@ const posts = (await getCollection("insights", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-const categories = [...new Set(posts.map((p) => p.data.category))];
+const categories = orderCategories(posts.map((p) => p.data.category));
 
 
 const schema = [

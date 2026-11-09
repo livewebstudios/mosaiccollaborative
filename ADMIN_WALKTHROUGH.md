@@ -16,7 +16,7 @@ appearances, LinkedIn and Substack pieces, and conference talks yourself. No cod
    - **Title**: the headline.
    - **Short description**: one or two sentences for the card and for Google. Keep it under 155 characters.
    - **Date**: the publish date.
-   - **Category**: Leadership, Culture, Change, AI at work, or Podcasts & appearances.
+   - **Category**: pick one from the list. You control that list (see "Managing categories" below).
    - **Author**: which of you wrote it, or The Mosaic Collaborative.
    - **Body**: the article itself. The toolbar handles headings, bold, lists, links and quotes.
 3. Click **Save**.
@@ -34,6 +34,19 @@ of the post and on its card.
    "Read on Substack" or "Event details". Leave it alone and it says "Read the original".
 3. If the piece lives somewhere else and you only want a line or two here, keep the body short
    (under about 40 words). The card on the Insights page then links straight to the original.
+
+## Managing categories
+
+The categories are yours to change.
+
+1. Click **Settings** on the left, then **Insight categories**.
+2. Click **Add category** to make a new one, or open one to rename it. Use the trash icon to remove one.
+   Drag them to change the order. That order is the order of the category labels on the Insights page.
+3. Click **Save**, then **Publish**.
+
+The new list shows up in the **Category** dropdown right away. One thing to know: renaming a category
+does not change the posts that already use the old name. Open those posts, pick the new name and save.
+A category only appears on the Insights page once a published post uses it.
 
 ## Publishing
 

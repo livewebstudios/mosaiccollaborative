@@ -7,7 +7,7 @@ import { glob } from "astro/loaders";
  *   title       string, the h1 and the card heading
  *   description string, the card blurb and the meta description, under 155 chars
  *   date        YYYY-MM-DD, rendered in UTC so it never shifts a day
- *   category    one of the five below
+ *   category    a name from src/data/insights-categories.json (edited in Decap under Settings)
  *   draft       true keeps it out of the build entirely
  *   heroAccent  navy, burgundy, gold or moss, tints the post header
  *   author      one of the three founders, or the company
@@ -21,7 +21,9 @@ const insights = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    category: z.enum(["Leadership", "Culture", "Change", "AI at work", "Podcasts & appearances"]),
+    // Free text on purpose: the team manages the list in Decap, and a renamed or removed
+    // category must never fail the build for posts that still carry the old name.
+    category: z.string().trim().min(1),
     draft: z.boolean().default(true),
     heroAccent: z.enum(["navy", "burgundy", "gold", "moss"]).default("navy"),
     author: z

@@ -82,6 +82,7 @@ const schema = [
                       srLabel={out ? `(${externalText(post.data.externalLabel)}, opens in a new tab)` : undefined}
                       class="post-card"
                     >
+                      {/* alt="" on purpose: the card is a link whose title already names it, so the photo is decorative. */}
                       {post.data.hero && (
                         <Image slot="media" src={post.data.hero} alt="" width={1600} height={900} loading="lazy" />
                       )}

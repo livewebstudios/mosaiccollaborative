@@ -19,9 +19,9 @@ collections:
     preview_path: "insights/{{slug}}"
     fields:
       - { label: Title, name: title, widget: string }
-      - { label: Short description (shows on the card, under 155 characters), name: description, widget: text }
+      - { label: Summary (the teaser on the Insights page and in Google, under 155 characters), name: description, widget: text }
       - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-      # Options come from Settings > Insight categories (src/data/insights-categories.json),
+      # Options come from Settings > Blog Categories (src/data/insights-categories.json),
       # so the team can add, rename, reorder or remove categories without a code change.
       - label: Category
         name: category
@@ -33,11 +33,12 @@ collections:
         display_fields: ["categories.*.name"]
         options_length: 100
       - { label: Author, name: author, widget: select, options: [Roz Cohen, Debra DeFrancesco, Amalia Egri Freedman, The Mosaic Collaborative], default: The Mosaic Collaborative }
-      - { label: Photo (optional), name: hero, widget: image, required: false }
+      - { label: Featured Image, name: hero, widget: image, required: false }
+      - { label: Image Description, name: heroAlt, widget: string, required: false, hint: "One short sentence describing the photo. Google reads this." }
       - { label: Link to the original (LinkedIn, Substack, podcast, event), name: externalUrl, widget: string, required: false }
       - { label: Link button text, name: externalLabel, widget: string, required: false, default: Read the original }
       - { label: Header color, name: heroAccent, widget: select, options: [navy, burgundy, gold, moss], default: navy }
-      - { label: Draft (unchecked = live on the site), name: draft, widget: boolean, default: true }
+      - { label: "Hide from the site (draft)", name: draft, widget: boolean, default: false, hint: "Check this to save a post without showing it on the site. Uncheck it and Publish to put it live." }
       - { label: Body, name: body, widget: markdown }
 
   # One editable list that feeds the Category dropdown above and the chips on /insights/.
@@ -46,7 +47,7 @@ collections:
     editor: { preview: false }
     files:
       - name: categories
-        label: Insight categories
+        label: Blog Categories
         file: src/data/insights-categories.json
         description: "Add, rename, reorder or remove categories. The order here is the order of the chips on the Insights page. Renaming a category here does not change posts that already use the old name, so open those posts and pick the new one."
         fields:

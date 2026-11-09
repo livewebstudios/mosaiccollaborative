@@ -79,7 +79,7 @@ const schema = [
     <div class="section post-body-section">
       <div class="container">
         {hero && (
-          <Image class="post-hero" src={hero} alt="" width={1600} height={900} />
+          <Image class="post-hero" src={hero} alt={post.data.heroAlt ?? ""} width={1600} height={900} />
         )}
         <div class="post-body">
           <Content />

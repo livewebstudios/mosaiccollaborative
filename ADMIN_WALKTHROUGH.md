@@ -14,18 +14,20 @@ appearances, LinkedIn and Substack pieces, and conference talks yourself. No cod
 1. Click **Insights** on the left, then **New Insight**.
 2. Fill in the fields from top to bottom:
    - **Title**: the headline.
-   - **Short description**: one or two sentences for the card and for Google. Keep it under 155 characters.
+   - **Summary**: one or two sentences for the card and for Google. Keep it under 155 characters.
    - **Date**: the publish date.
    - **Category**: pick one from the list. You control that list (see "Managing categories" below).
    - **Author**: which of you wrote it, or The Mosaic Collaborative.
+   - **Featured Image** and **Image Description**: see "Adding a photo" below.
    - **Body**: the article itself. The toolbar handles headings, bold, lists, links and quotes.
-3. Click **Save**.
+3. Click **Publish**, then **Publish now**. See "Publishing" below.
 
 ## Adding a photo
 
-In **Photo (optional)**, click **Choose an image**, then **Upload**, and pick a file from your computer.
+In **Featured Image**, click **Choose an image**, then **Upload**, and pick a file from your computer.
 Landscape photos work best (wider than tall, at least 1600 pixels across). The photo shows at the top
-of the post and on its card.
+of the post and on its card. Then fill in **Image Description** with one short sentence about the photo,
+for example "Roz leading a workshop at a conference". Google reads it.
 
 ## Linking to a podcast, LinkedIn post or Substack piece
 
@@ -39,27 +41,26 @@ of the post and on its card.
 
 The categories are yours to change.
 
-1. Click **Settings** on the left, then **Insight categories**.
+1. Click **Settings** on the left, then **Blog Categories**.
 2. Click **Add category** to make a new one, or open one to rename it. Use the trash icon to remove one.
    Drag them to change the order. That order is the order of the category labels on the Insights page.
-3. Click **Save**, then **Publish**.
+3. Click **Publish**, then **Publish now**.
 
 The new list shows up in the **Category** dropdown right away. One thing to know: renaming a category
-does not change the posts that already use the old name. Open those posts, pick the new name and save.
+does not change the posts that already use the old name. Open those posts, pick the new name and publish.
 A category only appears on the Insights page once a published post uses it.
 
 ## Publishing
 
-New posts start as drafts, so nothing goes live by accident. When you're ready:
-
-1. Uncheck **Draft**.
-2. Click **Save**, then **Publish** at the top right.
+Click **Publish** at the top right, then **Publish now**. It's live in about a minute. To save a post
+without showing it, check **Hide from the site (draft)** first.
 
 The site updates on its own in about a minute. Refresh the Insights page to see it.
 
 ## Editing or removing a post
 
-Open it from the Insights list, make your changes and save. To take a post down without deleting
-it, check **Draft** again and save.
+Open it from the Insights list, make your changes, then click **Publish**, then **Publish now**. To take a
+post down without deleting it, check **Hide from the site (draft)** and publish. To delete it, open the
+post and use **Delete published entry** at the top.
 
 Questions? Call or email Jon at Live Web Studios. Happy to do a 15 minute screen share the first time.

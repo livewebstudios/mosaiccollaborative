@@ -12,6 +12,7 @@ import { glob } from "astro/loaders";
  *   heroAccent  navy, burgundy, gold or moss, tints the post header
  *   author      one of the three founders, or the company
  *   hero        optional photo, a path under /media/img/insights/
+ *   heroAlt     optional one-sentence description of the photo, used as its alt text
  *   externalUrl / externalLabel  optional link out to where the piece lives
  * Roz and the team edit these through Decap at /admin/ (public/admin/config.yml).
  */
@@ -31,6 +32,8 @@ const insights = defineCollection({
       .default("The Mosaic Collaborative"),
     /** Path under /media/img/insights/ (Decap's media folder). */
     hero: z.string().optional(),
+    /** Image Description in the admin. Alt text for the post hero; the card photo stays decorative. */
+    heroAlt: z.string().optional(),
     /** Link to where the piece lives (LinkedIn, Substack, a podcast episode, an event page). */
     externalUrl: z.string().url().optional(),
     /** "Read on Substack", "Listen to the episode", "Event details". Defaults to "Read the original". */

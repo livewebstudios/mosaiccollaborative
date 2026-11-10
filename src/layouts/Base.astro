@@ -35,6 +35,12 @@ const schemaList = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-TJHGN8H6"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
